@@ -1,5 +1,5 @@
 # Load the SHIP data if it does not exist
-'load_spine.load' <- function() {
+'load_spine.load' <- function(only_subjects_with_image_data = FALSE) {
   # Constants
   CONSTANT.PATH_DARWIN <- "~/Sites/ship-tools/SHIP-Data/data/shipdata/SHIP_2013_combined/SHIP_2013_combined_image_trim_noumlauts.json"
   CONSTANT.PATH_LINUX <- "/home/paul/ship/ship-data/data/shipdata/SHIP_2013_combined/SHIP_2013_combined_image_trim_noumlauts.json"
@@ -20,8 +20,11 @@
     }
     cat('Loading SHIP Dataset dump ... ')
     load(file = "vardumps/ship_data_spine.Rdmped")
-    ship_data <<- ship_data
-    ship_data_image <<- ship_data_image
+    # Decide which data to return!
+    if (only_subjects_with_image_data) 
+      return(ship_data)
+    else
+      return(ship_data_image)
   }
 }
 
