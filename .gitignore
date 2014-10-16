@@ -1,6 +1,9 @@
 # Mac Stuff
 .DS_Store
 
+# R Vardumps
+R/vardumps
+
 # History files
 .Rhistory
 
