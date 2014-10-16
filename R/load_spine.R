@@ -1,5 +1,5 @@
 # Load the SHIP data if it does not exist
-'load_spine.load' <- function(only_subjects_with_image_data = FALSE) {
+'load_spine' <- function(only_subjects_with_image_data = FALSE) {
   ## Helper Functions
   # define function read_json
   'load_spine.helper.read_json' <- function(filepath) {
