@@ -4,6 +4,9 @@
 # R Vardumps
 R/vardumps
 
+# Plots
+plots/
+
 # History files
 .Rhistory
 
