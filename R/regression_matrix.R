@@ -46,5 +46,5 @@ source("load_spine.R")
 frame <- load_spine()
 
 regression_matrix <- create_regression_matrix(frame)
-qplot(x=Var1, y=Var2, data=melt(regression_matrix), fill=value, geom="tile") +
-  scale_fill_gradient2(limits=c(-5, 5))
+ggplot2::qplot(x=Var1, y=Var2, data=reshape2::melt(regression_matrix), fill=value, geom="tile", xlab="dependent", ylab="independent") +
+  ggplot2::scale_fill_gradient2(limits=c(min(regression_matrix), max(regression_matrix)))
