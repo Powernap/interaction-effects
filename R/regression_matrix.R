@@ -41,10 +41,19 @@
 }
 
 source("load_spine.R")
+library(ggplot2)
 
 # Load the spine data set
 frame <- load_spine()
 
 regression_matrix <- create_regression_matrix(frame)
-ggplot2::qplot(x=Var1, y=Var2, data=reshape2::melt(regression_matrix), fill=value, geom="tile", xlab="dependent", ylab="independent") +
-  ggplot2::scale_fill_gradient2(limits=c(min(regression_matrix), max(regression_matrix)))
+# Remove Entries from the regression matrix
+remove <- c('Mean_Curvature', 'Mean_Torsion', 'Mean_Curvature_Coronal', 
+            'Mean_Curvature_Transverse', 'Mean_Curvature_Sagittal', 'Curvature_Angle', 
+            'Curvature_Angle_Coronal', 'Curvature_Angle_Sagittal', 'Curvature_Angle_Transverse')
+
+regression_matrix <-regression_matrix[!rownames(regression_matrix) %in% remove, ]
+regression_matrix <-regression_matrix[, !colnames(regression_matrix) %in% remove]
+qplot(x=Var1, y=Var2, data=reshape2::melt(regression_matrix), fill=value, geom="tile", xlab="dependent", ylab="independent") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
+  scale_fill_gradient2(limits=c(min(regression_matrix), max(regression_matrix)))
