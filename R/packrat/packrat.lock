@@ -1,6 +1,6 @@
 PackratFormat: 1.4
 PackratVersion: 0.4.1.1
-RVersion: 3.1.0
+RVersion: 3.1.1
 Repos: CRAN=http://cran.rstudio.com
 
 Package: assertthat
@@ -66,6 +66,16 @@ Source: CRAN
 Version: 1.0.0
 Hash: c8bff66238347472f08b6a35608539ff
 Requires: digest, gtable, plyr, proto, reshape2, scales
+
+Package: ggvis
+Source: github
+Version: 0.3.0.9001
+Hash: 20590b1f8464f3a6273f1dae96aeaef7576c655f
+Requires: assertthat, magrittr, RJSONIO, htmltools, dplyr, plyr, shiny
+GithubRepo: ggvis
+GithubUsername: rstudio
+GithubRef: master
+GithubSha1: 20590b1f8464f3a6273f1dae96aeaef7576c655f
 
 Package: gtable
 Source: CRAN
@@ -176,13 +186,13 @@ Hash: f4aea783dfb279b89a0d735727fb46c5
 
 Package: rmarkdown
 Source: github
-Version: 0.3.8
-Hash: 49ec20f9491c6099d9a1447f50e2a42336e12ec7
+Version: 0.3.10
+Hash: 82a063d41be99d9229716159884e468b8a3a7bec
 Requires: caTools, htmltools, knitr, yaml
 GithubRepo: rmarkdown
 GithubUsername: rstudio
 GithubRef: v0.98.1000
-GithubSha1: 49ec20f9491c6099d9a1447f50e2a42336e12ec7
+GithubSha1: 82a063d41be99d9229716159884e468b8a3a7bec
 
 Package: scales
 Source: CRAN
