@@ -1,6 +1,6 @@
 PackratFormat: 1.4
 PackratVersion: 0.4.1.1
-RVersion: 3.1.1
+RVersion: 3.1.0
 Repos: CRAN=http://cran.rstudio.com
 
 Package: assertthat
@@ -56,6 +56,11 @@ Version: 0.5.5
 Hash: 20881970e590ee68de97a468694db7b0
 Requires: stringr
 
+Package: fmsb
+Source: CRAN
+Version: 0.5.1
+Hash: 37bafd07b052cc56a19ff6952a4176ce
+
 Package: formatR
 Source: CRAN
 Version: 1.0
@@ -68,14 +73,11 @@ Hash: c8bff66238347472f08b6a35608539ff
 Requires: digest, gtable, plyr, proto, reshape2, scales
 
 Package: ggvis
-Source: github
-Version: 0.3.0.9001
-Hash: 20590b1f8464f3a6273f1dae96aeaef7576c655f
-Requires: assertthat, magrittr, RJSONIO, htmltools, dplyr, plyr, shiny
-GithubRepo: ggvis
-GithubUsername: rstudio
-GithubRef: master
-GithubSha1: 20590b1f8464f3a6273f1dae96aeaef7576c655f
+Source: CRAN
+Version: 0.4
+Hash: 2ce2827306789fe66c344b423c2f1261
+Requires: assertthat, dplyr, htmltools, jsonlite, lazyeval, magrittr,
+    shiny
 
 Package: gtable
 Source: CRAN
@@ -95,14 +97,14 @@ Requires: digest
 
 Package: httpuv
 Source: CRAN
-Version: 1.3.0
-Hash: 156d2cdf8a183360610376b68a5dd435
+Version: 1.3.2
+Hash: 163f7f889c45832ff6e0841c90c51845
 Requires: Rcpp
 
 Package: jsonlite
 Source: CRAN
-Version: 0.9.12
-Hash: 08b7b0965550f20290b35a70f22f2215
+Version: 0.9.13
+Hash: dd2cfbfb6cce930fef0be435a7093e8a
 
 Package: knitr
 Source: CRAN
@@ -181,18 +183,18 @@ Requires: plyr, Rcpp, stringr
 
 Package: RJSONIO
 Source: CRAN
-Version: 1.2-0.2
-Hash: f4aea783dfb279b89a0d735727fb46c5
+Version: 1.3-0
+Hash: 8b1341dfd547c90ed4b3365d5aa46a7b
 
 Package: rmarkdown
 Source: github
-Version: 0.3.10
-Hash: 82a063d41be99d9229716159884e468b8a3a7bec
+Version: 0.3.8
+Hash: 49ec20f9491c6099d9a1447f50e2a42336e12ec7
 Requires: caTools, htmltools, knitr, yaml
 GithubRepo: rmarkdown
 GithubUsername: rstudio
 GithubRef: v0.98.1000
-GithubSha1: 82a063d41be99d9229716159884e468b8a3a7bec
+GithubSha1: 49ec20f9491c6099d9a1447f50e2a42336e12ec7
 
 Package: scales
 Source: CRAN
@@ -202,9 +204,9 @@ Requires: dichromat, labeling, munsell, plyr, RColorBrewer
 
 Package: shiny
 Source: CRAN
-Version: 0.10.1
-Hash: abf0d95fb716352103ee6d35b51fffa4
-Requires: digest, RJSONIO, xtable, caTools, htmltools, httpuv
+Version: 0.10.2.1
+Hash: f737d84e9db975b8fe73fa68e5e6802b
+Requires: digest, htmltools, httpuv, mime, R6, RJSONIO, xtable
 
 Package: stringr
 Source: CRAN
@@ -213,8 +215,8 @@ Hash: cdde0cfa0f52cffeaca23a11a3899779
 
 Package: xtable
 Source: CRAN
-Version: 1.7-3
-Hash: af110253b140f3f7199c0cac37536a2f
+Version: 1.7-4
+Hash: 7b30b5ca6c7ae80c4f916502e3ad0237
 
 Package: yaml
 Source: CRAN
