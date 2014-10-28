@@ -188,13 +188,13 @@ Hash: 8b1341dfd547c90ed4b3365d5aa46a7b
 
 Package: rmarkdown
 Source: github
-Version: 0.3.8
-Hash: 49ec20f9491c6099d9a1447f50e2a42336e12ec7
+Version: 0.3.10
+Hash: 82a063d41be99d9229716159884e468b8a3a7bec
 Requires: caTools, htmltools, knitr, yaml
 GithubRepo: rmarkdown
 GithubUsername: rstudio
 GithubRef: v0.98.1000
-GithubSha1: 49ec20f9491c6099d9a1447f50e2a42336e12ec7
+GithubSha1: 82a063d41be99d9229716159884e468b8a3a7bec
 
 Package: scales
 Source: CRAN
