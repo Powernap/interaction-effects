@@ -4,7 +4,7 @@
     return(coefficient_matrix)
   }
   # DEBUG
-  data <- frame
+  #data <- frame
   # /DEBUG
   # Get Class for each group
   variable_classes <- lapply(frame, class)
