@@ -4,7 +4,7 @@
     return(coefficient_matrix)
   }
   # DEBUG
-  #data <- frame
+  data <- frame
   # /DEBUG
   # Get Class for each group
   variable_classes <- lapply(frame, class)
@@ -14,7 +14,7 @@
   row.names(coefficient_matrix) <- variable_names
   colnames(coefficient_matrix) <- variable_names
   # Iterate over all variables
-  #for (i in 1:4) {
+  #for (i in 2:2) {
   for (i in 1:length(variable_names)) {
     current_dependent_variable_name <- variable_names[[i]]
     current_dependent_class <- variable_classes[current_dependent_variable_name]
@@ -29,6 +29,7 @@
         if (current_dependent_class == 'numeric')
           model <- try(lm(formula = formula, data = data), silent = TRUE)
         else
+          #model <- try(glm(formula = formula, family = "binomial", data = data), silent = TRUE)
           model <- try(glm(formula = formula, family = "binomial", data = data), silent = TRUE)
         # If binning fails, return null
         if(class(model) == "try-error") {
@@ -37,10 +38,17 @@
           #coefficient <- model$coefficients[[2]]
           #coefficient_matrix[i,j] <- coefficient
           #coefficient_matrix[i,j] <- mean(resid(model))
+          model_summary <- summary(model)
           if (current_dependent_class == 'numeric')
-            coefficient_matrix[i,j] <- summary(model)$sigma
+            coefficient_matrix[i,j] <- model_summary$r.squared
           else
-            coefficient_matrix[i,j] <- model$deviance
+            coefficient_matrix[i,j] <- fmsb::NagelkerkeR2(model)['R2'][[1]]
+
+          #coefficient_matrix[i,j] <- mean(abs(residuals(model)))
+          #if (current_dependent_class == 'numeric')
+          #  coefficient_matrix[i,j] <- summary(model)$sigma
+          #else
+          #  coefficient_matrix[i,j] <- model$deviance
         }
       }
     }
@@ -49,21 +57,16 @@
   return(coefficient_matrix)
 }
 
-'debug_regression_matrix' <- function() {
-  source("load_spine.R")
-  library(ggplot2)
-  library(shiny)
-  library(ggvis)
-  
-  # Load the spine data set
-  frame <- load_spine()
-  
-  regression_matrix <- create_regression_matrix(frame)
-  # Remove Entries from the regression matrix
-  remove <- c('Mean_Curvature', 'Mean_Torsion', 'Mean_Curvature_Coronal', 
-              'Mean_Curvature_Transverse', 'Mean_Curvature_Sagittal', 'Curvature_Angle', 
-              'Curvature_Angle_Coronal', 'Curvature_Angle_Sagittal', 'Curvature_Angle_Transverse')
-  
-  regression_matrix <-regression_matrix[!rownames(regression_matrix) %in% remove, ]
-  regression_matrix <-regression_matrix[, !colnames(regression_matrix) %in% remove]
-}
+source("load_spine.R")
+
+# Load the spine data set
+frame <- load_spine()
+
+regression_matrix <- create_regression_matrix(frame, force_calculation = F)
+# Remove Entries from the regression matrix
+remove <- c('Mean_Curvature', 'Mean_Torsion', 'Mean_Curvature_Coronal', 
+            'Mean_Curvature_Transverse', 'Mean_Curvature_Sagittal', 'Curvature_Angle', 
+            'Curvature_Angle_Coronal', 'Curvature_Angle_Sagittal', 'Curvature_Angle_Transverse')
+
+regression_matrix <-regression_matrix[!rownames(regression_matrix) %in% remove, ]
+regression_matrix <-regression_matrix[, !colnames(regression_matrix) %in% remove]

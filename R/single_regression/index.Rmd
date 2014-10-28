@@ -18,34 +18,24 @@ source("regression_matrix.R")
 library(ggplot2)
 library(shiny)
 library(ggvis)
-
-# Load the spine data set
-frame <- load_spine()
-
-regression_matrix <- create_regression_matrix(frame)
-# Remove Entries from the regression matrix
-remove <- c('Mean_Curvature', 'Mean_Torsion', 'Mean_Curvature_Coronal', 
-            'Mean_Curvature_Transverse', 'Mean_Curvature_Sagittal', 'Curvature_Angle', 
-            'Curvature_Angle_Coronal', 'Curvature_Angle_Sagittal', 'Curvature_Angle_Transverse')
-
-regression_matrix <-regression_matrix[!rownames(regression_matrix) %in% remove, ]
-regression_matrix <-regression_matrix[, !colnames(regression_matrix) %in% remove]
 ```
-
 Minimum of the regression matrix: `r min(regression_matrix, na.rm= TRUE)`.
 Maximum of the regression matrix: `r max(regression_matrix, na.rm= TRUE)`.
-
 ```{r echo=FALSE,message=FALSE, warning=FALSE, error=FALSE, out.extra=FALSE}
 
+# inputPanel(
+#   sliderInput("minimum", "Minimum Heatmap:", min = -100, max = 100, value = min(regression_matrix, na.rm= TRUE)),
+#   sliderInput("maximum", "Maximum Heatmap:", min = 0, max = 20, value = ceiling(max(regression_matrix, na.rm= TRUE)))
+# )
 inputPanel(
-  sliderInput("minimum", "Minimum Heatmap:", min = -100, max = 100, value = min(regression_matrix, na.rm= TRUE)),
-  sliderInput("maximum", "Maximum Heatmap:", min = -100, max = 10000, value = max(regression_matrix, na.rm= TRUE))
+  sliderInput("minimum", "Minimum Heatmap:", min = -100, max = 100, value = 0),
+  sliderInput("maximum", "Maximum Heatmap:", min = 0, max = 20, value = 1)
 )
 
 renderPlot({
   qplot(x=Var1, y=Var2, data=reshape2::melt(regression_matrix), fill=value, geom="tile", xlab="dependent", ylab="independent") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
-  scale_fill_gradient2(limits=c(input$minimum, input$maximum))
-}, height = 1200, width = 1200)
+  scale_fill_gradient(limits=c(input$minimum, input$maximum), low = "white", high = "steelblue")
+}, height = 2000, width = 2000)
 
 ```
