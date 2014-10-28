@@ -11,9 +11,7 @@ plots/
 .Rhistory
 
 # Packrat files
-R/packrat/lib/
-R/packrat/lib-ext/
-R/packrat/lib-R/
+R/packrat/lib*/
 
 # Example code in package build process
 *-Ex.R
