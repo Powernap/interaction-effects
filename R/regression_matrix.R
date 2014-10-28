@@ -1,7 +1,7 @@
-'create_regression_matrix' <- function(data, force_calculation = FALSE) {
-  if (file.exists("vardumps/coefficient_matrix.Rdmped") && !force_calculation) {
-    load(file = "vardumps/coefficient_matrix.Rdmped")
-    return(coefficient_matrix)
+'create_goodness_of_fit_matrix' <- function(data, force_calculation = FALSE) {
+  if (file.exists("vardumps/goodness_of_fit_matrix.Rdmped") && !force_calculation) {
+    load(file = "vardumps/goodness_of_fit_matrix.Rdmped")
+    return(goodness_of_fit_matrix)
   }
   # DEBUG
   #data <- frame
@@ -10,9 +10,9 @@
   variable_classes <- lapply(frame, class)
   variable_names <- colnames(data)
   # Create result matrix
-  coefficient_matrix <- matrix(0, length(variable_names), length(variable_names))
-  row.names(coefficient_matrix) <- variable_names
-  colnames(coefficient_matrix) <- variable_names
+  goodness_of_fit_matrix <- matrix(0, length(variable_names), length(variable_names))
+  row.names(goodness_of_fit_matrix) <- variable_names
+  colnames(goodness_of_fit_matrix) <- variable_names
   # Iterate over all variables
   #for (i in 2:2) {
   for (i in 1:length(variable_names)) {
@@ -37,16 +37,16 @@
           #coefficient <- model$coefficients[[2]]
           if (current_dependent_class == 'numeric') {
             model_summary <- summary(model)
-            coefficient_matrix[i,j] <- model_summary$r.squared
+            goodness_of_fit_matrix[i,j] <- model_summary$r.squared
           }
           else
-            coefficient_matrix[i,j] <- fmsb::NagelkerkeR2(model)['R2'][[1]]
+            goodness_of_fit_matrix[i,j] <- fmsb::NagelkerkeR2(model)['R2'][[1]]
         }
       }
     }
   }
-  save(list = c("coefficient_matrix"), file = "vardumps/coefficient_matrix.Rdmped")
-  return(coefficient_matrix)
+  save(list = c("goodness_of_fit_matrix"), file = "vardumps/goodness_of_fit_matrix.Rdmped")
+  return(goodness_of_fit_matrix)
 }
 
 source("load_spine.R")
@@ -54,11 +54,11 @@ source("load_spine.R")
 # Load the spine data set
 frame <- load_spine()
 
-regression_matrix <- create_regression_matrix(frame, force_calculation = F)
+goodness_of_fit_matrix <- create_goodness_of_fit_matrix(frame, force_calculation = F)
 # Remove Entries from the regression matrix
 remove <- c('Mean_Curvature', 'Mean_Torsion', 'Mean_Curvature_Coronal', 
             'Mean_Curvature_Transverse', 'Mean_Curvature_Sagittal', 'Curvature_Angle', 
             'Curvature_Angle_Coronal', 'Curvature_Angle_Sagittal', 'Curvature_Angle_Transverse')
 
-regression_matrix <-regression_matrix[!rownames(regression_matrix) %in% remove, ]
-regression_matrix <-regression_matrix[, !colnames(regression_matrix) %in% remove]
+goodness_of_fit_matrix <-goodness_of_fit_matrix[!rownames(goodness_of_fit_matrix) %in% remove, ]
+goodness_of_fit_matrix <-goodness_of_fit_matrix[, !colnames(goodness_of_fit_matrix) %in% remove]

@@ -19,13 +19,13 @@ library(ggplot2)
 library(shiny)
 library(ggvis)
 ```
-Minimum of the regression matrix: `r min(regression_matrix, na.rm= TRUE)`.
-Maximum of the regression matrix: `r max(regression_matrix, na.rm= TRUE)`.
+Minimum of the regression matrix: `r min(goodness_of_fit_matrix, na.rm= TRUE)`.
+Maximum of the regression matrix: `r max(goodness_of_fit_matrix, na.rm= TRUE)`.
 ```{r echo=FALSE,message=FALSE, warning=FALSE, error=FALSE, out.extra=FALSE}
 
 # inputPanel(
-#   sliderInput("minimum", "Minimum Heatmap:", min = -100, max = 100, value = min(regression_matrix, na.rm= TRUE)),
-#   sliderInput("maximum", "Maximum Heatmap:", min = 0, max = 20, value = ceiling(max(regression_matrix, na.rm= TRUE)))
+#   sliderInput("minimum", "Minimum Heatmap:", min = -100, max = 100, value = min(goodness_of_fit_matrix, na.rm= TRUE)),
+#   sliderInput("maximum", "Maximum Heatmap:", min = 0, max = 20, value = ceiling(max(goodness_of_fit_matrix, na.rm= TRUE)))
 # )
 inputPanel(
   sliderInput("minimum", "Minimum Heatmap:", min = -10, max = 20, value = 0),
@@ -33,7 +33,7 @@ inputPanel(
 )
 
 renderPlot({
-  qplot(x=Var1, y=Var2, data=reshape2::melt(regression_matrix), fill=value, geom="tile", xlab="dependent", ylab="independent") +
+  qplot(x=Var1, y=Var2, data=reshape2::melt(goodness_of_fit_matrix), fill=value, geom="tile", xlab="dependent", ylab="independent") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
   scale_fill_gradient(limits=c(input$minimum, input$maximum), low = "white", high = "steelblue")
 }, height = 2000, width = 2000)
