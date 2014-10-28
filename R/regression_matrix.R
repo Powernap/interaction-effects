@@ -29,26 +29,18 @@
         if (current_dependent_class == 'numeric')
           model <- try(lm(formula = formula, data = data), silent = TRUE)
         else
-          #model <- try(glm(formula = formula, family = "binomial", data = data), silent = TRUE)
           model <- try(glm(formula = formula, family = "binomial", data = data), silent = TRUE)
         # If binning fails, return null
         if(class(model) == "try-error") {
           message(paste0("'", formula, "' failed!"))
         } else {
           #coefficient <- model$coefficients[[2]]
-          #coefficient_matrix[i,j] <- coefficient
-          #coefficient_matrix[i,j] <- mean(resid(model))
-          model_summary <- summary(model)
-          if (current_dependent_class == 'numeric')
+          if (current_dependent_class == 'numeric') {
+            model_summary <- summary(model)
             coefficient_matrix[i,j] <- model_summary$r.squared
+          }
           else
             coefficient_matrix[i,j] <- fmsb::NagelkerkeR2(model)['R2'][[1]]
-
-          #coefficient_matrix[i,j] <- mean(abs(residuals(model)))
-          #if (current_dependent_class == 'numeric')
-          #  coefficient_matrix[i,j] <- summary(model)$sigma
-          #else
-          #  coefficient_matrix[i,j] <- model$deviance
         }
       }
     }
