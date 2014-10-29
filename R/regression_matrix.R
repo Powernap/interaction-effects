@@ -1,4 +1,4 @@
-'create_goodness_of_fit_matrix_dependent' <- function(data, dependent = NA, force_calculation = FALSE) {
+'create_goodness_of_fit_matrix_dependent' <- function(data, dependent, force_calculation = FALSE) {
   filename <- paste0("vardumps/goodness_of_fit_matrix_", dependent, ".Rdmped")
   if (file.exists(filename) && !force_calculation) {
     load(file = filename)
@@ -48,6 +48,17 @@
   }
   save(list = c("goodness_of_fit_matrix"), file = filename)
   return(goodness_of_fit_matrix)
+}
+
+## Creates Vardumps for all Variable Combinations
+'create_goodness_of_fit_matrix_for_all_variables' <- function(data) {
+  number_of_variables <- length(names(data))
+  count <- 0
+  for (variable_name in names(data)) {
+    count <- count + 1
+    print(paste0("[", count, '/', number_of_variables, ']Processing ', variable_name))
+    create_goodness_of_fit_matrix_dependent(data = data, dependent = variable_name)
+  }
 }
 
 'create_goodness_of_fit_matrix' <- function(data, force_calculation = FALSE) {
@@ -107,11 +118,4 @@ source("load_spine.R")
 frame <- load_spine()
 
 goodness_of_fit_matrix <- create_goodness_of_fit_matrix(frame, force_calculation = F)
-goodness_of_fit_matrix_gender <- create_goodness_of_fit_matrix_dependent(frame, dependent = "Gender", force_calculation = F)
-# # Remove Entries from the regression matrix
-# remove <- c('Mean_Curvature', 'Mean_Torsion', 'Mean_Curvature_Coronal', 
-#             'Mean_Curvature_Transverse', 'Mean_Curvature_Sagittal', 'Curvature_Angle', 
-#             'Curvature_Angle_Coronal', 'Curvature_Angle_Sagittal', 'Curvature_Angle_Transverse')
-
-# goodness_of_fit_matrix <-goodness_of_fit_matrix[!rownames(goodness_of_fit_matrix) %in% remove, ]
-# goodness_of_fit_matrix <-goodness_of_fit_matrix[, !colnames(goodness_of_fit_matrix) %in% remove]
+create_goodness_of_fit_matrix_for_all_variables(data=frame)
