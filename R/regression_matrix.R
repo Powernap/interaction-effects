@@ -50,6 +50,25 @@
   return(goodness_of_fit_matrix)
 }
 
+'export_goodness_of_fit_matrix' <- function(data) {
+  filename <- paste0("vardumps/matrix.raw")
+  result <- ''
+  debug_names <- c('Gender', 'bronchitis', 'diabetes_treatment', 'gout', 'posuture_work')
+  #for (variable_name in names(data)) {
+  for (variable_name in debug_names) {
+    current_matrix <- create_goodness_of_fit_matrix_dependent(data = data, dependent = variable_name)
+    current_data <- paste(current_matrix, sep=",")
+    if (result == '')
+      result <- current_data
+    else
+      result <- c(result, current_data)
+  }
+  # Write result
+  file_connection<-file(filename)
+  writeLines(result, file_connection)
+  close(file_connection)
+}
+
 ## Creates Vardumps for all Variable Combinations
 'create_goodness_of_fit_matrix_for_all_variables' <- function(data) {
   number_of_variables <- length(names(data))
@@ -118,4 +137,4 @@ source("load_spine.R")
 frame <- load_spine()
 
 goodness_of_fit_matrix <- create_goodness_of_fit_matrix(frame, force_calculation = F)
-create_goodness_of_fit_matrix_for_all_variables(data=frame)
+#create_goodness_of_fit_matrix_for_all_variables(data=frame)
