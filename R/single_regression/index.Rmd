@@ -47,6 +47,6 @@ renderPlot({
   qplot(x=Var1, y=Var2, data=reshape2::melt(fit_matrix), fill=value, geom="tile", xlab="dependent", ylab="independent") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
   scale_fill_gradient(limits=c(input$minimum, input$maximum), low = "white", high = "steelblue")
-}, height = 2000, width = 2000)
+}, height = 1000, width = 1000)
 
 ```
