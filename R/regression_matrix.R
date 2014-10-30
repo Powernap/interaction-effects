@@ -51,13 +51,19 @@
 }
 
 'export_goodness_of_fit_matrix' <- function(data) {
-  filename <- paste0("vardumps/matrix.raw")
+  filename <- "vardumps/matrix_144x144x144.raw"
   result <- ''
-  debug_names <- c('Gender', 'bronchitis', 'diabetes_treatment', 'gout', 'posuture_work')
-  #for (variable_name in names(data)) {
-  for (variable_name in debug_names) {
+  #debug_names <- c('Gender', 'bronchitis', 'diabetes_treatment', 'gout', 'posuture_work')
+  for (variable_name in names(data)) {
+  #for (variable_name in debug_names) {
     current_matrix <- create_goodness_of_fit_matrix_dependent(data = data, dependent = variable_name)
-    current_data <- paste(current_matrix, sep=",")
+    current_matrix[current_matrix == '-Inf'] <- 0
+    current_matrix <- round(current_matrix, digits=3)
+    #current_matrix <- as.double(current_matrix)
+    print(paste0("[", variable_name, "] #Rows: ", nrow(current_matrix)[[1]], ", #Cols: ", ncol(current_matrix)[[1]], ", Min: ", min(current_matrix), ", Max: ", max(current_matrix)))
+    #current_data <- paste(current_matrix, sep=" ")
+    #current_data <- paste0(current_matrix, sep=" ")
+    current_data <- paste(current_matrix, sep = "", collapse = " ")
     if (result == '')
       result <- current_data
     else
@@ -65,8 +71,9 @@
   }
   # Write result
   file_connection<-file(filename)
-  writeLines(result, file_connection)
+  writeLines(result, file_connection, sep = " ")
   close(file_connection)
+  return(current_matrix)
 }
 
 ## Creates Vardumps for all Variable Combinations
