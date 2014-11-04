@@ -155,10 +155,19 @@ Version: 1.8.1
 Hash: 6a287219196e18bc6261dc11b41b1ca0
 Requires: Rcpp
 
+Package: popbio
+Source: CRAN
+Version: 2.4
+Requires: quadprog
+
 Package: proto
 Source: CRAN
 Version: 0.3-10
 Hash: 668a9e87cedbdc5f56c396edf1bd2648
+
+Package: quadprog
+Source: CRAN
+Version: 1.5-5
 
 Package: R6
 Source: CRAN
