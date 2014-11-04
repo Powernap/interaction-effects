@@ -51,11 +51,12 @@
 }
 
 'export_goodness_of_fit_matrix' <- function(data, as_binary = TRUE) {
-  filename <- "vardumps/matrix_144x144x144.raw"
+  filename <- "vardumps/matrix_144x144x144_float.raw"
   result <- ''
   file_connection<-file(filename, "wb")
   for (variable_name in names(data)) {
     current_matrix <- create_goodness_of_fit_matrix_dependent(data = data, dependent = variable_name)
+    current_matrix[upper.tri(current_matrix)] <- 0
     current_matrix[current_matrix == '-Inf'] <- 0
     current_matrix <- round(current_matrix, digits=3)
     print(paste0("[", variable_name, "] #Rows: ", nrow(current_matrix)[[1]], ", #Cols: ", ncol(current_matrix)[[1]], ", Min: ", min(current_matrix), ", Max: ", max(current_matrix)))
@@ -75,6 +76,7 @@
     writeLines(result, file_connection, sep = " ")
     close(file_connection)
   }
+  return(current_matrix)
 }
 
 ## Creates Vardumps for all Variable Combinations
