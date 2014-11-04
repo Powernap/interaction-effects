@@ -50,30 +50,31 @@
   return(goodness_of_fit_matrix)
 }
 
-'export_goodness_of_fit_matrix' <- function(data) {
+'export_goodness_of_fit_matrix' <- function(data, as_binary = TRUE) {
   filename <- "vardumps/matrix_144x144x144.raw"
   result <- ''
-  #debug_names <- c('Gender', 'bronchitis', 'diabetes_treatment', 'gout', 'posuture_work')
+  file_connection<-file(filename, "wb")
   for (variable_name in names(data)) {
-  #for (variable_name in debug_names) {
     current_matrix <- create_goodness_of_fit_matrix_dependent(data = data, dependent = variable_name)
     current_matrix[current_matrix == '-Inf'] <- 0
     current_matrix <- round(current_matrix, digits=3)
-    #current_matrix <- as.double(current_matrix)
     print(paste0("[", variable_name, "] #Rows: ", nrow(current_matrix)[[1]], ", #Cols: ", ncol(current_matrix)[[1]], ", Min: ", min(current_matrix), ", Max: ", max(current_matrix)))
-    #current_data <- paste(current_matrix, sep=" ")
-    #current_data <- paste0(current_matrix, sep=" ")
     current_data <- paste(current_matrix, sep = "", collapse = " ")
     if (result == '')
       result <- current_data
     else
       result <- c(result, current_data)
   }
-  # Write result
-  file_connection<-file(filename)
-  writeLines(result, file_connection, sep = " ")
-  close(file_connection)
-  return(current_matrix)
+  if (as_binary) {
+    file_connection<-file(filename, "wb")
+    writeBin(as.numeric(unlist(strsplit(result, split = " "))), file_connection, size = 4)
+    close(file_connection)
+  }
+  else {
+    file_connection<-file(filename)
+    writeLines(result, file_connection, sep = " ")
+    close(file_connection)
+  }
 }
 
 ## Creates Vardumps for all Variable Combinations
