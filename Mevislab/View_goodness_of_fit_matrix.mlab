@@ -2,6 +2,50 @@
 network  {
   watchlist = ""
 }
+module ImageSave {
+  internal  {
+    frame = "825 357 96 56"
+    moduleGroupName = ""
+    windows  {
+      window _default {
+        geometry = "929 154 437 502"
+        sizeHint = "408 502"
+        wasOpen = no
+      }
+    }
+  }
+  fields  {
+    instanceName = ImageSave
+    taskVerboseLogging = FALSE
+    filename = /Users/paul/Tresors/interaction-effects/R/vardumps/matrix.dcm
+    format = DICOM
+    comment = ""
+    allowOverwrite = TRUE
+    autoFilename = FALSE
+    sourceName = /Users/paul/Tresors/interaction-effects/R/vardumps/matrix_144x144x144_float.raw
+    postfix = .result1
+    dicomNameUsed = TRUE
+    dicomMetaHeader = TRUE
+    dicomDerived = TRUE
+    dicomDerivedImageType = "OTHER\\MEVISLAB"
+    dicomDiscardTags = FrameSpecific
+    dicomStoreTimeInfo = None
+    dicomSetWindow = FALSE
+    dicomWindowCenter = 0
+    dicomWindowWidth = 0
+    dicomIgnoreHalfVoxelShift = FALSE
+    tiffCompression = None
+    tiffTileX = 128
+    tiffTileY = 128
+    tiffTileXAuto = TRUE
+    tiffTileYAuto = TRUE
+    saveDicomHeaderOnly = FALSE
+    pngCompression = Default
+    pngInterlaced = FALSE
+    jpegQuality = 75
+    jpegProgressive = FALSE
+  }
+}
 module View3D {
   internal  {
     frame = "649 349 144 56"
@@ -42,12 +86,12 @@ module View3D {
     alphaFactor = 1
     colorFactor = "1 0 0"
     camType = TRUE
-    camPosition = "152.431213378906 116.402290344238 101.451866149902"
-    camOrientation = "-0.355180680751801 0.907216489315033 -0.225399389863014 0.797981858253479"
+    camPosition = "76.2482604980469 221.653793334961 335.61474609375"
+    camOrientation = "-0.99904853105545 0.017844170331955 -0.0397952608764172 0.516921997070312"
     initialCameraOrientation = CAMERA_KEEP_AS_IS
-    camFar = 198.47888
-    camNear = 0.19808233
-    camFocal = 78.463158
+    camFar = 403.41232
+    camNear = 203.11081
+    camFocal = 303.16174
     camHeight = 0.78539801
     decoration = FALSE
     hiResRendering = FALSE
@@ -158,6 +202,7 @@ module ImageLoad {
   }
 }
 connections  {
+  ImageSave.input0 = ImageLoad.output0
   View3D.inImage = ImageLoad.output0
 }
 networkModel = ""
