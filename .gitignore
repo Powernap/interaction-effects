@@ -1,6 +1,9 @@
 # Mac Stuff
 .DS_Store
 
+# Data folders
+js/render\ particles/data
+
 # R Vardumps
 R/vardumps
 
