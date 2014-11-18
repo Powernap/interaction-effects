@@ -50,6 +50,30 @@
   return(goodness_of_fit_matrix)
 }
 
+'export_goodness_of_fit_matrix_json' <- function(data, pretty = FALSE) {
+  'export_as_json' <- function(data, filename, pretty = TRUE) {
+    # Create JSON Object
+    data_as_json <- jsonlite::toJSON(data, pretty=pretty)
+    sink(file = filename)
+    print(data_as_json)
+    sink()
+  }
+  filename <- "vardumps/matrix_144x144x144_float.json"
+  result <- ''
+  dimensions <- length(names(data))
+  json_array <- array(0, dim=c(dimensions, dimensions, dimensions))
+  count = 0
+  for (variable_name in names(data)) {
+    current_matrix <- create_goodness_of_fit_matrix_dependent(data = data, dependent = variable_name)
+    #current_matrix[upper.tri(current_matrix)] <- 0
+    current_matrix[current_matrix == '-Inf'] <- 0
+    current_matrix <- round(current_matrix, digits=3)
+    json_array[count,,] <- current_matrix
+    count <- count + 1
+  }
+  export_as_json(json_array, filename = filename, pretty = pretty)
+}
+
 'export_goodness_of_fit_matrix' <- function(data, as_binary = TRUE) {
   filename <- "vardumps/matrix_144x144x144_float.raw"
   result <- ''
@@ -139,16 +163,6 @@
   }
   save(list = c("goodness_of_fit_matrix"), file = "vardumps/goodness_of_fit_matrix.Rdmped")
   return(goodness_of_fit_matrix)
-}
-
-'export_as_json' <- function(data, filename, pretty = TRUE) {
-  # Create JSON Object
-  data_as_json <- jsonlite::toJSON(data, pretty=pretty)
-  #file_connection <- file(filename)
-  sink(file = filename)
-  print(data_as_json)
-  sink()
-  #close(file_connection)
 }
 
 source("load_spine.R")
