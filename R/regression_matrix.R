@@ -141,6 +141,16 @@
   return(goodness_of_fit_matrix)
 }
 
+'export_as_json' <- function(data, filename, pretty = TRUE) {
+  # Create JSON Object
+  data_as_json <- jsonlite::toJSON(data, pretty=pretty)
+  #file_connection <- file(filename)
+  sink(file = filename)
+  print(data_as_json)
+  sink()
+  #close(file_connection)
+}
+
 source("load_spine.R")
 
 # Load the spine data set
