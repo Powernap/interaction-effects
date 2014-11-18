@@ -51,15 +51,19 @@
 			var container, stats;
 			var camera, scene, renderer, particles, geometry, materials = [], parameters, i, h, color, size;
 			var mouseX = 0, mouseY = 0;
+			var controls;
+			var colors = [];
+			var matrixData;
 
 			var windowHalfX = window.innerWidth / 2;
 			var windowHalfY = window.innerHeight / 2;
 
 			init();
-			animate();
+			//animate();
 
 			function init() {
-			d3.json('data/matrix.json', function(data) {
+			d3.json('data/3d_matrix.json', function(data) {
+				matrixData = data;
 
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
@@ -88,7 +92,8 @@
 
 				controls.addEventListener( 'change', render );
 
-				var num_z = num_y = num_x = myData.length
+				var num_z = num_y = num_x = data.length
+				//var num_z = num_y = num_x = 2
 				//for ( i = 0; i < 20000; i ++ ) {
 				for ( var z = 0; z < num_z; z++) {
 					for ( var y = 0; y < num_y; y++) {
@@ -98,6 +103,10 @@
 							vertex.y = y*3;
 							vertex.z = z*3;
 							geometry.vertices.push( vertex );
+							var color = new THREE.Color();
+							color.setHSL(matrixData[x][y][z], 1.0, 0.5);
+							//colors.push(color);
+							geometry.colors.push(color);
 						}
 					}
 				}
@@ -124,9 +133,17 @@
 				color = [1,1,1];
 				size  = 2;
 
-				materials[i] = new THREE.PointCloudMaterial( { size: size } );
+				// materials = new THREE.PointCloudMaterial( { 
+				// 	size: size,
+				// 	vertexColors: THREE.VertexColors,
+				// 	opacity: "0.7"
+				// });
+				materials = new THREE.PointCloudMaterial( { 
+					size: size,
+					vertexColors: THREE.VertexColors
+				});
 
-				particles = new THREE.PointCloud( geometry, materials[i] );
+				particles = new THREE.PointCloud( geometry, materials );
 
 				scene.add( particles );
 				// for ( i = 0; i < parameters.length; i ++ ) {
@@ -162,6 +179,7 @@
 				//
 
 				window.addEventListener( 'resize', onWindowResize, false );
+				animate();
 			})
 			}
 
@@ -242,14 +260,14 @@
 
 				// }
 
-				for ( i = 0; i < materials.length; i ++ ) {
+				// for ( i = 0; i < materials.length; i ++ ) {
 
-					color = parameters[i][0];
+				// 	color = parameters[i][0];
 
-					h = ( 360 * ( color[0] + time ) % 360 ) / 360;
-					materials[i].color.setHSL( h, color[1], color[2] );
+				// 	h = ( 360 * ( color[0] + time ) % 360 ) / 360;
+				// 	materials.color.setHSL( h, color[1], color[2] );
 
-				}
+				// }
 
 				renderer.render( scene, camera );
 
