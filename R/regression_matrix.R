@@ -1,3 +1,63 @@
+# Goodness of fit Cube 3D: depdenent ~ independent1 + independent2 + independent3
+'create_goodness_of_fit_cube' <- function(data, dependent, force_calculation = FALSE) {
+  filename <- paste0("vardumps/", dependent, "/goodness_of_fit_cube_", dependent, ".Rdmped")
+  if (file.exists(filename) && !force_calculation) {
+    load(file = filename)
+    return(goodness_of_fit_matrix)
+  }
+  
+  variable_classes <- lapply(frame, class)
+  variable_names <- colnames(data)
+  # Create result matrix
+  #goodness_of_fit_matrix <- matrix(0, length(variable_names), length(variable_names), length(variable_names))
+  goodness_of_fit_matrix <- array(0, dim=c(length(variable_names), length(variable_names), length(variable_names)))
+  dimnames(goodness_of_fit_matrix)[[1]] <- variable_names
+  dimnames(goodness_of_fit_matrix)[[2]] <- variable_names
+  dimnames(goodness_of_fit_matrix)[[3]] <- variable_names
+  # Class of dependent variable
+  dependent_class <- variable_classes[dependent]
+  # Iterate over all variables
+  for (i in 1:length(variable_names)) {
+    current_independent_variable1_name <- variable_names[[i]]
+    # Iterate over all other variables
+    for (j in 1:length(variable_names)) {
+    #for (j in 1:3) {
+      current_independent_variable2_name <- variable_names[[j]]
+      # Iterate over all other variables
+      for (k in 1:length(variable_names)) {
+      #for (k in 1:2) {
+        # No correlation of variables with each other
+        if (i != j && i !=k) {
+          current_independent_variable3_name <- variable_names[[k]]
+          formula <- paste(dependent, "~", current_independent_variable1_name, '+', current_independent_variable2_name, '+', current_independent_variable3_name)
+          # If current class is numeric, apply Linear Regression
+          if (dependent_class == 'numeric')
+            model <- try(lm(formula = formula, data = data), silent = TRUE)
+          else
+            model <- try(glm(formula = formula, family = "binomial", data = data), silent = TRUE)
+          # If binning fails, return null
+          if(class(model) == "try-error") {
+            message(paste0("'", formula, "' failed!"))
+          } else {
+            #coefficient <- model$coefficients[[2]]
+            if (dependent_class == 'numeric') {
+              model_summary <- summary(model)
+              goodness_of_fit_matrix[i,j,k] <- model_summary$r.squared
+            }
+            else
+              goodness_of_fit_matrix[i,j,k] <- fmsb::NagelkerkeR2(model)['R2'][[1]]
+          }
+        }
+      }
+    }
+  }
+  # Create Dir if neccessary (otherwise it only displays a warning that the folder already exists)
+  dir.create(paste0("vardumps/", dependent))
+  save(list = c("goodness_of_fit_matrix"), file = filename)
+  return(goodness_of_fit_matrix)
+}
+
+# Goodness of fit Matrix 2D: depdenent ~ independent1 + independent2
 'create_goodness_of_fit_matrix_dependent' <- function(data, dependent, force_calculation = FALSE) {
   filename <- paste0("vardumps/goodness_of_fit_matrix_", dependent, ".Rdmped")
   if (file.exists(filename) && !force_calculation) {
@@ -50,16 +110,21 @@
   return(goodness_of_fit_matrix)
 }
 
+'helper.export_as_json' <- function(data, filename, pretty = TRUE) {
+  # Create JSON Object
+  data_as_json <- jsonlite::toJSON(data, pretty=pretty)
+  sink(file = filename)
+  print(data_as_json)
+  sink()
+}
+
+'export_goodness_of_fit_cube_json' <- function(cube, dependent, pretty = FALSE) { 
+  filename <- paste0("vardumps/", dependent, "/matrix_144x144x144_float.json")
+  helper.export_as_json(cube, filename = filename, pretty = pretty)
+}
+
 'export_goodness_of_fit_matrix_json' <- function(data, pretty = FALSE) {
-  'export_as_json' <- function(data, filename, pretty = TRUE) {
-    # Create JSON Object
-    data_as_json <- jsonlite::toJSON(data, pretty=pretty)
-    sink(file = filename)
-    print(data_as_json)
-    sink()
-  }
   filename <- "vardumps/matrix_144x144x144_float.json"
-  result <- ''
   dimensions <- length(names(data))
   json_array <- array(0, dim=c(dimensions, dimensions, dimensions))
   count = 0
@@ -71,7 +136,7 @@
     json_array[count,,] <- current_matrix
     count <- count + 1
   }
-  export_as_json(json_array, filename = filename, pretty = pretty)
+  helper.export_as_json(json_array, filename = filename, pretty = pretty)
 }
 
 'export_goodness_of_fit_matrix' <- function(data, as_binary = TRUE) {
@@ -114,6 +179,7 @@
   }
 }
 
+# Goodness of fit 2D-Matrix: Dependent ~ Independent
 'create_goodness_of_fit_matrix' <- function(data, force_calculation = FALSE) {
   if (file.exists("vardumps/goodness_of_fit_matrix.Rdmped") && !force_calculation) {
     load(file = "vardumps/goodness_of_fit_matrix.Rdmped")
@@ -172,3 +238,4 @@ frame <- load_spine()
 
 goodness_of_fit_matrix <- create_goodness_of_fit_matrix(frame, force_calculation = F)
 #create_goodness_of_fit_matrix_for_all_variables(data=frame)
+#export_goodness_of_fit_cube_json(cube = create_goodness_of_fit_cube(data = frame, dependent = "Gender"), dependent="Gender", pretty = FALSE)
