@@ -46,50 +46,39 @@
 
 		<script type="x-shader/x-vertex" id="vertexshader">
 
-		    attribute float alpha;
+			attribute float alpha;
+			varying float vAlpha;
 
-		    varying float vAlpha;
-
-		    void main() {
-
-		        vAlpha = alpha;
-
-		        vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
-
-		        //gl_PointSize = 20.0;
-		        //gl_PointSize = 2 * ( 300.0 / length( mvPosition.xyz ) );
-		        gl_PointSize = 3700.0 / length( mvPosition.xyz );
-
-		        gl_Position = projectionMatrix * mvPosition;
-
-		    }
+			void main() {
+				vAlpha = alpha;
+				vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+				gl_PointSize = 3700.0 / length( mvPosition.xyz );
+				gl_Position = projectionMatrix * mvPosition;
+			}
 
 		</script>
 
 		<script type="x-shader/x-fragment" id="fragmentshader">
 
-		    uniform vec3 color;
+			uniform vec3 color;
+			varying float vAlpha;
 
-		    varying float vAlpha;
-
-		    void main() {
-
-		        gl_FragColor = vec4(color, 1);
-		        gl_FragColor.a *= vAlpha;
-
-		    }
+			void main() {
+				gl_FragColor = vec4(color, 1);
+				gl_FragColor.a *= vAlpha * 0.1;
+			}
 
 		</script>
 
 		<script>
 
-		// Load data at the start!
+			// Load data at the start!
 			d3.json('data/3d_matrix.json', function(matrixData) {
 
 			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
 			var container, stats;
-			var camera, scene, renderer, particles, geometry, parameters, i, h, color, size;
+			var camera, scene, renderer, particles, geometry, i, h, color, size;
 			var shaderMaterial, materials = [];
 			var mouseX = 0, mouseY = 0;
 			var controls, attributes;
@@ -103,20 +92,16 @@
 			var windowHalfY = window.innerHeight / 2;
 
 			function addDatGui(){
-			    var gui = new dat.GUI();
-			    renderModeGUI = gui.add(this, "renderMode", ['opacity', 'color']);
-			    renderModeGUI.onChange( function(value) {
-			    	scene.remove( particles );
-			    	if (value == 'opacity')
-							particles = new THREE.PointCloud( geometry, shaderMaterial );
-						else
-							particles = new THREE.PointCloud( geometry, materials );
-						scene.add(particles);
-			    });
-			    // gui.add(camera.position, 'x', -500,500).step(5);
-			    // gui.add(camera.position, 'y', -500,500).step(5);
-			    // gui.add(camera.position, 'z', 1000,5000).step(5);
-			    //gui.add('bla', 'displayOutline');
+				var gui = new dat.GUI();
+				renderModeGUI = gui.add(this, "renderMode", ['opacity', 'color']);
+				renderModeGUI.onChange( function(value) {
+					scene.remove( particles );
+					if (value == 'opacity')
+						particles = new THREE.PointCloud( geometry, shaderMaterial );
+					else
+						particles = new THREE.PointCloud( geometry, materials );
+					scene.add(particles);
+				});
 			}
 
 			init();
@@ -136,16 +121,12 @@
 
 				// attributes
 				attributes = {
-
 					alpha: { type: 'f', value: [] },
-
 				};
 
 				// uniforms
 				uniforms = {
-
 					color: { type: "c", value: new THREE.Color( 0xff0000 ) },
-
 				};
 
 				shaderMaterial = new THREE.ShaderMaterial( {
@@ -163,9 +144,8 @@
 
 				// Geometry
 				geometry = new THREE.Geometry();
-				// var num_z = num_y = num_x = matrixData.length
-				var num_z = num_y = num_x = 50
-				//for ( i = 0; i < 20000; i ++ ) {
+				var num_z = num_y = num_x = matrixData.length
+				// var num_z = num_y = num_x = 50
 				for ( var z = 0; z < num_z; z++) {
 					for ( var y = 0; y < num_y; y++) {
 						for ( var x = 0; x < num_x; x++) {
@@ -175,73 +155,23 @@
 							vertex.z = z*3;
 							geometry.vertices.push( vertex );
 							var color = new THREE.Color();
-							// color.setHSL(0.5, matrixData[x][y][z], 0.5);
 							color.setHSL(0.5, 1, matrixData[x][y][z]);
-							//colors.push(color);
 							geometry.colors.push(color);
 							attributes.alpha.value.push(matrixData[x][y][z]);
 						}
 					}
 				}
-				//}
-
-				// parameters = [
-				// 	[ [1, 1, 0.5], 5 ],
-				// 	[ [0.95, 1, 0.5], 4 ],
-				// 	[ [0.90, 1, 0.5], 3 ],
-				// 	[ [0.85, 1, 0.5], 2 ],
-				// 	[ [0.80, 1, 0.5], 1 ]
-				// ];
-				// parameters = [
-				// 	[ [1, 1, 0.5], 40 ]
-				// ];
-				parameters = [
-					[ [1, 1, 0.5], 40 ],
-					[ [0.95, 1, 0.5], 40 ],
-					[ [0.90, 1, 0.5], 40 ],
-					[ [0.85, 1, 0.5], 40 ],
-					[ [0.80, 1, 0.5], 40 ]
-				];
 
 				color = [1,1,1];
 				size  = 6;
 
-				// materials = new THREE.PointCloudMaterial( { 
-				// 	size: size,
-				// 	vertexColors: THREE.VertexColors,
-				// 	opacity: "0.7"
-				// });
 				materials = new THREE.PointCloudMaterial( { 
 					size: size,
 					vertexColors: THREE.VertexColors
 				});
 
-				// particles = new THREE.PointCloud( geometry, materials );
 				particles = new THREE.PointCloud( geometry, shaderMaterial );
-				// for( var i = 0; i < particles.geometry.vertices.length; i++ ) {
-				    
-				// 	// set alpha based on distance to (local) y-axis
-				// 	attributes.alpha.value[ i ] = Math.abs( particles.geometry.vertices[ i ].x / 100 );
-
-				// }
-
 				scene.add( particles );
-				// for ( i = 0; i < parameters.length; i ++ ) {
-
-				// 	color = parameters[i][0];
-				// 	size  = parameters[i][1];
-
-				// 	materials[i] = new THREE.PointCloudMaterial( { size: size } );
-
-				// 	particles = new THREE.PointCloud( geometry, materials[i] );
-
-				// 	particles.rotation.x = Math.random() * 6;
-				// 	particles.rotation.y = Math.random() * 6;
-				// 	particles.rotation.z = Math.random() * 6;
-
-				// 	scene.add( particles );
-
-				// }
 
 				renderer = new THREE.WebGLRenderer();
 				renderer.setSize( window.innerWidth, window.innerHeight );
@@ -269,8 +199,9 @@
 				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 				document.addEventListener( 'touchstart', onDocumentTouchStart, false );
 				document.addEventListener( 'touchmove', onDocumentTouchMove, false );
-
 				window.addEventListener( 'resize', onWindowResize, false );
+
+				// Initialize GUI
 				addDatGui();
 			}
 
@@ -319,8 +250,6 @@
 
 			}
 
-			//
-
 			function animate() {
 				controls.update();
 				requestAnimationFrame( animate );
@@ -332,38 +261,9 @@
 
 			function render() {
 
-				var time = Date.now() * 0.00005;
-
-				// camera.position.x += ( mouseX - camera.position.x ) * 0.05;
-				// camera.position.y += ( - mouseY - camera.position.y ) * 0.05;
-
-				// camera.lookAt( scene.position );
-
-				// for ( i = 0; i < scene.children.length; i ++ ) {
-
-				// 	var object = scene.children[ i ];
-
-				// 	if ( object instanceof THREE.PointCloud ) {
-
-				// 		object.rotation.y = time * ( i < 4 ? i + 1 : - ( i + 1 ) );
-
-				// 	}
-
-				// }
-
-				// for ( i = 0; i < materials.length; i ++ ) {
-
-				// 	color = parameters[i][0];
-
-				// 	h = ( 360 * ( color[0] + time ) % 360 ) / 360;
-				// 	materials.color.setHSL( h, color[1], color[2] );
-
-				// }
-
 				renderer.render( scene, camera );
-
 			}
-		})
+		}); // Closing D3.fromJSON call
 
 
 		</script>
