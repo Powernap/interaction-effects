@@ -33,14 +33,15 @@
 	</head>
 	<body>
 
-		<div id="info">
+		<!-- <div id="info">
 			Regression Cube
-		</div>
+		</div> -->
 
 		<script src="bower_components/threejs/build/three.min.js"></script>
 		<script src="bower_components/threejs-examples/examples/js/Detector.js"></script>
 		<script src="bower_components/threejs-examples/examples/js/libs/stats.min.js"></script>
 		<script src="bower_components/threejs-examples/examples/js/controls/TrackballControls.js"></script>
+		<script src="bower_components/dat-gui/build/dat.gui.js"></script>
 		<script src="bower_components/d3/d3.js"></script>
 
 		<script type="x-shader/x-vertex" id="vertexshader">
@@ -82,24 +83,46 @@
 
 		<script>
 
+		// Load data at the start!
+			d3.json('data/3d_matrix.json', function(matrixData) {
+
 			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
 			var container, stats;
-			var camera, scene, renderer, particles, geometry, materials = [], parameters, i, h, color, size;
+			var camera, scene, renderer, particles, geometry, parameters, i, h, color, size;
+			var shaderMaterial, materials = [];
 			var mouseX = 0, mouseY = 0;
 			var controls, attributes;
 			var colors = [];
-			var matrixData;
-
+			var guiController;
+			// GUI
+			renderMode = "opacity";
+			var view = this;
+			// /GUI
 			var windowHalfX = window.innerWidth / 2;
 			var windowHalfY = window.innerHeight / 2;
 
+			function addDatGui(){
+			    var gui = new dat.GUI();
+			    renderModeGUI = gui.add(this, "renderMode", ['opacity', 'color']);
+			    renderModeGUI.onChange( function(value) {
+			    	scene.remove( particles );
+			    	if (value == 'opacity')
+							particles = new THREE.PointCloud( geometry, shaderMaterial );
+						else
+							particles = new THREE.PointCloud( geometry, materials );
+						scene.add(particles);
+			    });
+			    // gui.add(camera.position, 'x', -500,500).step(5);
+			    // gui.add(camera.position, 'y', -500,500).step(5);
+			    // gui.add(camera.position, 'z', 1000,5000).step(5);
+			    //gui.add('bla', 'displayOutline');
+			}
+
 			init();
-			//animate();
+			animate();
 
 			function init() {
-			d3.json('data/3d_matrix.json', function(data) {
-				matrixData = data;
 				// DOM
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
@@ -110,22 +133,6 @@
 				// Scene
 				scene = new THREE.Scene();
 				// scene.fog = new THREE.FogExp2( 0x000000, 0.0007 );
-
-				// Controls
-				controls = new THREE.TrackballControls( camera );
-				controls.rotateSpeed = 1.0;
-				controls.zoomSpeed = 1.2;
-				controls.panSpeed = 0.8;
-
-				controls.noZoom = false;
-				controls.noPan = false;
-
-				controls.staticMoving = true;
-				controls.dynamicDampingFactor = 0.3;
-
-				controls.keys = [ 65, 83, 68 ];
-
-				controls.addEventListener( 'change', render );
 
 				// attributes
 				attributes = {
@@ -141,7 +148,7 @@
 
 				};
 
-				var shaderMaterial = new THREE.ShaderMaterial( {
+				shaderMaterial = new THREE.ShaderMaterial( {
 
 					uniforms:       uniforms,
 					// vertexColors:   THREE.VertexColors,
@@ -156,8 +163,8 @@
 
 				// Geometry
 				geometry = new THREE.Geometry();
-				// var num_z = num_y = num_x = data.length
-				var num_z = num_y = num_x = 130
+				// var num_z = num_y = num_x = matrixData.length
+				var num_z = num_y = num_x = 50
 				//for ( i = 0; i < 20000; i ++ ) {
 				for ( var z = 0; z < num_z; z++) {
 					for ( var y = 0; y < num_y; y++) {
@@ -241,6 +248,19 @@
 				renderer.setClearColor(0xF0F0F0, 1)
 				container.appendChild( renderer.domElement );
 
+				// Controls
+				controls = new THREE.TrackballControls( camera, renderer.domElement );
+				controls.rotateSpeed = 1.0;
+				controls.zoomSpeed = 1.2;
+				controls.panSpeed = 0.8;
+				controls.noZoom = false;
+				controls.noPan = false;
+				controls.staticMoving = true;
+				controls.dynamicDampingFactor = 0.3;
+				controls.keys = [ 65, 83, 68 ];
+				controls.addEventListener( 'change', render );
+
+				// Stats
 				stats = new Stats();
 				stats.domElement.style.position = 'absolute';
 				stats.domElement.style.top = '0px';
@@ -250,11 +270,8 @@
 				document.addEventListener( 'touchstart', onDocumentTouchStart, false );
 				document.addEventListener( 'touchmove', onDocumentTouchMove, false );
 
-				//
-
 				window.addEventListener( 'resize', onWindowResize, false );
-				animate();
-			})
+				addDatGui();
 			}
 
 			function onWindowResize() {
@@ -346,6 +363,7 @@
 				renderer.render( scene, camera );
 
 			}
+		})
 
 
 		</script>
