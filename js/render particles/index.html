@@ -53,9 +53,6 @@
 
 			void main() {
 				vColor = color;
-				// gl_PointSize = 3700.0 / length( mvPosition.xyz );
-        // gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-				// vColor = color;
 				vAlpha = alpha;
 				vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
 				gl_PointSize = 3700.0 / length( mvPosition.xyz );
@@ -66,20 +63,13 @@
 
 		<script type="x-shader/x-fragment" id="fragmentshader">
 
-			// uniform vec3 color;
 			varying float vAlpha;
 			varying vec3 vColor;
 
 			void main() {
-				//gl_FragColor = vec4(color, 1);
 				gl_FragColor = vec4(vColor.rgb, 1);
-				// gl_FragColor.a *= vAlpha * 0.1;
 				gl_FragColor.a *= vAlpha;
 			}
-
-    // void main(){
-    //     gl_FragColor = vec4( vColor.rgb, 1.0 );
-    // }
 
 		</script>
 
@@ -97,6 +87,7 @@
 			var controls, attributes;
 			var colors = [];
 			var guiController;
+			var DEBUG = true;
 			transferfunction = new Transferfunction2D('blue', 'red');
 			// GUI
 			renderMode = "ShaderMaterial";
@@ -157,8 +148,11 @@
 
 				// Geometry
 				geometry = new THREE.Geometry();
-				// var num_z = num_y = num_x = matrixData.length
-				var num_z = num_y = num_x = 20
+				if (DEBUG)
+					var num_z = num_y = num_x = 20
+				else
+					var num_z = num_y = num_x = matrixData.length
+
 				for ( var z = 0; z < num_z; z++) {
 					for ( var y = 0; y < num_y; y++) {
 						for ( var x = 0; x < num_x; x++) {
