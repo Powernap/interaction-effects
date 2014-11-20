@@ -1,15 +1,18 @@
 # Goodness of fit Cube 3D: depdenent ~ independent1 + independent2 + independent3
 'create_goodness_of_fit_cube' <- function(data, dependent, force_calculation = FALSE) {
-  filename <- paste0("vardumps/cubes/goodness_of_fit_cube_", dependent, ".Rdmped")
+  filename <- paste0("vardumps/cubes/cube_", dependent, ".Rdmped")
+  filename_log <- paste0("vardumps/cubes/cube_", dependent, ".log")
   if (file.exists(filename) && !force_calculation) {
     load(file = filename)
     return(goodness_of_fit_matrix)
   }
+  # Prepare logging
+  connection_log <- file(filename_log, open = "wt")
+  sink(connection_log, type = "message")
   
   variable_classes <- lapply(frame, class)
   variable_names <- colnames(data)
   # Create result matrix
-  #goodness_of_fit_matrix <- matrix(0, length(variable_names), length(variable_names), length(variable_names))
   goodness_of_fit_matrix <- array(0, dim=c(length(variable_names), length(variable_names), length(variable_names)))
   dimnames(goodness_of_fit_matrix)[[1]] <- variable_names
   dimnames(goodness_of_fit_matrix)[[2]] <- variable_names
@@ -18,6 +21,7 @@
   dependent_class <- variable_classes[dependent]
   # Iterate over all variables
   for (i in 1:length(variable_names)) {
+  #for (i in 1:3) {
     current_independent_variable1_name <- variable_names[[i]]
     # Iterate over all other variables
     for (j in 1:length(variable_names)) {
@@ -25,7 +29,7 @@
       current_independent_variable2_name <- variable_names[[j]]
       # Iterate over all other variables
       for (k in 1:length(variable_names)) {
-      #for (k in 1:2) {
+      #for (k in 1:3) {
         # No correlation of variables with each other
         if (i != j && i !=k) {
           current_independent_variable3_name <- variable_names[[k]]
@@ -55,6 +59,8 @@
   # Create Dir if neccessary (otherwise it only displays a warning that the folder already exists)
   dir.create(paste0("vardumps/cubes"))
   save(list = c("goodness_of_fit_matrix"), file = filename)
+  
+  unlink(connection_log)
   return(goodness_of_fit_matrix)
 }
 
@@ -120,7 +126,7 @@
 }
 
 'export_goodness_of_fit_cube_json' <- function(cube, dependent, pretty = FALSE) { 
-  filename <- paste0("vardumps/cubes/matrix_144x144x144_float.json")
+  filename <- paste0("vardumps/cubes/cube_", dependent, ".json")
   dir.create("vardumps/cubes")
   helper.export_as_json(cube, filename = filename, pretty = pretty)
 }
@@ -177,7 +183,7 @@
   for (variable_name in names(data)) {
     count <- count + 1
     print(paste0("[", count, '/', number_of_variables, '] Processing ', variable_name))
-    cube <- create_goodness_of_fit_cube_dependent(data = data, dependent = variable_name)
+    cube <- create_goodness_of_fit_cube(data = data, dependent = variable_name)
     export_goodness_of_fit_cube_json(cube = cube, dependent = variable_name, pretty = FALSE)
   }
 }
@@ -253,3 +259,4 @@ frame <- load_spine()
 goodness_of_fit_matrix <- create_goodness_of_fit_matrix(frame, force_calculation = F)
 #create_goodness_of_fit_matrix_for_all_variables(data=frame)
 #export_goodness_of_fit_cube_json(cube = create_goodness_of_fit_cube(data = frame, dependent = "Gender"), dependent="Gender", pretty = FALSE)
+#create_goodness_of_fit_cube_for_all_variables(data = frame)
