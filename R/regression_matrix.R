@@ -1,6 +1,6 @@
 # Goodness of fit Cube 3D: depdenent ~ independent1 + independent2 + independent3
 'create_goodness_of_fit_cube' <- function(data, dependent, force_calculation = FALSE) {
-  filename <- paste0("vardumps/", dependent, "/goodness_of_fit_cube_", dependent, ".Rdmped")
+  filename <- paste0("vardumps/cubes/goodness_of_fit_cube_", dependent, ".Rdmped")
   if (file.exists(filename) && !force_calculation) {
     load(file = filename)
     return(goodness_of_fit_matrix)
@@ -50,9 +50,10 @@
         }
       }
     }
+    print(paste0("[", dependent, "] ", round((i + 1) / length(variable_names), digits=1), " % done"))
   }
   # Create Dir if neccessary (otherwise it only displays a warning that the folder already exists)
-  dir.create(paste0("vardumps/", dependent))
+  dir.create(paste0("vardumps/cubes"))
   save(list = c("goodness_of_fit_matrix"), file = filename)
   return(goodness_of_fit_matrix)
 }
@@ -119,7 +120,8 @@
 }
 
 'export_goodness_of_fit_cube_json' <- function(cube, dependent, pretty = FALSE) { 
-  filename <- paste0("vardumps/", dependent, "/matrix_144x144x144_float.json")
+  filename <- paste0("vardumps/cubes/matrix_144x144x144_float.json")
+  dir.create("vardumps/cubes")
   helper.export_as_json(cube, filename = filename, pretty = pretty)
 }
 
@@ -168,13 +170,25 @@
   return(current_matrix)
 }
 
+# Creates regression Cubes for all Variables
+'create_goodness_of_fit_cube_for_all_variables' <- function(data) {
+  number_of_variables <- length(names(data))
+  count <- 0
+  for (variable_name in names(data)) {
+    count <- count + 1
+    print(paste0("[", count, '/', number_of_variables, '] Processing ', variable_name))
+    cube <- create_goodness_of_fit_cube_dependent(data = data, dependent = variable_name)
+    export_goodness_of_fit_cube_json(cube = cube, dependent = variable_name, pretty = FALSE)
+  }
+}
+
 ## Creates Vardumps for all Variable Combinations
 'create_goodness_of_fit_matrix_for_all_variables' <- function(data) {
   number_of_variables <- length(names(data))
   count <- 0
   for (variable_name in names(data)) {
     count <- count + 1
-    print(paste0("[", count, '/', number_of_variables, ']Processing ', variable_name))
+    print(paste0("[", count, '/', number_of_variables, '] Processing ', variable_name))
     create_goodness_of_fit_matrix_dependent(data = data, dependent = variable_name)
   }
 }
