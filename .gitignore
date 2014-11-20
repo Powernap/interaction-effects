@@ -1,5 +1,6 @@
 # Mac Stuff
 .DS_Store
+.sublime-project
 
 # Data folders
 js/render\ particles/data
