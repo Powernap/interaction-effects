@@ -50,7 +50,7 @@
         }
       }
     }
-    print(paste0("[", dependent, "] ", round((i + 1) / length(variable_names), digits=1), " % done"))
+    print(paste0("[", dependent, "] ", round((i + 1) / length(variable_names), digits=3) * 100, " % done"))
   }
   # Create Dir if neccessary (otherwise it only displays a warning that the folder already exists)
   dir.create(paste0("vardumps/cubes"))

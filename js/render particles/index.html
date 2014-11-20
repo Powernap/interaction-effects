@@ -33,10 +33,6 @@
 	</head>
 	<body>
 
-		<!-- <div id="info">
-			Regression Cube
-		</div> -->
-
 		<script src="bower_components/threejs/build/three.min.js"></script>
 		<script src="bower_components/threejs-examples/examples/js/Detector.js"></script>
 		<script src="bower_components/threejs-examples/examples/js/libs/stats.min.js"></script>
@@ -48,8 +44,14 @@
 
 			attribute float alpha;
 			varying float vAlpha;
+			// Coloring: https://stackoverflow.com/questions/25740054/three-js-passing-vertex-colors-to-fragment-shader
+			varying vec3 vColor;
 
 			void main() {
+				vColor = color;
+				// gl_PointSize = 3700.0 / length( mvPosition.xyz );
+        // gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+				// vColor = color;
 				vAlpha = alpha;
 				vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
 				gl_PointSize = 3700.0 / length( mvPosition.xyz );
@@ -60,13 +62,20 @@
 
 		<script type="x-shader/x-fragment" id="fragmentshader">
 
-			uniform vec3 color;
+			// uniform vec3 color;
 			varying float vAlpha;
+			varying vec3 vColor;
 
 			void main() {
-				gl_FragColor = vec4(color, 1);
-				gl_FragColor.a *= vAlpha * 0.1;
+				//gl_FragColor = vec4(color, 1);
+				gl_FragColor = vec4(vColor.rgb, 1);
+				// gl_FragColor.a *= vAlpha * 0.1;
+				gl_FragColor.a *= vAlpha;
 			}
+
+    // void main(){
+    //     gl_FragColor = vec4( vColor.rgb, 1.0 );
+    // }
 
 		</script>
 
@@ -85,7 +94,7 @@
 			var colors = [];
 			var guiController;
 			// GUI
-			renderMode = "opacity";
+			renderMode = "shaderMaterial";
 			var view = this;
 			// /GUI
 			var windowHalfX = window.innerWidth / 2;
@@ -93,10 +102,10 @@
 
 			function addDatGui(){
 				var gui = new dat.GUI();
-				renderModeGUI = gui.add(this, "renderMode", ['opacity', 'color']);
+				renderModeGUI = gui.add(this, "renderMode", ['shaderMaterial', 'PointCloudMaterial']);
 				renderModeGUI.onChange( function(value) {
 					scene.remove( particles );
-					if (value == 'opacity')
+					if (value == 'shaderMaterial')
 						particles = new THREE.PointCloud( geometry, shaderMaterial );
 					else
 						particles = new THREE.PointCloud( geometry, materials );
@@ -132,7 +141,7 @@
 				shaderMaterial = new THREE.ShaderMaterial( {
 
 					uniforms:       uniforms,
-					// vertexColors:   THREE.VertexColors,
+					vertexColors:   THREE.VertexColors,
 					attributes:     attributes,
 					vertexShader:   document.getElementById( 'vertexshader' ).textContent,
 					fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
@@ -145,7 +154,7 @@
 				// Geometry
 				geometry = new THREE.Geometry();
 				var num_z = num_y = num_x = matrixData.length
-				// var num_z = num_y = num_x = 50
+				// var num_z = num_y = num_x = 20
 				for ( var z = 0; z < num_z; z++) {
 					for ( var y = 0; y < num_y; y++) {
 						for ( var x = 0; x < num_x; x++) {
