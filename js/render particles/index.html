@@ -21,17 +21,20 @@
 				color:#0078ff;
 			}
 
-			#info {
+			#test {
 				color: #989898;
 				position: absolute;
 				top: 0px; width: 100%;
 				padding: 5px;
-				z-index: 100;
+				/*z-index: 100;*/
 			}
 
 		</style>
 	</head>
 	<body>
+
+		<div id="test">
+		</div>
 
 		<script src="bower_components/threejs/build/three.min.js"></script>
 		<script src="bower_components/threejs-examples/examples/js/Detector.js"></script>
@@ -39,6 +42,7 @@
 		<script src="bower_components/threejs-examples/examples/js/controls/TrackballControls.js"></script>
 		<script src="bower_components/dat-gui/build/dat.gui.js"></script>
 		<script src="bower_components/d3/d3.js"></script>
+		<script src="js/Transferfunction2D.js"></script>
 
 		<script type="x-shader/x-vertex" id="vertexshader">
 
@@ -80,12 +84,12 @@
 		</script>
 
 		<script>
-
 			// Load data at the start!
 			d3.json('data/3d_matrix.json', function(matrixData) {
 
 			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
+			var view = this;
 			var container, stats;
 			var camera, scene, renderer, particles, geometry, i, h, color, size;
 			var shaderMaterial, materials = [];
@@ -93,19 +97,19 @@
 			var controls, attributes;
 			var colors = [];
 			var guiController;
+			transferfunction = new Transferfunction2D('blue', 'red');
 			// GUI
-			renderMode = "shaderMaterial";
-			var view = this;
+			renderMode = "ShaderMaterial";
 			// /GUI
 			var windowHalfX = window.innerWidth / 2;
 			var windowHalfY = window.innerHeight / 2;
 
 			function addDatGui(){
 				var gui = new dat.GUI();
-				renderModeGUI = gui.add(this, "renderMode", ['shaderMaterial', 'PointCloudMaterial']);
+				renderModeGUI = gui.add(this, "renderMode", ['ShaderMaterial', 'PointCloudMaterial']);
 				renderModeGUI.onChange( function(value) {
 					scene.remove( particles );
-					if (value == 'shaderMaterial')
+					if (value == 'ShaderMaterial')
 						particles = new THREE.PointCloud( geometry, shaderMaterial );
 					else
 						particles = new THREE.PointCloud( geometry, materials );
@@ -153,15 +157,15 @@
 
 				// Geometry
 				geometry = new THREE.Geometry();
-				var num_z = num_y = num_x = matrixData.length
-				// var num_z = num_y = num_x = 20
+				// var num_z = num_y = num_x = matrixData.length
+				var num_z = num_y = num_x = 20
 				for ( var z = 0; z < num_z; z++) {
 					for ( var y = 0; y < num_y; y++) {
 						for ( var x = 0; x < num_x; x++) {
 							var vertex = new THREE.Vector3();
-							vertex.x = x*3;
-							vertex.y = y*3;
-							vertex.z = z*3;
+							vertex.x = x*3 - ((num_x * 3) / 2);
+							vertex.y = y*3 - ((num_y * 3) / 2);
+							vertex.z = z*3 - ((num_z * 3) / 2);
 							geometry.vertices.push( vertex );
 							var color = new THREE.Color();
 							color.setHSL(0.5, 1, matrixData[x][y][z]);
