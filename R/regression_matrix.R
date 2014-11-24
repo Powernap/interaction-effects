@@ -177,12 +177,19 @@
 }
 
 # Creates regression Cubes for all Variables
-'create_goodness_of_fit_cube_for_all_variables' <- function(data) {
+'create_goodness_of_fit_cube_for_all_variables' <- function(data, process_number, number_of_cores) {
+  # DEBUG
+  # data <- frame
+  # process_number <- 1
+  # number_of_cores <- 8
+  # / DEBUG
   number_of_variables <- length(names(data))
-  count <- 0
-  for (variable_name in names(data)) {
-    count <- count + 1
-    print(paste0("[", count, '/', number_of_variables, '] Processing ', variable_name))
+  number_of_steps <- round(number_of_variables / number_of_cores)
+  start_count <- ((process_number - 1) * number_of_steps) + 1
+  stop_count <- process_number * (number_of_steps)
+  for (i in start_count:stop_count) {
+    variable_name <- names(data)[i]
+    print(paste0("[", i, '/', stop_count, '] Processing ', variable_name))
     cube <- create_goodness_of_fit_cube(data = data, dependent = variable_name)
     export_goodness_of_fit_cube_json(cube = cube, dependent = variable_name, pretty = FALSE)
   }
@@ -259,4 +266,4 @@ frame <- load_spine()
 goodness_of_fit_matrix <- create_goodness_of_fit_matrix(frame, force_calculation = F)
 #create_goodness_of_fit_matrix_for_all_variables(data=frame)
 #export_goodness_of_fit_cube_json(cube = create_goodness_of_fit_cube(data = frame, dependent = "Gender"), dependent="Gender", pretty = FALSE)
-#create_goodness_of_fit_cube_for_all_variables(data = frame)
+#create_goodness_of_fit_cube_for_all_variables(data = frame, process_number = 1, number_of_cores = 8)
