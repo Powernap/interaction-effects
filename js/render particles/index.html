@@ -115,7 +115,7 @@
 						slicingPlane.vertices[3].z = value;
 						slicingPlane.verticesNeedUpdate = true;
 					});
-					renderModeGUI 				= gui.add(this, "renderMode", ['ShaderMaterial', 'PointCloudMaterial']);
+					renderModeGUI = gui.add(this, "renderMode", ['ShaderMaterial', 'PointCloudMaterial']);
 					renderModeGUI.onChange( function(value) {
 						scene.remove( particles );
 						if (value == 'ShaderMaterial')
@@ -183,11 +183,49 @@
 								vertex.y = y*3 - ((num_y * 3) / 2);
 								vertex.z = z*3 - ((num_z * 3) / 2);
 								geometry.vertices.push( vertex );
+								// var vertex1 = new THREE.Vector3();
+								// vertex1.x = x*3 - ((num_x * 3) / 2) + 1;
+								// vertex1.y = y*3 - ((num_y * 3) / 2) + 1;
+								// vertex1.z = z*3 - ((num_z * 3) / 2) + 1;
+								// geometry.vertices.push( vertex1 );
+								// var vertex2 = new THREE.Vector3();
+								// vertex2.x = x*3 - ((num_x * 3) / 2) + 2;
+								// vertex2.y = y*3 - ((num_y * 3) / 2) + 2;
+								// vertex2.z = z*3 - ((num_z * 3) / 2) + 2;
+								// geometry.vertices.push( vertex2 );
+								// var vertex3 = new THREE.Vector3();
+								// vertex3.x = x*3 - ((num_x * 3) / 2) + 3;
+								// vertex3.y = y*3 - ((num_y * 3) / 2) + 3;
+								// vertex3.z = z*3 - ((num_z * 3) / 2) + 3;
+								// geometry.vertices.push( vertex3 );
+								// var vertex4 = new THREE.Vector3();
+								// vertex4.x = x*3 - ((num_x * 3) / 2) + 4;
+								// vertex4.y = y*3 - ((num_y * 3) / 2) + 4;
+								// vertex4.z = z*3 - ((num_z * 3) / 2) + 4;
+								// geometry.vertices.push( vertex4 );
+								// var vertex5 = new THREE.Vector3();
+								// vertex5.x = x*3 - ((num_x * 3) / 2) + 5;
+								// vertex5.y = y*3 - ((num_y * 3) / 2) + 5;
+								// vertex5.z = z*3 - ((num_z * 3) / 2) + 5;
+								// geometry.vertices.push( vertex5 );
+								
 								// var color = new THREE.Color();
 								//color.setHSL(0.5, 1, matrixData3D[x][y][z]);
 								var color = new THREE.Color(transferfunction(matrixData2D[x][y]));
 								geometry.colors.push(color);
 								attributes.alpha.value.push(matrixData3D[x][y][z]);
+								// var color = new THREE.Color(transferfunction(matrixData2D[x][y]));
+								// geometry.colors.push(color);
+								// attributes.alpha.value.push(matrixData3D[x][y][z]);
+								// var color = new THREE.Color(transferfunction(matrixData2D[x][y]));
+								// geometry.colors.push(color);
+								// attributes.alpha.value.push(matrixData3D[x][y][z]);
+								// var color = new THREE.Color(transferfunction(matrixData2D[x][y]));
+								// geometry.colors.push(color);
+								// attributes.alpha.value.push(matrixData3D[x][y][z]);
+								// var color = new THREE.Color(transferfunction(matrixData2D[x][y]));
+								// geometry.colors.push(color);
+								// attributes.alpha.value.push(matrixData3D[x][y][z]);
 							}
 						}
 					}
@@ -214,7 +252,8 @@
 					// Renderer
 					renderer = new THREE.WebGLRenderer();
 					renderer.setSize( window.innerWidth, window.innerHeight );
-					renderer.setClearColor(0xF0F0F0, 1)
+					// renderer.setClearColor(0xF0F0F0, 1)
+					renderer.setClearColor(0xFFFFFF, 1)
 					container.appendChild( renderer.domElement );
 
 					// Controls
