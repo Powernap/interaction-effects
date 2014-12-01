@@ -5,6 +5,9 @@
 # Data folders
 js/render\ particles/data
 
+# Bower folders
+js/render\ particles/bower_components
+
 # R Vardumps
 R/vardumps
 
