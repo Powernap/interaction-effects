@@ -5,6 +5,7 @@
 		<title>three.js webgl - particles</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" media="screen"> <!-- Bootstrap -->
 		<style>
 			body {
 				background-color: #F0F0F0;
@@ -42,6 +43,8 @@
 		<script src="bower_components/threejs-examples/examples/js/controls/TrackballControls.js"></script>
 		<script src="bower_components/dat-gui/build/dat.gui.js"></script>
 		<script src="bower_components/d3/d3.js"></script>
+		<script src="bower_components/jquery/dist/jquery.js"></script>
+		<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
 		<script src="js/Transferfunction2D.js"></script>
 
 		<script type="x-shader/x-vertex" id="vertexshader">
@@ -81,17 +84,20 @@
 			var controls, attributes;
 			var colors = [];
 			var guiController;
-			var DEBUG = false;
+			var DEBUG = true;
 			var transferfunction = new Transferfunction2D('blue', 'red');
 			// GUI
 			var renderMode = "ShaderMaterial";
 			// /GUI
 			var windowHalfX = window.innerWidth / 2;
 			var windowHalfY = window.innerHeight / 2;
+			var slicingPlane;
+			var slicingPlanePosition = 0;
 			var matrixData3D;
 			var matrixData2D;
 			// Load data at the start!
-			d3.json('data/matrix3D.json', function(_matrixData3D) {
+			// d3.json('data/matrix3D.json', function(_matrixData3D) {
+			d3.json('data/cube_back_pain_last_3_month.json', function(_matrixData3D) {
 				d3.json('data/matrix2D.json', function(_matrixData2D) {
 					matrixData3D = _matrixData3D;
 					matrixData2D = _matrixData2D;
@@ -101,7 +107,15 @@
 
 				function addDatGui(){
 					var gui = new dat.GUI();
-					renderModeGUI = gui.add(this, "renderMode", ['ShaderMaterial', 'PointCloudMaterial']);
+					slicingPlanePosition 	= gui.add(this, "slicingPlanePosition", -200, 200);
+					slicingPlanePosition.onChange(function(value) {
+						slicingPlane.vertices[0].z = value;
+						slicingPlane.vertices[1].z = value;
+						slicingPlane.vertices[2].z = value;
+						slicingPlane.vertices[3].z = value;
+						slicingPlane.verticesNeedUpdate = true;
+					});
+					renderModeGUI 				= gui.add(this, "renderMode", ['ShaderMaterial', 'PointCloudMaterial']);
 					renderModeGUI.onChange( function(value) {
 						scene.remove( particles );
 						if (value == 'ShaderMaterial')
@@ -161,7 +175,6 @@
 						.domain([0, 1])
 						.range(['blue', 'red']);
 
-
 					for ( var z = 0; z < num_z; z++) {
 						for ( var y = 0; y < num_y; y++) {
 							for ( var x = 0; x < num_x; x++) {
@@ -190,6 +203,15 @@
 					particles = new THREE.PointCloud( geometry, shaderMaterial );
 					scene.add( particles );
 
+					// [Geometry] Add Slicing Plane
+					planeSize = (num_x * 3) + 100;
+					slicingPlane = new THREE.PlaneGeometry(planeSize, planeSize);
+					// var slicingPlaneMaterial = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
+					var slicingPlaneMaterial = new THREE.MeshBasicMaterial( {color: 0xB0B0B0, opacity: 0.5, side: THREE.DoubleSide} );
+					var plane = new THREE.Mesh( slicingPlane, slicingPlaneMaterial );
+					scene.add( plane );
+
+					// Renderer
 					renderer = new THREE.WebGLRenderer();
 					renderer.setSize( window.innerWidth, window.innerHeight );
 					renderer.setClearColor(0xF0F0F0, 1)
