@@ -57,9 +57,25 @@
 			void main() {
 				vColor = color;
 				vAlpha = alpha;
-				vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+				// mat4 newViewMatrix = mat4(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
+				mat4 newViewMatrix = modelViewMatrix;
+				mat4 newProjectionMatrix = projectionMatrix;
+				// newViewMatrix[0][0] = 1.0;
+				// newViewMatrix[1][1] = 1.0;
+				// newViewMatrix[2][2] = 1.0;
+				// newViewMatrix[3][3] = 1.0;
+				// newViewMatrix[0] = vec4(1,0,0,0);
+				// newViewMatrix[1] = vec4(0,1,0,0);
+				// newViewMatrix[2] = vec4(0,0,1,0);
+				// newProjectionMatrix[0] = vec4(1.1555265188217163,0,0,0);
+				// newProjectionMatrix[1] = vec4(0,1.3032253980636597,0,0);
+				// newProjectionMatrix[2] = vec4(0,0,-1.000666856765747,0);
+				// newProjectionMatrix[3] = vec4(-1,0,-2.000666856765747,0);
+				// newViewMatrix[3] = vec4(0,0,-1000,1);
+				// vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+				vec4 mvPosition = newViewMatrix * vec4( position, 1.0 );
 				gl_PointSize = 3700.0 / length( mvPosition.xyz );
-				gl_Position = projectionMatrix * mvPosition;
+				gl_Position = newProjectionMatrix * mvPosition;
 			}
 
 		</script>
@@ -84,7 +100,7 @@
 			var controls, attributes;
 			var colors = [];
 			var guiController;
-			var DEBUG = true;
+			var DEBUG = false;
 			var transferfunction = new Transferfunction2D('blue', 'red');
 			// GUI
 			var renderMode = "ShaderMaterial";
@@ -135,7 +151,7 @@
 					document.body.appendChild( container );
 					// camera
 					camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 3000 );
-					camera.position.z = 1000;
+					camera.position.z = 600;
 
 					// Scene
 					scene = new THREE.Scene();
@@ -183,6 +199,7 @@
 								vertex.y = y*3 - ((num_y * 3) / 2);
 								vertex.z = z*3 - ((num_z * 3) / 2);
 								geometry.vertices.push( vertex );
+								
 								// var vertex1 = new THREE.Vector3();
 								// vertex1.x = x*3 - ((num_x * 3) / 2) + 1;
 								// vertex1.y = y*3 - ((num_y * 3) / 2) + 1;
@@ -239,6 +256,7 @@
 					});
 
 					particles = new THREE.PointCloud( geometry, shaderMaterial );
+					// particles = new THREE.Mesh( geometry, shaderMaterial );
 					scene.add( particles );
 
 					// [Geometry] Add Slicing Plane
