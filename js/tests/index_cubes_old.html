@@ -1,0 +1,234 @@
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - trackball controls</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				/*color: #000;*/
+				font-family:Monospace;
+				font-size:13px;
+				text-align:center;
+				font-weight: bold;
+
+				background-color: #fff;
+				margin: 0px;
+				overflow: hidden;
+			}
+
+			#info {
+				color:#000;
+				position: absolute;
+				top: 0px; width: 100%;
+				padding: 5px;
+
+			}
+
+			a {
+				color: red;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="container"></div>
+		<div id="info">
+			Caption
+		</div>
+
+		<script src="bower_components/threejs/build/three.min.js"></script>
+		<script src="bower_components/threejs-examples/examples/js/controls/TrackballControls.js"></script>
+		<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+
+<!--		<script src="js/libs/stats.min.js"></script>-->
+
+		<script>
+		var camera, scene, renderer, geometry, material, mesh;
+
+		init();
+		animate();
+
+		function init() {
+
+			scene = new THREE.Scene();
+
+			camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 10000);
+			camera.position.z = 200;
+			scene.add(camera);
+
+			// Add Controls
+			controls = new THREE.TrackballControls( camera );
+			controls.rotateSpeed = 1.0;
+			controls.zoomSpeed = 1.2;
+			controls.panSpeed = 0.8;
+
+			controls.noZoom = false;
+			controls.noPan = false;
+
+			controls.staticMoving = true;
+			controls.dynamicDampingFactor = 0.3;
+
+			controls.keys = [ 65, 83, 68 ];
+
+			controls.addEventListener( 'change', render );
+
+			//createCubes(44,44,44,5000)
+			createCubesDirty(70,70,70,5000)
+
+			renderer = new THREE.WebGLRenderer();
+			renderer.setSize(window.innerWidth, window.innerHeight);
+
+			document.body.appendChild(renderer.domElement);
+
+		}
+
+		function createCubesDirty (num_x, num_y, num_z, max_cubes) {
+			cubes = [];
+			merged_geometry = [];
+			merged_geometry_1 = new THREE.Geometry();
+			merged_geometry_2 = new THREE.Geometry();
+			merged_geometry_3 = new THREE.Geometry();
+			var cubeCounter = 1;
+			var meshes = 0;
+			var totalcount = 0;
+			var maxcount = num_x * num_y * num_z;
+			
+			for ( var z = 0; z < num_z; z++) {
+				for ( var y = 0; y < num_y; y++) {
+					for ( var x = 0; x < num_x; x++) {
+						totalcount = totalcount + 1;
+						new_geometry = new THREE.BoxGeometry(1, 1, 1);
+						
+						material = new THREE.MeshNormalMaterial();
+					
+						mesh = new THREE.Mesh(new_geometry, material);
+						mesh.position.x = x*2;
+						mesh.position.y = y*2;
+						mesh.position.z = z*2;
+
+						if (cubeCounter/max_cubes < 0.33) {
+							mesh.updateMatrix()
+							merged_geometry_1.merge(mesh.geometry, mesh.matrix)
+						}
+						else if (cubeCounter/max_cubes >= 0.33 && cubeCounter/max_cubes < 0.66) {
+							mesh.updateMatrix()
+							merged_geometry_2.merge(mesh.geometry, mesh.matrix)
+						}
+						else {
+							mesh.updateMatrix()
+							merged_geometry_3.merge(mesh.geometry, mesh.matrix)
+						}
+
+						if (cubeCounter % 500 == 0)
+							console.log(Math.round((totalcount/maxcount) * 100) + " percent done");
+
+						cubeCounter = cubeCounter + 1;
+						// if (cubeCounter < max_cubes + 1) {
+						// 	mesh.updateMatrix()
+						// 	merged_geometry[meshes].merge(mesh.geometry, mesh.matrix)
+						// 	cubeCounter = cubeCounter + 1;
+						// }
+						// else {
+						// 	console.log(Math.round((totalcount/maxcount) * 100) + " percent done");
+						// 	meshes = meshes + 1;
+						// 	cubeCounter = 1;
+						// 	merged_geometry[meshes] = new THREE.Geometry();
+						// 	mesh.updateMatrix()
+						// 	merged_geometry[meshes].merge(mesh.geometry, mesh.matrix)
+						// }
+					}
+				}
+			}
+			// for (var i in merged_geometry) {
+			// 	merged_geometry[i].computeFaceNormals();
+			// 	group = new THREE.Mesh(merged_geometry[i], material );
+			// 	group.matrixAutoUpdate = false;
+			// 	group.updateMatrix();
+			// 	scene.add(group);
+			// }
+			merged_geometry_1.computeFaceNormals();
+			group_1 = new THREE.Mesh(merged_geometry_1, material );
+			group_1.matrixAutoUpdate = false;
+			group_1.updateMatrix();
+			scene.add(group_1);
+			merged_geometry_2.computeFaceNormals();
+			group_2 = new THREE.Mesh(merged_geometry_2, material );
+			group_2.matrixAutoUpdate = false;
+			group_2.updateMatrix();
+			scene.add(group_2);
+			merged_geometry_3.computeFaceNormals();
+			group_3 = new THREE.Mesh(merged_geometry_3, material );
+			group_3.matrixAutoUpdate = false;
+			group_3.updateMatrix();
+			scene.add(group_3);
+			//return (merged_geometry)
+		}
+
+		function createCubes (num_x, num_y, num_z, max_cubes) {
+			cubes = [];
+			merged_geometry = [];
+			merged_geometry[0] = new THREE.Geometry();
+			var cubeCounter = 1;
+			var meshes = 0;
+			var totalcount = 0;
+			var maxcount = num_x * num_y * num_z;
+
+			for ( var z = 0; z < num_z; z++) {
+				for ( var y = 0; y < num_y; y++) {
+					for ( var x = 0; x < num_x; x++) {
+						totalcount = totalcount + 1;
+						new_geometry = new THREE.BoxGeometry(1, 1, 1);
+						
+						material = new THREE.MeshNormalMaterial();
+					
+						mesh = new THREE.Mesh(new_geometry, material);
+						mesh.position.x = x*2;
+						mesh.position.y = y*2;
+						mesh.position.z = z*2;
+						if (cubeCounter < max_cubes + 1) {
+							mesh.updateMatrix()
+							merged_geometry[meshes].merge(mesh.geometry, mesh.matrix)
+							cubeCounter = cubeCounter + 1;
+						}
+						else {
+							console.log(Math.round((totalcount/maxcount) * 100) + " percent done");
+							meshes = meshes + 1;
+							cubeCounter = 1;
+							merged_geometry[meshes] = new THREE.Geometry();
+							mesh.updateMatrix()
+							merged_geometry[meshes].merge(mesh.geometry, mesh.matrix)
+						}
+					}
+				}
+			}
+			for (var i in merged_geometry) {
+				merged_geometry[i].computeFaceNormals();
+				group = new THREE.Mesh(merged_geometry[i], material );
+				group.matrixAutoUpdate = false;
+				group.updateMatrix();
+				scene.add(group);
+			}
+			return (merged_geometry)
+		}
+
+		function animate() {
+			requestAnimationFrame(animate);
+			controls.update();
+			render();
+		}
+
+		function render() {
+
+			//camera.rotation.x += 0.01;
+			//camera.rotation.y += 0.02;
+			//camera.rotation.y = 90 * Math.PI / 180
+
+			renderer.render(scene, camera);
+
+		}
+		</script>
+
+	</body>
+</html>
