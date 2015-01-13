@@ -32,3 +32,6 @@ R/packrat/lib*/
 # RStudio files
 .Rproj.user/
 .Rproj.user
+
+# Do not upload CSV files (datasets)
+*.csv

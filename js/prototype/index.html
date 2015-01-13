@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>Executing R code snippets - jsFiddle demo by opencpu</title>
+  
+  <script type='text/javascript' src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+  <script type='text/javascript' src="http://cdn.opencpu.org/opencpu-0.4.js"></script>
+  <style type='text/css'>
+    
+  </style>
+  
+
+
+<script type='text/javascript'>//<![CDATA[ 
+window.onload=function(){
+//because identity is in base
+ocpu.seturl("http://localhost:8890/ocpu/library/base/R")
+
+//actual handler
+$("#submitbutton").on("click", function(){
+
+    //arguments
+    var mysnippet = new ocpu.Snippet($("#input").val());
+    
+    //disable button
+    $("button").attr("disabled", "disabled");
+
+    //perform the request
+    var req = ocpu.call("identity", {
+        "x" : mysnippet
+    }, function(session){
+        session.getConsole(function(outtxt){
+            $("#output").text(outtxt); 
+        });
+    });
+        
+    //if R returns an error, alert the error message
+    req.fail(function(){
+        alert("Server error: " + req.responseText);
+    });      
+    
+    req.always(function(){
+        $("button").removeAttr("disabled");    
+    });
+});    
+}
+
+</script>
+
+
+</head>
+<body>
+  <h1>Posting Code Snippets</h1>
+
+<textarea id="input" rows="4" cols="50">
+x = rnorm(1000)
+plot(x)
+mean(x)  
+</textarea> 
+
+<br /> <button id="submitbutton" type="button">Call R</button>
+
+<pre><code id="output"></code></pre>
+  
+</body>
+
+
+</html>
+
