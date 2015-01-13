@@ -33,5 +33,6 @@ R/packrat/lib*/
 .Rproj.user/
 .Rproj.user
 
-# Do not upload CSV files (datasets)
+# Do not upload CSV or JSON files (datasets)
 *.csv
+*.json
