@@ -1,12 +1,14 @@
 # Libaries necessary: fmsb
 # load_dataset("/Users/paul/Desktop/patients-100k.csv")
 # matrix <- r_squared_matrix(dependent = "gender")
-data <- NA
+pkg.env <- new.env()
+pkg.env$data <- NA
 
 'load_dataset' <- function (csv_filepath){ #, type_filepath) {
   #csv_filepath <- "/Users/paul/Tresors/Regresson Cubes/js-html/prototype/data/breast_fat.csv"
   #type_filepath <- "/Users/paul/Tresors/Regresson Cubes/js-html/prototype/data/dictionary.json"
-  data <<- read.csv(csv_filepath, header = TRUE)
+  pkg.env$data <- read.csv(csv_filepath, header = TRUE)
+  data <- read.csv(csv_filepath, header = TRUE)
   #   library(rjson)
   #   dictionary <- fromJSON(file = type_filepath)
   #   # Extract the variable types
@@ -30,7 +32,7 @@ data <- NA
   return(data)
 }
 
-'r_squared_matrix' <- function(dependent, force_calculation = FALSE) {
+'r_squared_matrix' <- function(data, dependent, force_calculation = FALSE) {
   # filename <- paste0("vardumps/goodness_of_fit_matrix_", dependent, ".Rdmped")
   # if (file.exists(filename) && !force_calculation) {
   #   load(file = filename)
@@ -40,6 +42,7 @@ data <- NA
   #data <- frame
   # /DEBUG
   # Get Class for each group
+  # data <- pkg.env$data
   variable_classes <- lapply(frame, class)
   variable_names <- colnames(data)
   # Create result matrix
