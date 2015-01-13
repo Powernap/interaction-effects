@@ -1,6 +1,6 @@
-\name{regression_cubes-package}
-\alias{regression_cubes-package}
-\alias{regression_cubes}
+\name{regressionCube-package}
+\alias{regressionCube-package}
+\alias{regressionCube}
 \docType{package}
 \title{
 What the package does (short line)
@@ -12,7 +12,7 @@ More about what it does (maybe more than one line)
 }
 \details{
 \tabular{ll}{
-Package: \tab regression_cubes\cr
+Package: \tab regressionCube\cr
 Type: \tab Package\cr
 Version: \tab 1.0\cr
 Date: \tab 2015-01-13\cr

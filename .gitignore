@@ -9,10 +9,10 @@ js/render\ particles/data
 js/render\ particles/bower_components
 
 # R Vardumps
-R/vardumps
+R/interaction-effects/vardumps
 
 # MISC Files
-R/misc
+R/interaction-effects/misc
 
 # Plots
 plots/
@@ -21,7 +21,7 @@ plots/
 .Rhistory
 
 # Packrat files
-R/packrat/lib*/
+R/interaction-effects/packrat/lib*/
 
 # Example code in package build process
 *-Ex.R
