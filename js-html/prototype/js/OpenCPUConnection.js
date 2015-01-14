@@ -12,6 +12,18 @@ var OpenCPUConnection = function(URLToOpenCPUServer) {
 	this._URLToOpenCPUServer = URLToOpenCPUServer;
 };
 
+/**
+* This method exectes a R command through the OpenCPU bridge and makes
+* the results available through callback functions
+*
+* @method execute
+* @param {String} namespace Namespace of the R function (e.g. "/library/regressionCube/R")
+* @param {String} command Name of the R function
+* @param {Object} parameters JSON config object of the R command
+* @param {String} config.name The name on the config object
+* @param {Function} callbackSuccess Callback function for successfull command (gets handed the session object)
+* @param {Function} callbackFail Callback function for failed command (gets handed the error object)
+*/
 OpenCPUConnection.prototype.execute = function(namespace, command, parameters, callbackSuccess, callbackFail) {
 	if (parameters == undefined) parameters = {};
 	ocpu.seturl(this._URLToOpenCPUServer + namespace)
