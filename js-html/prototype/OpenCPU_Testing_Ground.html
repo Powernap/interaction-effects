@@ -7,18 +7,18 @@
 
   <script type='text/javascript' src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
   <script type='text/javascript' src="http://cdn.opencpu.org/opencpu-0.4.js"></script>
+  <script src="app.js"></script>
   <script src="js/OpenCPUConnection.js"></script>
   <script src="js/RSession.js"></script>
-  <style type='text/css'>
 
-  </style>
+  <style type='text/css'></style>
 
 
 <script type='text/javascript'>//<![CDATA[
 window.onload=function(){
   // ToDo Path settings should be parameterized through the App
   // Connection to the OpenCPU Server
-  myRSession = new RSession("http://localhost:8145/ocpu")
+  myRSession = new RCUBE.RSession("http://localhost:8145/ocpu")
   myRSession.loadDataset("/Users/paul/Desktop/patients-100k.csv", function(session){
     myRSession.calculateRSquaredValues(myRSession._datasetSession, function(_session){
       _session.getConsole(function(outtxt){console.log(outtxt)});

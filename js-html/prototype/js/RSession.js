@@ -1,11 +1,11 @@
-var RSession = function(URLToOpenCPUServer) {
-  this._openCPUConnection = new OpenCPUConnection(URLToOpenCPUServer);
+RCUBE.RSession = function(URLToOpenCPUServer) {
+  this._openCPUConnection = new RCUBE.Helper.OpenCPUConnection(URLToOpenCPUServer);
   this._datasetSession = undefined;
   this._rSquaredSession = undefined;
   this._rSquaredJSON = undefined;
 };
 
-RSession.prototype.loadDataset = function(csvFilePath, callback) {
+RCUBE.RSession.prototype.loadDataset = function(csvFilePath, callback) {
   self = this;
   this._openCPUConnection.execute(
     "/library/regressionCube/R",
@@ -20,7 +20,7 @@ RSession.prototype.loadDataset = function(csvFilePath, callback) {
   });
 };
 
-RSession.prototype.calculateRSquaredValues = function(session, callback) {
+RCUBE.RSession.prototype.calculateRSquaredValues = function(session, callback) {
   self = this;
   this._openCPUConnection.execute(
     "/library/regressionCube/R",

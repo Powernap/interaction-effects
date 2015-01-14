@@ -4,7 +4,7 @@
  * @class OpenCPUConnection
  * @param URL: Url to the OpenCPU Server (e.g. "http://localhost:8054/ocpu")
  */
-var OpenCPUConnection = function(URLToOpenCPUServer) {
+RCUBE.Helper.OpenCPUConnection = function(URLToOpenCPUServer) {
   if (!("ocpu" in window)) {
     console.err("OpenCPU Javascript API is not loaded.");
     return;
@@ -24,7 +24,7 @@ var OpenCPUConnection = function(URLToOpenCPUServer) {
  * @param {Function} callbackSuccess Callback function for successfull command (gets handed the session object)
  * @param {Function} callbackFail Callback function for failed command (gets handed the error object)
  */
-OpenCPUConnection.prototype.execute = function(namespace, command, parameters, callbackSuccess, callbackFail) {
+RCUBE.Helper.OpenCPUConnection.prototype.execute = function(namespace, command, parameters, callbackSuccess, callbackFail) {
   if (parameters == undefined) parameters = {};
   ocpu.seturl(this._URLToOpenCPUServer + namespace)
   ocpu.call(command, parameters, function(session) {
