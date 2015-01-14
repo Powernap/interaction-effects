@@ -16,6 +16,8 @@
 
 <script type='text/javascript'>//<![CDATA[
 window.onload=function(){
+  // ToDo Path settings should be parameterized through the App
+  // Connection to the OpenCPU Server
   myRSession = new RSession("http://localhost:8145/ocpu")
   myRSession.loadDataset("/Users/paul/Desktop/patients-100k.csv", function(session){
     myRSession.calculateRSquaredValues(myRSession._datasetSession, function(_session){
@@ -26,7 +28,6 @@ window.onload=function(){
       });
     });
   });
-  // Do Stuff
 }//]]>
 
 </script>
