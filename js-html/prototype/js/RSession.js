@@ -1,6 +1,8 @@
 var RSession = function(URLToOpenCPUServer) {
   this._openCPUConnection = new OpenCPUConnection(URLToOpenCPUServer);
   this._datasetSession = undefined;
+  this._rSquaredSession = undefined;
+  this._rSquaredJSON = undefined;
 };
 
 RSession.prototype.loadDataset = function(csvFilePath, callback) {
