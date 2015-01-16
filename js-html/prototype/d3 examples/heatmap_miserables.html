@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html class="ocks-org do-not-copy">
+<html>
 <meta charset="utf-8">
-<title>Les Misérables Co-occurrence</title>
+<title>Heatmap Prototype</title>
 <style>
-  /*@import url(../style.css?aea6f0a);*/
 
   .background {
     fill: #eee;
@@ -14,16 +13,58 @@
   text.active {
     fill: red;
   }
+  text.mono {
+    font-size: 9pt;
+    font-family: Consolas, courier;
+    /*fill: #aaa;*/
+  }
+  rect.cell-selected {
+    stroke: rgb(51, 102, 153);
+    stroke-width: 0.5px;
+  }
+  rect.cell-hover {
+    stroke: #F00;
+    stroke-width: 1.0px;
+  }
+  #tooltip {
+    position: absolute;
+    width: 200px;
+    height: auto;
+    padding: 10px;
+    background-color: white;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+    -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+  }
+  #tooltip.hidden {
+    display: none;
+  }
+  #tooltip p {
+    margin: 0;
+    font-family: sans-serif;
+    font-size: 12px;
+    line-height: 20px;
+  }
 </style>
 <script src="http://d3js.org/d3.v2.min.js?2.8.1"></script>
 
-<h1><i>Heatmap Prototype</i> Co-occurrence</h1>
+<h1>Heatmap Prototype</h1>
 <p>Order:
   <select id="order">
     <option value="name">by Name</option>
     <option value="count">by Frequency</option>
     <option value="group">by Cluster</option>
   </select>
+</p>
+<div id="tooltip" class="hidden">
+  <p>
+    <span id="value">
+  </p>
+</div>
 
   <script>
 
@@ -139,6 +180,7 @@
       .attr("y", x.rangeBand() / 2)
       .attr("dy", ".32em")
       .attr("text-anchor", "end")
+      .classed("mono", true)
       .text(function(d, i) {
         return nodes[i].name;
       });
@@ -158,6 +200,7 @@
       .attr("x", 6)
       .attr("y", x.rangeBand() / 2)
       .attr("dy", ".32em")
+      .classed("mono", true)
       .attr("text-anchor", "start")
       .text(function(d, i) {
         return nodes[i].name;
@@ -186,16 +229,27 @@
     }
 
     function mouseover(p) {
+      d3.select(this).classed("cell-hover", true);
       d3.selectAll(".row text").classed("active", function(d, i) {
         return i == p.y;
       });
       d3.selectAll(".column text").classed("active", function(d, i) {
         return i == p.x;
       });
+      //Update the tooltip position and value
+      d3.select("#tooltip")
+      .style("left", (d3.event.pageX + 10) + "px")
+      .style("top", (d3.event.pageY - 10) + "px")
+      .select("#value")
+      .text("X: " + names[p.x] + "Y: " + names[p.y] + "\nValue: " + p.z);
+      //Show the tooltip
+      d3.select("#tooltip").classed("hidden", false);
     }
 
     function mouseout() {
       d3.selectAll("text").classed("active", false);
+      d3.selectAll("rect").classed("cell-hover", false);
+      d3.select("#tooltip").classed("hidden", true);
     }
 
     d3.select("#order").on("change", function() {
@@ -205,18 +259,18 @@
     function order(value) {
       x.domain(orders[value]);
 
-      var t = svg.transition().duration(2500);
+      var t = svg.transition().duration(1500);
 
       t.selectAll(".row")
         .delay(function(d, i) {
-          return x(i) * 4;
+          return x(i) * 2;
         })
         .attr("transform", function(d, i) {
           return "translate(0," + x(i) + ")";
         })
         .selectAll(".cell")
         .delay(function(d) {
-          return x(d.x) * 4;
+          return x(d.x) * 2;
         })
         .attr("x", function(d) {
           return x(d.x);
@@ -224,7 +278,7 @@
 
       t.selectAll(".column")
         .delay(function(d, i) {
-          return x(i) * 4;
+          return x(i) * 2;
         })
         .attr("transform", function(d, i) {
           return "translate(" + x(i) + ")rotate(-90)";
