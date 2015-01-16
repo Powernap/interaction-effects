@@ -6,7 +6,7 @@
 js/render\ particles/data
 
 # Bower folders
-js/render\ particles/bower_components
+bower_components/
 
 # R Vardumps
 R/interaction-effects/vardumps
