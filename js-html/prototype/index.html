@@ -3,75 +3,27 @@
 <html ng-app="cube" lang="en">
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <title>Executing R code snippets</title>
-
-  <!-- // <script type='text/javascript' src="http://code.jquery.com/jquery-1.10.2.min.js"></script> -->
+  <title>RCube Prototype</title>
   <script src="bower_components/jquery/dist/jquery.js"></script>
   <script src="bower_components/d3/d3.js"></script>
   <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
   <script src="bower_components/angular/angular.js"></script>
-  <script src="app.js"></script>
+  <script src="js/RCUBE.js"></script>
   <script src="js/OpenCPUConnection.js"></script>
   <script src="js/vis/heatmap.js"></script>
   <script src="js/RSession.js"></script>
   <script src="js/opencpu-0.4.js"></script>
+  <script src="app.js"></script>
 
   <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" media="screen"> <!-- Bootstrap -->
   <link href="css/heatmap.css" rel="stylesheet" media="screen">
   <style type='text/css'></style>
-
-
-<script type='text/javascript'>//<![CDATA[
-window.onload=function(){
-  // ToDo Path settings should be parameterized through the App
-  // Connection to the OpenCPU Server
-  // myRSession = new RCUBE.RSession("http://localhost:5738/ocpu")
-  // myRSession.loadDataset("/Users/paul/Desktop/patients-100k.csv", function(session){
-  //   myRSession.calculateRSquaredValues(myRSession._datasetSession, function(_session){
-  //     _session.getConsole(function(outtxt){console.log(outtxt)});
-  //     $.getJSON(myRSession._rSquaredSession.loc + "R/.val/json" , function(data){
-  //       myRSession._rSquaredJSON = data;
-  //       console.log(data);
-  //     });
-  //   });
-  // });
-  var performanceTest = function(id, serverURL) {
-    myRSession = new RCUBE.RSession(serverURL);
-    var start = new Date().getTime();
-    myRSession.loadDataset("/Users/paul/Desktop/patients-100k.csv", function(session){
-      myRSession.calculateRSquaredValues(myRSession._datasetSession, function(_session){
-        // _session.getConsole(function(outtxt){console.log(outtxt)});
-        var end = new Date();
-        var time = (end.getTime() - start) / (1000);
-        console.log("[" + end.getHours() + ":" + end.getMinutes() + ":" + end.getSeconds() + "] Execution time " + id + ": " + time + " seconds");
-        $.getJSON(myRSession._rSquaredSession.loc + "R/.val/json" , function(data){
-          myRSession._rSquaredJSON = data;
-          console.log(data);
-          myJSON = data;
-          // Test: Create RSquared Values
-          var rSquared = data;
-          var names = ["gender","age","diab","hypertension","stroke","chd","smoking","bmi"];
-          var myHeatmap = new RCUBE.Heatmap(".my-heatmap", rSquared, names);
-        });
-      });
-    });
-  };
-  performanceTest(1, "http://localhost:3533/ocpu");
-  // performanceTest(2, "http://localhost:3533/ocpu");
-  // performanceTest(3);
-  // performanceTest(4);
-  // performanceTest(5);
-  // performanceTest(6);
-  // performanceTest(7);
-  // performanceTest(8);
-}//]]>
-
 </script>
 </head>
 <body>
   <div class=container>
     <h1> λ OpenCPU Testing Ground λ </h1>
-    <div class=my-heatmap>
+    <div class=my-heatmap ng-controller="HeatmapController as heatmap" ng-show="heatmap.visible">
       <h3>Heatmap Prototype</h3>
       <p>Order:
         <select id="order-heatmap">
@@ -88,6 +40,4 @@ window.onload=function(){
     </div>
   </div>
 </body>
-
-
 </html>
