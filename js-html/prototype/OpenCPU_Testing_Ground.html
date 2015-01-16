@@ -7,10 +7,16 @@
 
   <script type='text/javascript' src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
   <script type='text/javascript' src="http://cdn.opencpu.org/opencpu-0.4.js"></script>
+  <script src="bower_components/jquery/jquery.js"></script>
+  <!-- <script src="bower_components/jquery-ui/ui/jquery-ui.js"></script> -->
+  <script src="bower_components/d3/d3.js"></script>
+  <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+  <script src="bower_components/angular/angular.js"></script>
   <script src="app.js"></script>
   <script src="js/OpenCPUConnection.js"></script>
   <script src="js/RSession.js"></script>
 
+  <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" media="screen"> <!-- Bootstrap -->
   <style type='text/css'></style>
 
 
@@ -18,16 +24,40 @@
 window.onload=function(){
   // ToDo Path settings should be parameterized through the App
   // Connection to the OpenCPU Server
-  myRSession = new RCUBE.RSession("http://localhost:8145/ocpu")
-  myRSession.loadDataset("/Users/paul/Desktop/patients-100k.csv", function(session){
-    myRSession.calculateRSquaredValues(myRSession._datasetSession, function(_session){
-      _session.getConsole(function(outtxt){console.log(outtxt)});
-      $.getJSON(myRSession._rSquaredSession.loc + "R/.val/json" , function(data){
-        myRSession._rSquaredJSON = data;
-        console.log(data);
+  // myRSession = new RCUBE.RSession("http://localhost:5738/ocpu")
+  // myRSession.loadDataset("/Users/paul/Desktop/patients-100k.csv", function(session){
+  //   myRSession.calculateRSquaredValues(myRSession._datasetSession, function(_session){
+  //     _session.getConsole(function(outtxt){console.log(outtxt)});
+  //     $.getJSON(myRSession._rSquaredSession.loc + "R/.val/json" , function(data){
+  //       myRSession._rSquaredJSON = data;
+  //       console.log(data);
+  //     });
+  //   });
+  // });
+  var performanceTest = function(id, serverURL) {
+    myRSession = new RCUBE.RSession(serverURL);
+    var start = new Date().getTime();
+    myRSession.loadDataset("/Users/paul/Desktop/patients-100k.csv", function(session){
+      myRSession.calculateRSquaredValues(myRSession._datasetSession, function(_session){
+        // _session.getConsole(function(outtxt){console.log(outtxt)});
+        var end = new Date();
+        var time = (end.getTime() - start) / (1000);
+        console.log("[" + end.getHours() + ":" + end.getMinutes() + ":" + end.getSeconds() + "] Execution time " + id + ": " + time + " seconds");
+        $.getJSON(myRSession._rSquaredSession.loc + "R/.val/json" , function(data){
+          myRSession._rSquaredJSON = data;
+          // console.log(data);
+        });
       });
     });
-  });
+  }
+  performanceTest(1, "http://localhost:7279/ocpu");
+  performanceTest(2, "http://localhost:7279/ocpu");
+  // performanceTest(3);
+  // performanceTest(4);
+  // performanceTest(5);
+  // performanceTest(6);
+  // performanceTest(7);
+  // performanceTest(8);
 }//]]>
 
 </script>
