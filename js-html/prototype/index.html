@@ -14,7 +14,7 @@
   <script src="js/OpenCPUConnection.js"></script>
   <script src="js/vis/heatmap.js"></script>
   <script src="js/RSession.js"></script>
-  <script type='text/javascript' src="http://cdn.opencpu.org/opencpu-0.4.js"></script>
+  <script src="js/opencpu-0.4.js"></script>
 
   <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" media="screen"> <!-- Bootstrap -->
   <link href="css/heatmap.css" rel="stylesheet" media="screen">
@@ -22,11 +22,7 @@
 
 
 <script type='text/javascript'>//<![CDATA[
-var myJSON;
 window.onload=function(){
-  var rSquared = [[0,0.0013,0.0019,0.0003,0,0.008,0.0151,0.001],[0.0013,0,0.0042,0.0019,0.0014,0.0114,0.0162,0.0021],[0.0019,0.0042,0,0.0019,0.0019,0.0088,0.0172,0.0042],[0.0003,0.0019,0.0019,0,0.0003,0.008,0.0155,0.0018],[0,0.0014,0.0019,0.0003,0,0.008,0.0152,0.001],[0.008,0.0114,0.0088,0.008,0.008,0,0.0222,0.0104],[0.0151,0.0162,0.0172,0.0155,0.0152,0.0222,0,0.0179],[0.001,0.0021,0.0042,0.0018,0.001,0.0104,0.0179,0]];
-  var names = ["gender","age","diab","hypertension","stroke","chd","smoking","bmi"];
-  var myHeatmap = new RCUBE.Heatmap(".my-heatmap", rSquared, names);
   // ToDo Path settings should be parameterized through the App
   // Connection to the OpenCPU Server
   // myRSession = new RCUBE.RSession("http://localhost:5738/ocpu")
@@ -52,11 +48,15 @@ window.onload=function(){
           myRSession._rSquaredJSON = data;
           console.log(data);
           myJSON = data;
+          // Test: Create RSquared Values
+          var rSquared = data;
+          var names = ["gender","age","diab","hypertension","stroke","chd","smoking","bmi"];
+          var myHeatmap = new RCUBE.Heatmap(".my-heatmap", rSquared, names);
         });
       });
     });
   };
-  // performanceTest(1, "http://localhost:3533/ocpu");
+  performanceTest(1, "http://localhost:3533/ocpu");
   // performanceTest(2, "http://localhost:3533/ocpu");
   // performanceTest(3);
   // performanceTest(4);
