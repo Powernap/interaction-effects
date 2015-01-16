@@ -2,65 +2,18 @@
 <html>
 <meta charset="utf-8">
 <title>Heatmap Prototype</title>
-<style>
-
-  .background {
-    fill: #eee;
-  }
-  line {
-    stroke: #fff;
-  }
-  text.active {
-    fill: red;
-  }
-  text.mono {
-    font-size: 9pt;
-    font-family: Consolas, courier;
-    /*fill: #aaa;*/
-  }
-  rect.cell-selected {
-    stroke: rgb(51, 102, 153);
-    stroke-width: 0.5px;
-  }
-  rect.cell-hover {
-    stroke: #F00;
-    stroke-width: 1.0px;
-  }
-  #tooltip {
-    position: absolute;
-    width: 200px;
-    height: auto;
-    padding: 10px;
-    background-color: white;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-    -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-    pointer-events: none;
-  }
-  #tooltip.hidden {
-    display: none;
-  }
-  #tooltip p {
-    margin: 0;
-    font-family: sans-serif;
-    font-size: 12px;
-    line-height: 20px;
-  }
-</style>
+<link href="heatmap.css" rel="stylesheet" media="screen">
 <script src="http://d3js.org/d3.v2.min.js?2.8.1"></script>
 
 <h1>Heatmap Prototype</h1>
 <p>Order:
-  <select id="order">
+  <select id="order-heatmap">
     <option value="name">by Name</option>
     <option value="count">by Frequency</option>
     <option value="group">by Cluster</option>
   </select>
 </p>
-<div id="tooltip" class="hidden">
+<div id="tooltip-heatmap" class="hidden">
   <p>
     <span id="value">
   </p>
@@ -68,31 +21,36 @@
 
   <script>
 
-    var rSquared = [[0,0.0013,0.0019,0.0003,0,0.008,0.0151,0.001],[0.0013,0,0.0042,0.0019,0.0014,0.0114,0.0162,0.0021],[0.0019,0.0042,0,0.0019,0.0019,0.0088,0.0172,0.0042],[0.0003,0.0019,0.0019,0,0.0003,0.008,0.0155,0.0018],[0,0.0014,0.0019,0.0003,0,0.008,0.0152,0.001],[0.008,0.0114,0.0088,0.008,0.008,0,0.0222,0.0104],[0.0151,0.0162,0.0172,0.0155,0.0152,0.0222,0,0.0179],[0.001,0.0021,0.0042,0.0018,0.001,0.0104,0.0179,0]];
-    var names = ["gender","age","diab","hypertension","stroke","chd","smoking","bmi"];
-    var nodes = [];
-    var links = [];
+    function createHeatmapInput(rSquared, names) {
+      var rSquared = [[0,0.0013,0.0019,0.0003,0,0.008,0.0151,0.001],[0.0013,0,0.0042,0.0019,0.0014,0.0114,0.0162,0.0021],[0.0019,0.0042,0,0.0019,0.0019,0.0088,0.0172,0.0042],[0.0003,0.0019,0.0019,0,0.0003,0.008,0.0155,0.0018],[0,0.0014,0.0019,0.0003,0,0.008,0.0152,0.001],[0.008,0.0114,0.0088,0.008,0.008,0,0.0222,0.0104],[0.0151,0.0162,0.0172,0.0155,0.0152,0.0222,0,0.0179],[0.001,0.0021,0.0042,0.0018,0.001,0.0104,0.0179,0]];
+      var names = ["gender","age","diab","hypertension","stroke","chd","smoking","bmi"];
+      var nodes = [];
+      var links = [];
 
-    names.forEach(function(value, i){
-      var node = {};
-      node.count = 0;
-      node.name = value;
-      node.index = i;
-      node.group = 0; // TODO: Remove this, only there due to example compability
-      nodes.push(node);
-    });
-
-    names.forEach(function(value_i, i){
-      names.forEach(function(value_j, j){
-        var value = rSquared[i][j];
-        var link = {};
-        link.source = i;
-        link.target = j;
-        link.value = value;
-        links.push(link);
+      names.forEach(function(value, i){
+        var node = {};
+        node.count = 0;
+        node.name = value;
+        node.index = i;
+        node.group = 0; // TODO: Remove this, only there due to example compability
+        nodes.push(node);
       });
-    });
-    var heatmapData = {"nodes": nodes, "links": links};
+
+      names.forEach(function(value_i, i){
+        names.forEach(function(value_j, j){
+          var value = rSquared[i][j];
+          var link = {};
+          link.source = i;
+          link.target = j;
+          link.value = value;
+          links.push(link);
+        });
+      });
+      return {"nodes": nodes, "links": links};
+    }
+
+    var heatmapData = createHeatmapInput();
+
 
     var margin = {
         top: 80,
@@ -111,6 +69,7 @@
     var svg = d3.select("body").append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
+      .classed("heatmap", true)
       .style("margin-left", +margin.left + "px")
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -237,22 +196,22 @@
         return i == p.x;
       });
       //Update the tooltip position and value
-      d3.select("#tooltip")
+      d3.select("#tooltip-heatmap")
       .style("left", (d3.event.pageX + 10) + "px")
       .style("top", (d3.event.pageY - 10) + "px")
       .select("#value")
       .text("X: " + names[p.x] + "Y: " + names[p.y] + "\nValue: " + p.z);
       //Show the tooltip
-      d3.select("#tooltip").classed("hidden", false);
+      d3.select("#tooltip-heatmap").classed("hidden", false);
     }
 
     function mouseout() {
       d3.selectAll("text").classed("active", false);
       d3.selectAll("rect").classed("cell-hover", false);
-      d3.select("#tooltip").classed("hidden", true);
+      d3.select("#tooltip-heatmap").classed("hidden", true);
     }
 
-    d3.select("#order").on("change", function() {
+    d3.select("#order-heatmap").on("change", function() {
       order(this.value);
     });
 

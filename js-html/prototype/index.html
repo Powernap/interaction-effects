@@ -1,71 +1,93 @@
 
 <!DOCTYPE html>
-<html>
+<html ng-app="cube" lang="en">
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <title>Executing R code snippets - jsFiddle demo by opencpu</title>
-  
-  <script type='text/javascript' src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+  <title>Executing R code snippets</title>
+
+  <!-- // <script type='text/javascript' src="http://code.jquery.com/jquery-1.10.2.min.js"></script> -->
+  <script src="bower_components/jquery/dist/jquery.js"></script>
+  <script src="bower_components/d3/d3.js"></script>
+  <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+  <script src="bower_components/angular/angular.js"></script>
+  <script src="app.js"></script>
+  <script src="js/OpenCPUConnection.js"></script>
+  <script src="js/vis/heatmap.js"></script>
+  <script src="js/RSession.js"></script>
   <script type='text/javascript' src="http://cdn.opencpu.org/opencpu-0.4.js"></script>
-  <style type='text/css'>
-    
-  </style>
-  
+
+  <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" media="screen"> <!-- Bootstrap -->
+  <link href="css/heatmap.css" rel="stylesheet" media="screen">
+  <style type='text/css'></style>
 
 
-<script type='text/javascript'>//<![CDATA[ 
+<script type='text/javascript'>//<![CDATA[
+var myJSON;
 window.onload=function(){
-//because identity is in base
-ocpu.seturl("http://localhost:8890/ocpu/library/base/R")
-
-//actual handler
-$("#submitbutton").on("click", function(){
-
-    //arguments
-    var mysnippet = new ocpu.Snippet($("#input").val());
-    
-    //disable button
-    $("button").attr("disabled", "disabled");
-
-    //perform the request
-    var req = ocpu.call("identity", {
-        "x" : mysnippet
-    }, function(session){
-        session.getConsole(function(outtxt){
-            $("#output").text(outtxt); 
+  var rSquared = [[0,0.0013,0.0019,0.0003,0,0.008,0.0151,0.001],[0.0013,0,0.0042,0.0019,0.0014,0.0114,0.0162,0.0021],[0.0019,0.0042,0,0.0019,0.0019,0.0088,0.0172,0.0042],[0.0003,0.0019,0.0019,0,0.0003,0.008,0.0155,0.0018],[0,0.0014,0.0019,0.0003,0,0.008,0.0152,0.001],[0.008,0.0114,0.0088,0.008,0.008,0,0.0222,0.0104],[0.0151,0.0162,0.0172,0.0155,0.0152,0.0222,0,0.0179],[0.001,0.0021,0.0042,0.0018,0.001,0.0104,0.0179,0]];
+  var names = ["gender","age","diab","hypertension","stroke","chd","smoking","bmi"];
+  var myHeatmap = new RCUBE.Heatmap(".my-heatmap", rSquared, names);
+  // ToDo Path settings should be parameterized through the App
+  // Connection to the OpenCPU Server
+  // myRSession = new RCUBE.RSession("http://localhost:5738/ocpu")
+  // myRSession.loadDataset("/Users/paul/Desktop/patients-100k.csv", function(session){
+  //   myRSession.calculateRSquaredValues(myRSession._datasetSession, function(_session){
+  //     _session.getConsole(function(outtxt){console.log(outtxt)});
+  //     $.getJSON(myRSession._rSquaredSession.loc + "R/.val/json" , function(data){
+  //       myRSession._rSquaredJSON = data;
+  //       console.log(data);
+  //     });
+  //   });
+  // });
+  var performanceTest = function(id, serverURL) {
+    myRSession = new RCUBE.RSession(serverURL);
+    var start = new Date().getTime();
+    myRSession.loadDataset("/Users/paul/Desktop/patients-100k.csv", function(session){
+      myRSession.calculateRSquaredValues(myRSession._datasetSession, function(_session){
+        // _session.getConsole(function(outtxt){console.log(outtxt)});
+        var end = new Date();
+        var time = (end.getTime() - start) / (1000);
+        console.log("[" + end.getHours() + ":" + end.getMinutes() + ":" + end.getSeconds() + "] Execution time " + id + ": " + time + " seconds");
+        $.getJSON(myRSession._rSquaredSession.loc + "R/.val/json" , function(data){
+          myRSession._rSquaredJSON = data;
+          console.log(data);
+          myJSON = data;
         });
+      });
     });
-        
-    //if R returns an error, alert the error message
-    req.fail(function(){
-        alert("Server error: " + req.responseText);
-    });
-    
-    req.always(function(){
-        $("button").removeAttr("disabled");    
-    });
-});    
-}
+  };
+  // performanceTest(1, "http://localhost:3533/ocpu");
+  // performanceTest(2, "http://localhost:3533/ocpu");
+  // performanceTest(3);
+  // performanceTest(4);
+  // performanceTest(5);
+  // performanceTest(6);
+  // performanceTest(7);
+  // performanceTest(8);
+}//]]>
 
 </script>
-
-
 </head>
 <body>
-  <h1>Posting Code Snippets</h1>
-
-<textarea id="input" rows="4" cols="50">
-x = rnorm(1000)
-plot(x)
-mean(x)  
-</textarea> 
-
-<br /> <button id="submitbutton" type="button">Call R</button>
-
-<pre><code id="output"></code></pre>
-  
+  <div class=container>
+    <h1> λ OpenCPU Testing Ground λ </h1>
+    <div class=my-heatmap>
+      <h3>Heatmap Prototype</h3>
+      <p>Order:
+        <select id="order-heatmap">
+          <option value="name">by Name</option>
+          <option value="count">by Frequency</option>
+          <option value="group">by Cluster</option>
+        </select>
+      </p>
+      <div id="tooltip-heatmap" class="hidden">
+        <p>
+          <span id="value">
+          </p>
+        </div>
+    </div>
+  </div>
 </body>
 
 
 </html>
-
