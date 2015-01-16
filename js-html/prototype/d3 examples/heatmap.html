@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<head>
+
+</head>
+<style>
+  .q0-11 {
+    fill: rgb(215, 48, 39);
+  }
+  .q1-11 {
+    fill: rgb(244, 109, 67);
+  }
+  .q2-11 {
+    fill: rgb(253, 174, 97);
+  }
+  .q3-11 {
+    fill: rgb(254, 224, 144);
+  }
+  .q4-11 {
+    fill: rgb(255, 255, 191);
+  }
+  .q5-11 {
+    fill: rgb(224, 243, 248);
+  }
+  .q6-11 {
+    fill: rgb(171, 217, 233);
+  }
+  .q7-11 {
+    fill: rgb(116, 173, 209);
+  }
+  .q8-11 {
+    fill: rgb(69, 117, 180);
+  }
+</style>
+
+<body>
+  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+  <div id="chart"></div>
+  <script>
+    // https://stackoverflow.com/questions/16259317/d3-js-sorting-the-rows-of-a-heatmap-by-column-values-approaches
+    var dataset = [{
+      "2003": "1",
+      "2004": "1",
+      "2005": "1",
+      "2006": "1",
+      "2007": "1",
+      "2008": "1",
+      "2009": "1",
+      "Country Name": "USA"
+    }, {
+      "2003": "2",
+      "2004": "2",
+      "2005": "2",
+      "2006": "2",
+      "2007": "3",
+      "2008": "4",
+      "2009": "6",
+      "Country Name": "Canada"
+    }, {
+      "2003": "3",
+      "2004": "3",
+      "2005": "3",
+      "2006": "3",
+      "2007": "2",
+      "2008": "3",
+      "2009": "3",
+      "Country Name": "Italy"
+    }, {
+      "2003": "4",
+      "2004": "4",
+      "2005": "4",
+      "2006": "4",
+      "2007": "4",
+      "2008": "2",
+      "2009": "2",
+      "Country Name": "France"
+    }, {
+      "2003": "5",
+      "2004": "6",
+      "2005": "6",
+      "2006": "6",
+      "2007": "6",
+      "2008": "6",
+      "2009": "7",
+      "Country Name": "Ireland"
+    }, {
+      "2003": "6",
+      "2004": "5",
+      "2005": "5",
+      "2006": "5",
+      "2007": "5",
+      "2008": "5",
+      "2009": "4",
+      "Country Name": "Germany"
+    }];
+
+    data = [];
+    dataset.forEach(function(d) {
+      for (year = 2003; year < 2010; year++) {
+        data.push({
+          "year": year,
+          "Country": d["Country Name"],
+          "value": d[year]
+        });
+      }
+    });
+
+    var countryOrder = ["USA", "France", "Italy", "Canada", "Germany", "Ireland"];
+
+    var cellSize = 30,
+      cellBorder = 3,
+      height = 300,
+      width = 300;
+
+    var yScale = d3.scale.ordinal()
+      .domain(d3.range(dataset.length))
+      .rangeRoundBands([0, height], 0.05);
+
+    var xScale = d3.scale.ordinal()
+      .domain(d3.range(7))
+      .rangeRoundBands([0, width], 0.05);
+
+    var color = d3.scale.quantize()
+      .domain([0, 6])
+      .range(d3.range(9).map(function(d) {
+        return "q" + d + "-11";
+      }));
+
+    var grid = d3.select("#chart").append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .attr("class", "chart");
+
+    var cells = grid.selectAll("rect")
+      .data(data)
+      .enter().append("svg:rect")
+      .attr("class", function(d) {
+        return color(d.value);
+      })
+      .attr("x", function(d) {
+        return (d.year - 2003) * cellSize;
+      })
+      .attr("y", function(d) {
+        return (countryOrder.indexOf(d.Country)) * cellSize;
+      })
+      .attr("width", cellSize - cellBorder)
+      .attr("height", cellSize - cellBorder)
+      .on('mouseover', function() {
+        d3.select(this)
+          .style('fill', 'white');
+      })
+      .on('mouseout', function() {
+        d3.select(this)
+          .style('fill', '');
+      })
+      .on('click', function() {
+        console.log(d3.select(this));
+      })
+      .style("stroke", '#555');
+  </script>
+</body>
