@@ -25,7 +25,7 @@ RCUBE.RSession.prototype.calculateRSquaredValues = function(session, callback) {
   this._openCPUConnection.execute(
     "/library/regressionCube/R",
     'r_squared_matrix',
-  {"data": session, "dependent": "gender"},
+  {"data": session, "dependent": "age"},
   function(_session){
     self._rSquaredSession = _session;
     if (callback != undefined) callback(_session);

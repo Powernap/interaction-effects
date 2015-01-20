@@ -29,5 +29,5 @@ var performanceTest = function(id, serverURL) {
     });
   });
 };
-performanceTest(1, "http://localhost:3533/ocpu");
+performanceTest(1, "http://localhost:9167/ocpu");
 })();

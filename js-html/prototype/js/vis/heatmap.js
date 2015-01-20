@@ -14,7 +14,6 @@ RCUBE.Heatmap.prototype.createHeatmapInput = function(rSquared, names) {
     node.count = 0;
     node.name = value;
     node.index = i;
-    node.group = 0; // TODO: Remove this, only there due to example compability
     nodes.push(node);
   });
 
@@ -47,7 +46,7 @@ RCUBE.Heatmap.prototype.main = function (canvasID, heatmapData, names){
   var x = d3.scale.ordinal().rangeBands([0, width]),
   // z = d3.scale.linear().domain([0, 4]).clamp(true),
   z = d3.scale.linear().domain([0, 0.5]).clamp(true),
-  c = d3.scale.category10().domain(d3.range(10));
+  category = d3.scale.category10().domain(d3.range(10));
 
   var svg = d3.select(canvasID).append("svg")
   .attr("width", width + margin.left + margin.right)
@@ -77,11 +76,7 @@ RCUBE.Heatmap.prototype.main = function (canvasID, heatmapData, names){
   // Convert links to matrix; count character occurrences.
   heatmapData.links.forEach(function(link) {
     matrix[link.source][link.target].z += link.value;
-    matrix[link.target][link.source].z += link.value;
-    matrix[link.source][link.source].z += link.value;
-    matrix[link.target][link.target].z += link.value;
     nodes[link.source].count += link.value;
-    nodes[link.target].count += link.value;
   });
 
   // Precompute the orders.
@@ -91,9 +86,6 @@ RCUBE.Heatmap.prototype.main = function (canvasID, heatmapData, names){
     }),
     count: d3.range(n).sort(function(a, b) {
       return nodes[b].count - nodes[a].count;
-    }),
-    group: d3.range(n).sort(function(a, b) {
-      return nodes[b].group - nodes[a].group;
     })
   };
 
@@ -164,7 +156,7 @@ RCUBE.Heatmap.prototype.main = function (canvasID, heatmapData, names){
       return z(d.z);
     })
     .style("fill", function(d) {
-      return nodes[d.x].group == nodes[d.y].group ? c(nodes[d.x].group) : null;
+      return category(0);
     })
     .on("mouseover", mouseover)
     .on("mouseout", mouseout);
