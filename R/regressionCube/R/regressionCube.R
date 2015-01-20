@@ -43,7 +43,7 @@ pkg.env$data <- NA
   # /DEBUG
   # Get Class for each group
   # data <- pkg.env$data
-  variable_classes <- lapply(frame, class)
+  variable_classes <- lapply(data, class)
   variable_names <- colnames(data)
   # Create result matrix
   goodness_of_fit_matrix <- matrix(0, length(variable_names), length(variable_names))
