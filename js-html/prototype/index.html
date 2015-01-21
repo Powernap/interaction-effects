@@ -14,6 +14,7 @@
   <script src="js/RSession.js"></script>
   <script src="js/opencpu-0.4.js"></script>
   <script src="app.js"></script>
+  <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
 
   <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" media="screen"> <!-- Bootstrap -->
   <link href="css/heatmap.css" rel="stylesheet" media="screen">
@@ -23,6 +24,10 @@
 <body>
   <div class=container>
     <h1> λ OpenCPU Testing Ground λ </h1>
+
+    <input type="file" ng-controller="FileloadCtrl" onchange="angular.element(this).scope().file_changed(this)"
+    type="file" accept=".csv" />
+
     <div ng-controller="HeatmapController as heatmap" ng-show="heatmap.visible">
       <div class=my-heatmap>
         <h3>Heatmap Prototype</h3>

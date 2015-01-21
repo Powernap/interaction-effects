@@ -1,4 +1,5 @@
-RCUBE.RSession = function(URLToOpenCPUServer) {
+RCUBE.RSession = function(URLToOpenCPUServer, name) {
+  this._name = name;
   this._openCPUConnection = new RCUBE.Helper.OpenCPUConnection(URLToOpenCPUServer);
   this._datasetSession = undefined;
   this._rSquaredSession = undefined;

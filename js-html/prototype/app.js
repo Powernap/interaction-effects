@@ -1,6 +1,30 @@
 (function() {
 var app = angular.module('cube', [ ]);
 
+// Constructor Code
+app.run(function($rootScope, $http) {
+  // Load the file containing all servers
+  $http.get('opencpu_servers.json')
+    .then(function(result){
+      // Create rSessions Array
+      $rootScope.rSessions = [];
+      // and fill it with new Server connections
+      for (server in result.data)
+        $rootScope.rSessions.push(new RCUBE.RSession(server.url, server.name));
+
+      console.log($rootScope.rSessions);
+    });
+});
+
+app.controller('FileloadCtrl', function($scope) {
+  // File Changed event from input area
+  $scope.file_changed = function(element, $scope) {
+    var csvFile = element.files[0];
+    console.log("Loaded File");
+    console.log(csvFile);
+  };
+});
+
 app.factory('CreateHeatmap', function() {
 
   // # http://markdalgleish.com/2013/06/using-promises-in-angularjs-views/
@@ -9,7 +33,6 @@ app.factory('CreateHeatmap', function() {
     var start = new Date().getTime();
     myRSession.loadDataset("/Users/paul/Desktop/patients-100k.csv", function(session){
       myRSession.calculateRSquaredValues(myRSession._datasetSession, function(_session){
-        // _session.getConsole(function(outtxt){console.log(outtxt)});
         var end = new Date();
         var time = (end.getTime() - start) / (1000);
         console.log("[" + end.getHours() + ":" + end.getMinutes() + ":" + end.getSeconds() + "] Execution time " + ": " + time + " seconds");
@@ -33,10 +56,10 @@ app.factory('CreateHeatmap', function() {
 app.controller("HeatmapController", function($scope, CreateHeatmap){
   var heatmap = this;
   // http://jimhoskins.com/2012/12/17/angularjs-and-apply.html
-  CreateHeatmap.createHeatmap(function(heatmapVis) {
-    $scope.$apply(heatmap.visible = true);
-    $scope.heatmapVis = heatmapVis;
-  });
+  // CreateHeatmap.createHeatmap(function(heatmapVis) {
+  //   $scope.$apply(heatmap.visible = true);
+  //   $scope.heatmapVis = heatmapVis;
+  // });
 });
 
 })();
