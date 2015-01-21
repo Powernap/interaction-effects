@@ -1,0 +1,9 @@
+{
+  "servers": [
+    {
+      "name": "Localhost",
+      "url": "http://localhost:9083/ocpu"
+    }
+  ],
+  "dataURL": "http://localhost:8888/patients-100k.csv"
+}
