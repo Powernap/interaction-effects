@@ -9,10 +9,9 @@ app.run(function($rootScope, $http) {
       // Create rSessions Array
       $rootScope.rSessions = [];
       // and fill it with new Server connections
-      for (server in result.data)
+      result.data.forEach(function(server){
         $rootScope.rSessions.push(new RCUBE.RSession(server.url, server.name));
-
-      console.log($rootScope.rSessions);
+      });
     });
 });
 
