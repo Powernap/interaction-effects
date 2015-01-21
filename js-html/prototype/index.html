@@ -19,15 +19,20 @@
 
   <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" media="screen"> <!-- Bootstrap -->
   <link href="css/heatmap.css" rel="stylesheet" media="screen">
-  <style type='text/css'></style>
+  <style type='text/css'>
+    .header {
+      text-align: center;
+      color: lightgrey;
+    }
+  </style>
 </script>
 </head>
 <body>
   <div class=container>
-    <h1> λ OpenCPU Testing Ground λ </h1>
+    <h1 class="header"> λ OpenCPU Testing Ground λ </h1>
 
-    <input type="file" ng-controller="FileloadCtrl" onchange="angular.element(this).scope().file_changed(this)"
-    type="file" accept=".csv" />
+    <input type="file" ng-controller="FileloadCtrl as fileload" onchange="angular.element(this).scope().file_changed(this)"
+    type="file" accept=".csv" ng-show="fileload.visible" />
 
     <div ng-controller="HeatmapController as heatmap" ng-show="heatmap.visible">
       <div class=my-heatmap>

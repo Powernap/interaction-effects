@@ -1,8 +1,8 @@
-RCUBE.Dataset = function(file){
-  this._file = file;
+RCUBE.Dataset = function(url){
+  this._url = url;
   var self = this;
-  // Load the CSV file
-  this.helper.loadCSV(file.name, function(data) {
+  // Load the CSV url
+  this.helper.loadCSV(url, function(data) {
     self._csv = data;
     self._names = Object.keys(self._csv[0]);
     console.log(self);
