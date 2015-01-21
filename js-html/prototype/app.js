@@ -17,10 +17,11 @@ app.run(function($rootScope, $http) {
 
 app.controller('FileloadCtrl', function($scope) {
   // File Changed event from input area
-  $scope.file_changed = function(element, $scope) {
+  $scope.file_changed = function(element) {
     var csvFile = element.files[0];
     console.log("Loaded File");
     console.log(csvFile);
+    $scope.dataset = new RCUBE.Dataset(csvFile);
   };
 });
 
