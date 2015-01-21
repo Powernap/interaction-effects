@@ -17,6 +17,9 @@ R/interaction-effects/misc
 # Plots
 plots/
 
+# Data
+data/
+
 # History files
 .Rhistory
 
@@ -33,6 +36,5 @@ R/interaction-effects/packrat/lib*/
 .Rproj.user/
 .Rproj.user
 
-# Do not upload CSV or JSON files (datasets)
+# Do not upload CSV files (datasets)
 *.csv
-*.json
