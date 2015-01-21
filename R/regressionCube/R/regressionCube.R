@@ -4,11 +4,17 @@
 pkg.env <- new.env()
 pkg.env$data <- NA
 
-'load_dataset' <- function (csv_filepath){ #, type_filepath) {
+'load_dataset' <- function (csv_file, isURL=TRUE){ #, type_filepath) {
   #csv_filepath <- "/Users/paul/Tresors/Regresson Cubes/js-html/prototype/data/breast_fat.csv"
   #type_filepath <- "/Users/paul/Tresors/Regresson Cubes/js-html/prototype/data/dictionary.json"
-  pkg.env$data <- read.csv(csv_filepath, header = TRUE)
-  data <- read.csv(csv_filepath, header = TRUE)
+  if (isURL) {
+    pkg.env$data <- read.csv(url(csv_file), header = TRUE)
+    data <- read.csv(url(csv_file), header = TRUE)
+  }
+  else {
+    pkg.env$data <- read.csv(csv_file, header = TRUE)
+    data <- read.csv(csv_file, header = TRUE)
+  }
   #   library(rjson)
   #   dictionary <- fromJSON(file = type_filepath)
   #   # Extract the variable types
