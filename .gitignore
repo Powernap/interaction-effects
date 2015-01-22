@@ -38,3 +38,6 @@ R/interaction-effects/packrat/lib*/
 
 # Do not upload CSV files (datasets)
 *.csv
+
+# Temp folders
+tmp/

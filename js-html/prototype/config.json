@@ -5,5 +5,5 @@
       "url": "http://localhost:9083/ocpu"
     }
   ],
-  "dataURL": "http://localhost:8888/patients-100k.csv"
+  "dataURL": "http://localhost:3000/patients-100k.csv"
 }
