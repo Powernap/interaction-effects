@@ -11,8 +11,9 @@ var ACCESS_CONTROLL_ALLOW_ORIGIN = false;
 
 // Host most stuff in the public folder
 app.use(express.static(__dirname + '/../prototype'));
-// app.use(express.static(__dirname + '/../../src'));
 
+// The flow logic is adapted from the flow.js Github Repo.
+// See `flow.js/samples/Node.js/README.md` for more details!
 // Handle uploads through Flow.js
 app.post('/upload', multipartMiddleware, function(req, res) {
   flow.post(req, function(status, filename, original_filename, identifier) {
@@ -55,4 +56,6 @@ app.get('/download/:identifier', function(req, res) {
   flow.write(req.params.identifier, res);
 });
 
-app.listen(3000);
+var port = 8888;
+console.log("Started listening on Port " + port);
+app.listen(port);
