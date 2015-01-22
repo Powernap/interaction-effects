@@ -88,7 +88,6 @@ module.exports = flow = function(temporaryFolder) {
     //'invalid_flow_request', null, null, null
     //'non_flow_request', null, null, null
     $.post = function(req, callback) {
-
         var fields = req.body;
         var files = req.files;
 
