@@ -10,7 +10,7 @@ var app = express();
 var ACCESS_CONTROLL_ALLOW_ORIGIN = false;
 
 // Host most stuff in the public folder
-app.use(express.static(__dirname + '/'));
+app.use(express.static(__dirname + '/../prototype'));
 // app.use(express.static(__dirname + '/../../src'));
 
 // Handle uploads through Flow.js
