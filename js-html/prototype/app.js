@@ -16,19 +16,6 @@ app.run(function($rootScope, $http) {
     });
 });
 
-// TODO: This is currently not used, the file input is specified
-// in the config.json file. later we may make a custom URL
-app.controller('FileloadCtrl', function($scope) {
-  this.visible = false;
-  // File Changed event from input area
-  $scope.file_changed = function(element) {
-    var csvFile = element.files[0];
-    console.log("Loaded File");
-    console.log(csvFile);
-    $scope.dataset = new RCUBE.Dataset(csvFile);
-  };
-});
-
 app.factory('CreateHeatmap', function() {
 
   // # http://markdalgleish.com/2013/06/using-promises-in-angularjs-views/

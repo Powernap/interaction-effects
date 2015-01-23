@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html ng-app="cube" lang="en">
+
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <title>RCube Prototype</title>
@@ -16,9 +16,12 @@
   <script src="js/RSession.js"></script>
   <script src="js/opencpu-0.4.js"></script>
   <script src="app.js"></script>
-  <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+  <script>
+    document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')
+  </script>
 
-  <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" media="screen"> <!-- Bootstrap -->
+  <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" media="screen">
+  <!-- Bootstrap -->
   <link href="css/heatmap.css" rel="stylesheet" media="screen">
   <style type='text/css'>
     .header {
@@ -26,32 +29,27 @@
       color: lightgrey;
     }
   </style>
-</script>
+  </script>
 </head>
+
 <body>
   <div class=container>
     <h1 class="header"> λ OpenCPU Testing Ground λ </h1>
 
-    <input type="file" ng-controller="FileloadCtrl as fileload" onchange="angular.element(this).scope().file_changed(this)"
-    type="file" accept=".csv" ng-show="fileload.visible" />
+    <div flow-init="{target: '/upload'}" flow-files-submitted="$flow.upload()" flow-file-success="$file.msg = $message">
 
+      <input type="file" flow-btn/>
+      <!-- Input OR Other element as upload button
+      <span class="btn" flow-btn>Upload File</span> -->
 
-    <div flow-init="{target: '/upload'}"
-    flow-files-submitted="$flow.upload()"
-    flow-file-success="$file.msg = $message">
-
-    <input type="file" flow-btn/>
-    <!-- Input OR Other element as upload button
-    <span class="btn" flow-btn>Upload File</span> -->
-
-    <table>
-      <tr ng-repeat="file in $flow.files">
-        <td>{{$index+1}}</td>
-        <td>{{file.name}}</td>
-        <td>{{file.msg}}</td>
-      </tr>
-    </table>
-  </div>
+      <table>
+        <tr ng-repeat="file in $flow.files">
+          <td>{{$index+1}}</td>
+          <td>{{file.name}}</td>
+          <td>{{file.msg}}</td>
+        </tr>
+      </table>
+    </div>
 
     <div ng-controller="HeatmapController as heatmap" ng-show="heatmap.visible">
       <div class=my-heatmap>
@@ -65,10 +63,11 @@
         <div id="tooltip-heatmap" class="hidden">
           <p>
             <span id="value">
-            </p>
+          </p>
         </div>
       </div>
     </div>
   </div>
 </body>
+
 </html>
