@@ -22,12 +22,13 @@ app.config(['flowFactoryProvider', function (flowFactoryProvider) {
     // Test Chunks looks for already uploaded chunks before
     // uploading them again. This may be suitable for large data sets
     testChunks: true,
+    progressCallbacksInterval: 0,
     permanentErrors:[404, 500, 501]
   };
   // You can also set default events:
   flowFactoryProvider.on('catchAll', function (event) {
     // Uncomment to see all Flow Events
-    console.log('catchAll', arguments);
+    // console.log('catchAll', arguments);
   });
   // Can be used with different implementations of Flow.js
   // flowFactoryProvider.factory = fustyFlowFactory;
@@ -40,6 +41,12 @@ app.directive('fileUpload', function(){
     controller: function($scope){
       this.visible = true;
       this.uploadEnabled = false;
+      this.progressbar = {
+        "visible": false,
+        "percent": 0
+      }
+      this.progressbarVisible = false;
+      var controllerSelf = this;
       // Has to be defined on the Scope, because `input`s don't have an angular change event
       // See https://stackoverflow.com/questions/17922557/angularjs-how-to-check-for-changes-in-file-input-fields
       uploader = this;
@@ -51,11 +58,20 @@ app.directive('fileUpload', function(){
       this.upload = function() {
         $scope.uploader.flow.upload();
       };
-      $scope.uploader.controllerFn = function ($flow, $file, $message) {
+
+      $scope.uploader.flowUploadStart = function(){
+        controllerSelf.progressbar.visible = true;
+      };
+
+      $s<cope.uploader.flowFileProgress = function($file){
+        controllerSelf.progressbar.percent = $file.progress() * 100;
+      };
+
+      $scope.uploader.flowFileSuccess = function ($flow, $file, $message) {
         console.log($file);
-        console.log($flow);
-        console.log($message);
-      }
+        // console.log($flow);
+        // console.log($message);
+      };
     },
     controllerAs: 'myUploader'
   };
