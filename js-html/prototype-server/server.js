@@ -52,14 +52,21 @@ app.post('/upload', multipartMiddleware, function(req, res) {
       getHashFromFile(UPLOAD_DIR, filename, function(hash){
         console.log("Hash for file " + filename + ' is ' + hash);
         var extension = path.extname(filename);
-        fs.rename(UPLOAD_DIR + filename, UPLOAD_DIR + hash + extension, function(err) {
-          if ( err ) console.log('ERROR: ' + err);
-        });
+        // Do not rename until it is clear how we communicate the namechange
+        // fs.rename(UPLOAD_DIR + filename, UPLOAD_DIR + hash + extension, function(err) {
+        //   if ( err ) console.log('ERROR: ' + err);
+        // });
+        // res.req.body.flowFilename = hash + extension;
+        // res.status(status).send();
       });
     }
     if (ACCESS_CONTROLL_ALLOW_ORIGIN) {
       res.header("Access-Control-Allow-Origin", "*");
     }
+    // req.body.flowFilename = 'WOHOOOO';
+    // res.req.body.flowFilename = 'WOHOOOO';
+    // submit = res.status(status);
+    // submit.req.body.flowFilename = 'WOHOOOO';
     res.status(status).send();
   });
 });
