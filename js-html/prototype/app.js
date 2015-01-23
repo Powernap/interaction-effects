@@ -16,6 +16,13 @@ app.run(function($rootScope, $http) {
     });
 });
 
+app.directive('fileUpload', function(){
+  return {
+    restrict: 'E',
+    templateUrl: 'directives/file-upload.html'
+  };
+});
+
 app.factory('CreateHeatmap', function() {
 
   // # http://markdalgleish.com/2013/06/using-promises-in-angularjs-views/
