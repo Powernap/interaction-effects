@@ -44,6 +44,7 @@ app.post('/upload', multipartMiddleware, function(req, res) {
     if (status == 'done') {
       var filepath = UPLOAD_DIR + filename;
       var stream = fs.createWriteStream(filepath);
+      console.log(identifier);
       flow.write(identifier, stream);
 
       getHashFromFile(UPLOAD_DIR, filename, function(hash){

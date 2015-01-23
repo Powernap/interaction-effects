@@ -1,6 +1,7 @@
 <div class="panel panel-default upload" flow-init flow-name="uploader.flow"
   ng-show="myUploader.visible"
-  flow-file-added="!!{csv:1}[$file.getExtension()]">
+  flow-file-added="!!{csv:1}[$file.getExtension()]"
+  flow-file-success="uploader.controllerFn($flow, $file, $message)">
   <div class="panel-heading">
     <h3 class="panel-title">File Upload</h3>
   </div>

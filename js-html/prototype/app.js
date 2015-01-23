@@ -26,7 +26,8 @@ app.config(['flowFactoryProvider', function (flowFactoryProvider) {
   };
   // You can also set default events:
   flowFactoryProvider.on('catchAll', function (event) {
-    console.log('catchAll', arguments);
+    // Uncomment to see all Flow Events
+    // console.log('catchAll', arguments);
   });
   // Can be used with different implementations of Flow.js
   // flowFactoryProvider.factory = fustyFlowFactory;
@@ -48,9 +49,13 @@ app.directive('fileUpload', function(){
 
       $scope.uploader = {};
       this.upload = function() {
-        console.log("clicked upload");
         $scope.uploader.flow.upload();
       };
+      $scope.uploader.controllerFn = function ($flow, $file, $message) {
+        console.log($file);
+        console.log($flow);
+        console.log($message);
+      }
     },
     controllerAs: 'myUploader'
   };
