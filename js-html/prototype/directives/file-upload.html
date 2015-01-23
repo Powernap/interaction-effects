@@ -1,21 +1,15 @@
-<div flow-init flow-name="uploader.flow"
+<div class="panel panel-default upload" flow-init flow-name="uploader.flow"
   ng-show="myUploader.visible"
   flow-file-added="!!{csv:1}[$file.getExtension()]">
-
-  <input type="file" accept=".csv" flow-btn/>
-  <button class="btn btn-default" ng-click="myUploader.upload()">Upload</button>
-
-  <div ng-repeat="file in uploader.flow.files" >
-    {{file.name}} <a ng-click="file.cancel()">X</a>
+  <div class="panel-heading">
+    <h3 class="panel-title">File Upload</h3>
   </div>
-  Total files #{{uploader.flow.files.length}}
-
-
-  <!-- <table>
-    <tr ng-repeat="file in $flow.files">
-      <td>{{$index+1}}</td>
-      <td>{{file.name}}</td>
-      <td>{{file.msg}}</td>
-    </tr>
-  </table> -->
+  <div class="panel-body">
+    <div class="form-group">
+      <input type="file" accept=".csv" flow-btn onchange="angular.element(this).scope().fileNameChanged()"/>
+      <p class="help-block" ng-repeat="file in uploader.flow.files"><button type="button" ng-click="file.cancel()" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button> {{file.name}}</p>
+      <button class="btn btn-default" ng-click="myUploader.upload()"
+        ng-disabled="!myUploader.uploadEnabled">Upload</button>
+    </div>
+  </div>
 </div>
