@@ -27,7 +27,7 @@ app.config(['flowFactoryProvider', function (flowFactoryProvider) {
   // You can also set default events:
   flowFactoryProvider.on('catchAll', function (event) {
     // Uncomment to see all Flow Events
-    // console.log('catchAll', arguments);
+    console.log('catchAll', arguments);
   });
   // Can be used with different implementations of Flow.js
   // flowFactoryProvider.factory = fustyFlowFactory;

@@ -46,16 +46,17 @@ app.post('/upload', multipartMiddleware, function(req, res) {
       var stream = fs.createWriteStream(filepath);
       console.log(identifier);
       flow.write(identifier, stream);
+      // Clean chunks after the file is assembled
+      flow.clean(identifier);
 
       getHashFromFile(UPLOAD_DIR, filename, function(hash){
-        console.log(hash);
+        console.log("Hash for file " + filename + ' is ' + hash);
         var extension = path.extname(filename);
         fs.rename(UPLOAD_DIR + filename, UPLOAD_DIR + hash + extension, function(err) {
           if ( err ) console.log('ERROR: ' + err);
         });
       });
     }
-    // TODO: Remove files from tmp folder after file is assembled
     if (ACCESS_CONTROLL_ALLOW_ORIGIN) {
       res.header("Access-Control-Allow-Origin", "*");
     }
