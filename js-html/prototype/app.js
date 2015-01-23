@@ -63,7 +63,7 @@ app.directive('fileUpload', function(){
         controllerSelf.progressbar.visible = true;
       };
 
-      $s<cope.uploader.flowFileProgress = function($file){
+      $scope.uploader.flowFileProgress = function($file){
         controllerSelf.progressbar.percent = $file.progress() * 100;
       };
 
