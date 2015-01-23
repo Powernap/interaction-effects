@@ -1,14 +1,21 @@
-<div flow-init="{target: '/upload'}" flow-files-submitted="$flow.upload()" flow-file-success="$file.msg = $message">
+<div flow-init flow-name="uploader.flow"
+  ng-show="myUploader.visible"
+  flow-file-added="!!{csv:1}[$file.getExtension()]">
 
-  <input type="file" flow-btn/>
-  <!-- Input OR Other element as upload button
-  <span class="btn" flow-btn>Upload File</span> -->
+  <input type="file" accept=".csv" flow-btn/>
+  <button class="btn btn-default" ng-click="myUploader.upload()">Upload</button>
 
-  <table>
+  <div ng-repeat="file in uploader.flow.files" >
+    {{file.name}} <a ng-click="file.cancel()">X</a>
+  </div>
+  Total files #{{uploader.flow.files.length}}
+
+
+  <!-- <table>
     <tr ng-repeat="file in $flow.files">
       <td>{{$index+1}}</td>
       <td>{{file.name}}</td>
       <td>{{file.msg}}</td>
     </tr>
-  </table>
+  </table> -->
 </div>

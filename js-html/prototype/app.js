@@ -12,14 +12,40 @@ app.run(function($rootScope, $http) {
       result.data.servers.forEach(function(server){
         $rootScope.rSessions.push(new RCUBE.RSession(server.url, server.name));
       });
-      $rootScope.dataset = new RCUBE.Dataset(result.data.dataURL);
+      // $rootScope.dataset = new RCUBE.Dataset(result.data.dataURL);
     });
 });
+
+app.config(['flowFactoryProvider', function (flowFactoryProvider) {
+  flowFactoryProvider.defaults = {
+    target: '/upload',
+    // Test Chunks looks for already uploaded chunks before
+    // uploading them again. This may be suitable for large data sets
+    testChunks: true,
+    permanentErrors:[404, 500, 501]
+  };
+  // You can also set default events:
+  flowFactoryProvider.on('catchAll', function (event) {
+    console.log('catchAll', arguments);
+  });
+  // Can be used with different implementations of Flow.js
+  // flowFactoryProvider.factory = fustyFlowFactory;
+}]);
 
 app.directive('fileUpload', function(){
   return {
     restrict: 'E',
-    templateUrl: 'directives/file-upload.html'
+    templateUrl: 'directives/file-upload.html',
+    controller: function($scope){
+      this.visible = true;
+
+      $scope.uploader = {};
+      this.upload = function() {
+        console.log("clicked upload");
+        $scope.uploader.flow.upload();
+      };
+    },
+    controllerAs: 'myUploader'
   };
 });
 

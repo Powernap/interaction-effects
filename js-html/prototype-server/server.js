@@ -28,7 +28,6 @@ var getHashFromFile = function(filepath, filename, callback) {
 
   reader.on('end', function() {
     var hash = shasum.digest('hex');
-    // console.log(d + '  ' + filename);
     callback(hash);
   });
 }
@@ -76,6 +75,8 @@ app.options('/upload', function(req, res){
 app.get('/upload', function(req, res) {
   flow.get(req, function(status, filename, original_filename, identifier) {
     console.log('GET', status);
+    console.log('GET', filename);
+    console.log('GET', original_filename);
     if (ACCESS_CONTROLL_ALLOW_ORIGIN) {
       res.header("Access-Control-Allow-Origin", "*");
     }
