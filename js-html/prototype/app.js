@@ -19,7 +19,6 @@ app.run(['$rootScope', '$http', 'rSessions', function($rootScope, $http, rSessio
 app.factory('dataLoading', ['$rootScope', 'rSessions', function($rootScope, rSessions){
   var dataLoadingService = {};
   dataLoadingService.dataset = $rootScope.dataset;
-  console.log(dataLoadingService.dataset);
 
   dataLoadingService.loadData = function(url) {
     dataLoadingService.dataset._url = url;
@@ -33,9 +32,6 @@ app.factory('dataLoading', ['$rootScope', 'rSessions', function($rootScope, rSes
         ['age', 'gender'].forEach(function(dimensionName){
           rSessions.calculateRSquared(dimensionName).then(function(rSquared){
             dataLoadingService.dataset._rSquared[dimensionName] = rSquared;
-            console.log(dimensionName);
-            console.log(rSquared);
-            console.log("Broadcasting rSquaredCalculationDone of dim " + dimensionName);
             $rootScope.$broadcast('rSquaredCalculationDone', dimensionName);
           });
         });
@@ -74,7 +70,6 @@ app.factory('rSessions', ['$q', function($q){
       var numberSessionsLoaded = 0;
       rSessionsService.sessions.forEach(function(rsession, i){
         rsession.loadDataset(url, function(){
-          console.log("Loaded for #" + i);
           numberSessionsLoaded = numberSessionsLoaded + 1;
           if (numberSessionsLoaded == rSessionsService.sessions.length)
             resolve();
@@ -139,7 +134,7 @@ app.directive('fileUpload', ['$rootScope', 'createHeatmap', 'rSessions', 'dataLo
       };
 
       $scope.uploader.flowFileSuccess = function ($flow, $file, $message) {
-        console.log($file);
+        // console.log($file);
         // rSessions.loadDataset(document.URL + $file.name);
         dataLoading.loadData(document.URL + $file.name);
         // createHeatmap.createHeatmap().then(function(heatmap){ });
@@ -151,7 +146,6 @@ app.directive('fileUpload', ['$rootScope', 'createHeatmap', 'rSessions', 'dataLo
 
 app.factory('createHeatmap', ['$rootScope', '$q', 'dataLoading', function($rootScope, $q, dataLoading) {
 
-  console.log("createHeatmap Called");
   var createHeatmapService = {};
   createHeatmapService.status = {'created': false};
 
@@ -164,7 +158,6 @@ app.factory('createHeatmap', ['$rootScope', '$q', 'dataLoading', function($rootS
     var rSquared = dataLoading.dataset._rSquared[dependentVariable];
     myHeatmap = new RCUBE.Heatmap(".my-heatmap", rSquared, names);
     this.status.created = true;
-    console.log("Heatmap created");
   }
 
   return createHeatmapService;
