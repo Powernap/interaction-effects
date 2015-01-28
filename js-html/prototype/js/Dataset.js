@@ -1,19 +1,15 @@
-RCUBE.Dataset = function(url){
-  this._url = url;
-  var self = this;
-  // Load the CSV url
-  this.helper.loadCSV(url, function(data) {
-    self._csv = data;
-    self._names = Object.keys(self._csv[0]);
-    console.log(self);
-  });
+RCUBE.Dataset = function(){
+  this._url = undefined;
+  this._csvData = undefined;
+  this._dimensionNames = undefined;
+  this._rSquared = {};
+};
+
+RCUBE.Dataset.prototype.setCsvData = function(csvData) {
+  this._csvData = csvData;
+  this._dimensionNames = Object.keys(this._csvData[0]);
 }
 
-RCUBE.Dataset.prototype.helper = {};
-
-RCUBE.Dataset.prototype.helper.loadCSV = function(path, callback) {
-  d3.csv(path, function(data){
-    if (callback != undefined)
-      callback(data);
-  });
+RCUBE.Dataset.prototype.getDimensionNames = function(){
+  return this._dimensionNames;
 }
