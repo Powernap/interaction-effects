@@ -21,12 +21,12 @@ RCUBE.RSession.prototype.loadDataset = function(csvFilePath, callback) {
   });
 };
 
-RCUBE.RSession.prototype.calculateRSquaredValues = function(callback) {
+RCUBE.RSession.prototype.calculateRSquaredValues = function(dependentVariable, callback) {
   self = this;
   this._openCPUConnection.execute(
     "/library/regressionCube/R",
     'r_squared_matrix',
-  {"data": self._datasetSession, "dependent": "age"},
+  {"data": self._datasetSession, "dependent": dependentVariable},
   function(_session){
     self._rSquaredSession = _session;
     if (callback != undefined) callback(_session);

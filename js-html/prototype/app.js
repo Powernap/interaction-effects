@@ -26,8 +26,11 @@ app.factory('dataLoading', ['$rootScope', 'rSessions', function($rootScope, rSes
     loadCSV(url, function(csvData){
       dataset.setCsvData(csvData);
       rSessions.loadDataset(url).then(function(data){
-        console.log("All Sessions loaded");
-        dataset.getDimensionNames().forEach(function(dimensionName){
+        console.log("Dataset loaded for all active OpenCPU sessions");
+        // TODO: All requests are executed in parallel, it will be a good
+        // idea to perform it manually
+        // dataset.getDimensionNames().forEach(function(dimensionName){
+        ['age', 'gender'].forEach(function(dimensionName){
           rSessions.calculateRSquared(dimensionName).then(function(rSquared){
             dataset._rSquared[dimensionName] = rSquared;
             console.log(dimensionName);
@@ -55,8 +58,7 @@ app.factory('rSessions', ['$q', function($q){
       // TODO: Write distribution algorithm here!
       var rsession = rSessionsService.sessions[0];
 
-      // TODO: Respect targetVariable Input
-      rsession.calculateRSquaredValues(function(rsquaredSession){
+      rsession.calculateRSquaredValues(targetVariable, function(rsquaredSession){
         $.getJSON(rsquaredSession.loc + "R/.val/json" , function(rSquaredData){
           resolve(rSquaredData);
         });
@@ -74,11 +76,6 @@ app.factory('rSessions', ['$q', function($q){
           numberSessionsLoaded = numberSessionsLoaded + 1;
           if (numberSessionsLoaded == rSessionsService.sessions.length)
             resolve();
-          // rsession.calculateRSquaredValues(function(rsquaredSession){
-          //   $.getJSON(rsquaredSession.loc + "R/.val/json" , function(data){
-          //     console.log(data);
-          //   });
-          // });
         });
       });
     });
