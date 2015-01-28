@@ -18,23 +18,25 @@ app.run(['$rootScope', '$http', 'rSessions', function($rootScope, $http, rSessio
 
 app.factory('dataLoading', ['$rootScope', 'rSessions', function($rootScope, rSessions){
   var dataLoadingService = {};
-  var dataset = $rootScope.dataset;
-  console.log(dataset);
+  dataLoadingService.dataset = $rootScope.dataset;
+  console.log(dataLoadingService.dataset);
 
   dataLoadingService.loadData = function(url) {
-    dataset._url = url;
+    dataLoadingService.dataset._url = url;
     loadCSV(url, function(csvData){
-      dataset.setCsvData(csvData);
+      dataLoadingService.dataset.setCsvData(csvData);
       rSessions.loadDataset(url).then(function(data){
         console.log("Dataset loaded for all active OpenCPU sessions");
         // TODO: All requests are executed in parallel, it will be a good
         // idea to perform it manually
-        // dataset.getDimensionNames().forEach(function(dimensionName){
+        // dataLoadingService.dataset.getDimensionNames().forEach(function(dimensionName){
         ['age', 'gender'].forEach(function(dimensionName){
           rSessions.calculateRSquared(dimensionName).then(function(rSquared){
-            dataset._rSquared[dimensionName] = rSquared;
+            dataLoadingService.dataset._rSquared[dimensionName] = rSquared;
             console.log(dimensionName);
             console.log(rSquared);
+            console.log("Broadcasting rSquaredCalculationDone of dim " + dimensionName);
+            $rootScope.$broadcast('rSquaredCalculationDone', dimensionName);
           });
         });
       });
@@ -147,64 +149,24 @@ app.directive('fileUpload', ['$rootScope', 'createHeatmap', 'rSessions', 'dataLo
   };
 }]);
 
-app.factory('createHeatmap', ['$rootScope', '$q', 'rSessions', function($rootScope, $q, rSessions) {
+app.factory('createHeatmap', ['$rootScope', '$q', 'dataLoading', function($rootScope, $q, dataLoading) {
 
   console.log("createHeatmap Called");
   var createHeatmapService = {};
   createHeatmapService.status = {'created': false};
 
-  var broadcastUpdate = function () {
-    $rootScope.$broadcast('createHeatmap.status.update');
+  createHeatmapService.getStatus = function(){
+    return createHeatmapService.status['created'];
   };
 
-  // # http://markdalgleish.com/2013/06/using-promises-in-angularjs-views/
-  // var createHeatmap = function(csvUrl, callback) {
-  //   var start = new Date().getTime();
-  //   myRSession.loadDataset(csvUrl, 'FALSE', function(session){
-  //     myRSession.calculateRSquaredValues(myRSession._datasetSession, function(_session){
-  //       var end = new Date();
-  //       var time = (end.getTime() - start) / (1000);
-  //       console.log("[" + end.getHours() + ":" + end.getMinutes() + ":" + end.getSeconds() + "] Execution time " + ": " + time + " seconds");
-  //       $.getJSON(myRSession._rSquaredSession.loc + "R/.val/json" , function(data){
-  //         myRSession._rSquaredJSON = data;
-  //         myJSON = data;
-  //         // Test: Create RSquared Values
-  //         var rSquared = data;
-  //         var names = ["gender","age","diab","hypertension","stroke","chd","smoking","bmi"];
-  //         myHeatmap = new RCUBE.Heatmap(".my-heatmap", rSquared, names);
-  //         callback(myHeatmap);
-  //       });
-  //     });
-  //   });
-  // };
+  createHeatmapService.createHeatmap = function(dependentVariable){
+    var names = dataLoading.dataset.getDimensionNames();
+    var rSquared = dataLoading.dataset._rSquared[dependentVariable];
+    myHeatmap = new RCUBE.Heatmap(".my-heatmap", rSquared, names);
+    this.status.created = true;
+    console.log("Heatmap created");
+  }
 
-  createHeatmapService.createHeatmap = function(url) {
-    // Create Promise
-    return $q(function(resolve, reject){
-      myRSession = rSessions.sessions[0];
-      var start = new Date().getTime();
-      myRSession.loadDataset("/Users/paul/Desktop/patients-100k.csv", 'FALSE', function(session){
-        myRSession.calculateRSquaredValues(myRSession._datasetSession, function(_session){
-          var end = new Date();
-          var time = (end.getTime() - start) / (1000);
-          console.log("[" + end.getHours() + ":" + end.getMinutes() + ":" + end.getSeconds() + "] Execution time " + ": " + time + " seconds");
-          $.getJSON(myRSession._rSquaredSession.loc + "R/.val/json" , function(data){
-            myRSession._rSquaredJSON = data;
-            myJSON = data;
-            // Test: Create RSquared Values
-            var rSquared = data;
-            var names = ["gender","age","diab","hypertension","stroke","chd","smoking","bmi"];
-            myHeatmap = new RCUBE.Heatmap(".my-heatmap", rSquared, names);
-            // $rootScope.$apply(createHeatmapService.created = true);
-            createHeatmapService.status.created = true;
-            console.log("Heatmap created");
-            broadcastUpdate();
-            resolve(myHeatmap);
-          });
-        });
-      });
-    });
-  };
   return createHeatmapService;
 }]);
 
@@ -213,8 +175,14 @@ app.controller("HeatmapController", function($scope, createHeatmap){
   // http://jimhoskins.com/2012/12/17/angularjs-and-apply.html
   // https://variadic.me/posts/2013-10-15-share-state-between-controllers-in-angularjs.html
   heatmap.visible = createHeatmap.status.created;
-  $scope.$on('createHeatmap.status.update', function () {
-    console.log("Got Status update");
+
+  $scope.$on('rSquaredCalculationDone', function(event, dimension){
+    if (dimension == 'age')
+      createHeatmap.createHeatmap('age');
+  });
+
+  // https://stackoverflow.com/questions/15380140/service-variable-not-updating-in-controller
+  $scope.$watch(createHeatmap.getStatus, function(){
     heatmap.visible = createHeatmap.status.created;
   });
 });
