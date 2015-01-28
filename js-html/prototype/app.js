@@ -2,18 +2,27 @@
 var app = angular.module('cube', ['flow']);
 
 // Constructor Code
-app.run(function($rootScope, $http) {
+app.run(['$rootScope', '$http', 'rSessions', function($rootScope, $http, rSessions) {
   // Load the file containing all servers
   $http.get('config.json')
     .then(function(result){
-      // Create rSessions Array
-      $rootScope.rSessions = [];
       // and fill it with new Server connections
       result.data.servers.forEach(function(server){
-        $rootScope.rSessions.push(new RCUBE.RSession(server.url, server.name));
+        // $rootScope.rSessions.push(new RCUBE.RSession(server.url, server.name));
+        rSessions.pushService(server.url, server.name);
       });
       // $rootScope.dataset = new RCUBE.Dataset(result.data.dataURL);
     });
+}]);
+
+app.factory('rSessions', function(){
+  var rSessionsService = {};
+  rSessionsService.sessions = [];
+  rSessionsService.pushService = function(url, name){
+    rSessionsService.sessions.push(new RCUBE.RSession(url, name))
+    console.log("Created new R Session: " + url + ", " + name);
+  };
+  return rSessionsService;
 });
 
 app.config(['flowFactoryProvider', function (flowFactoryProvider) {
@@ -34,7 +43,14 @@ app.config(['flowFactoryProvider', function (flowFactoryProvider) {
   // flowFactoryProvider.factory = fustyFlowFactory;
 }]);
 
-app.directive('fileUpload', function(){
+app.factory('heatmapService', function() {
+  var shinyNewServiceInstance = {};
+  // factory function body that constructs shinyNewServiceInstance
+  shinyNewServiceInstance.data = '3';
+  return shinyNewServiceInstance;
+});
+
+app.directive('fileUpload', ['$rootScope', 'createHeatmap', function($rootScope, createHeatmap){
   return {
     restrict: 'E',
     templateUrl: 'directives/file-upload.html',
@@ -69,21 +85,33 @@ app.directive('fileUpload', function(){
 
       $scope.uploader.flowFileSuccess = function ($flow, $file, $message) {
         console.log($file);
+        createHeatmap.createHeatmap().then(function(heatmap){
+          console.log("Flow Controller: Created Successfully");
+          console.log("Flow Controller: Status Created: " + createHeatmap.status.created);
+        });
         // console.log($flow);
         // console.log($message);
       };
     },
     controllerAs: 'myUploader'
   };
-});
+}]);
 
-app.factory('CreateHeatmap', function() {
+app.factory('createHeatmap', ['$rootScope', '$q', function($rootScope, $q) {
+
+  console.log("createHeatmap Called");
+  var createHeatmapService = {};
+  createHeatmapService.status = {'created': false};
+
+  var broadcastUpdate = function () {
+    $rootScope.$broadcast('createHeatmap.status.update');
+  };
 
   // # http://markdalgleish.com/2013/06/using-promises-in-angularjs-views/
-  var createHeatmap = function(callback) {
-    myRSession = new RCUBE.RSession("http://localhost:1226/ocpu");
+  var createHeatmap = function(csvUrl, callback) {
+    myRSession = new $rSessions[0];
     var start = new Date().getTime();
-    myRSession.loadDataset("/Users/paul/Desktop/patients-100k.csv", function(session){
+    myRSession.loadDataset(csvUrl, 'FALSE', function(session){
       myRSession.calculateRSquaredValues(myRSession._datasetSession, function(_session){
         var end = new Date();
         var time = (end.getTime() - start) / (1000);
@@ -100,17 +128,55 @@ app.factory('CreateHeatmap', function() {
       });
     });
   };
-  return {
-    createHeatmap: createHeatmap
-  };
-});
 
-app.controller("HeatmapController", function($scope, CreateHeatmap){
+  createHeatmapService.createHeatmap = function() {
+    return $q(function(resolve, reject){
+    myRSession = new RCUBE.RSession("http://localhost:1412/ocpu");
+    var start = new Date().getTime();
+    myRSession.loadDataset("/Users/paul/Desktop/patients-100k.csv", 'FALSE', function(session){
+      myRSession.calculateRSquaredValues(myRSession._datasetSession, function(_session){
+        var end = new Date();
+        var time = (end.getTime() - start) / (1000);
+        console.log("[" + end.getHours() + ":" + end.getMinutes() + ":" + end.getSeconds() + "] Execution time " + ": " + time + " seconds");
+        $.getJSON(myRSession._rSquaredSession.loc + "R/.val/json" , function(data){
+          myRSession._rSquaredJSON = data;
+          myJSON = data;
+          // Test: Create RSquared Values
+          var rSquared = data;
+          var names = ["gender","age","diab","hypertension","stroke","chd","smoking","bmi"];
+          myHeatmap = new RCUBE.Heatmap(".my-heatmap", rSquared, names);
+          // $rootScope.$apply(createHeatmapService.created = true);
+          createHeatmapService.status.created = true;
+          console.log("Heatmap created");
+          broadcastUpdate();
+          resolve(myHeatmap);
+          // callback(myHeatmap);
+        });
+      });
+    });
+    });
+  };
+  return createHeatmapService;
+}]);
+
+app.controller("HeatmapController", function($scope, createHeatmap){
   var heatmap = this;
+  heatmap.visible = createHeatmap.status.created;
+  $scope.$on('createHeatmap.status.update', function () {
+    console.log("Got Status update");
+    heatmap.visible = createHeatmap.status.created;
+  });
+
+  // createHeatmap.createHeatmap().then(function(){
+  //   heatmap.visible = createHeatmap.created;
+  //   // $scope.$apply(heatmap.visible = createHeatmap.created);
+  // });
   // http://jimhoskins.com/2012/12/17/angularjs-and-apply.html
-  // CreateHeatmap.createHeatmap(function(heatmapVis) {
-  //   $scope.$apply(heatmap.visible = true);
-  //   $scope.heatmapVis = heatmapVis;
+  // createHeatmap.createHeatmap('/Users/paul/Desktop/patients-100k.csv', function(heatmapVis) {
+  // createHeatmap.createHeatmap(function(heatmapVis) {
+  //   $scope.$apply(heatmap.visible = createHeatmap.created);
+  //   // heatmap.visible = createHeatmap.created;
+  //   // $scope.heatmapVis = heatmapVis;
   // });
 });
 

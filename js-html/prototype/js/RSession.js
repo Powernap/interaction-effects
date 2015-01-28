@@ -6,12 +6,13 @@ RCUBE.RSession = function(URLToOpenCPUServer, name) {
   this._rSquaredJSON = undefined;
 };
 
-RCUBE.RSession.prototype.loadDataset = function(csvFilePath, callback) {
+RCUBE.RSession.prototype.loadDataset = function(csvFilePath, isURL, callback) {
   self = this;
   this._openCPUConnection.execute(
     "/library/regressionCube/R",
     'load_dataset',
-  {"csv_filepath": csvFilePath},
+  {"csv_file": csvFilePath,
+  'isURL': isURL},
   function(session){
     self._datasetSession = session;
     if (callback != undefined) callback(session);
