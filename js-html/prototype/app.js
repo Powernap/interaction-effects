@@ -39,8 +39,6 @@ app.config(['flowFactoryProvider', function (flowFactoryProvider) {
     // Uncomment to see all Flow Events
     // console.log('catchAll', arguments);
   });
-  // Can be used with different implementations of Flow.js
-  // flowFactoryProvider.factory = fustyFlowFactory;
 }]);
 
 app.factory('heatmapService', function() {
@@ -85,12 +83,7 @@ app.directive('fileUpload', ['$rootScope', 'createHeatmap', function($rootScope,
 
       $scope.uploader.flowFileSuccess = function ($flow, $file, $message) {
         console.log($file);
-        createHeatmap.createHeatmap().then(function(heatmap){
-          console.log("Flow Controller: Created Successfully");
-          console.log("Flow Controller: Status Created: " + createHeatmap.status.created);
-        });
-        // console.log($flow);
-        // console.log($message);
+        createHeatmap.createHeatmap().then(function(heatmap){ });
       };
     },
     controllerAs: 'myUploader'
@@ -150,7 +143,6 @@ app.factory('createHeatmap', ['$rootScope', '$q', function($rootScope, $q) {
           console.log("Heatmap created");
           broadcastUpdate();
           resolve(myHeatmap);
-          // callback(myHeatmap);
         });
       });
     });
@@ -160,24 +152,14 @@ app.factory('createHeatmap', ['$rootScope', '$q', function($rootScope, $q) {
 }]);
 
 app.controller("HeatmapController", function($scope, createHeatmap){
-  var heatmap = this;
+
+  // http://jimhoskins.com/2012/12/17/angularjs-and-apply.html
+  // https://variadic.me/posts/2013-10-15-share-state-between-controllers-in-angularjs.html
   heatmap.visible = createHeatmap.status.created;
   $scope.$on('createHeatmap.status.update', function () {
     console.log("Got Status update");
     heatmap.visible = createHeatmap.status.created;
   });
-
-  // createHeatmap.createHeatmap().then(function(){
-  //   heatmap.visible = createHeatmap.created;
-  //   // $scope.$apply(heatmap.visible = createHeatmap.created);
-  // });
-  // http://jimhoskins.com/2012/12/17/angularjs-and-apply.html
-  // createHeatmap.createHeatmap('/Users/paul/Desktop/patients-100k.csv', function(heatmapVis) {
-  // createHeatmap.createHeatmap(function(heatmapVis) {
-  //   $scope.$apply(heatmap.visible = createHeatmap.created);
-  //   // heatmap.visible = createHeatmap.created;
-  //   // $scope.heatmapVis = heatmapVis;
-  // });
 });
 
 })();
