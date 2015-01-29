@@ -6,6 +6,7 @@ angular.module('cube')
     controller: function($scope){
       this.visible = true;
       this.uploadEnabled = false;
+      this.hideUploadButton = false;
       this.progressbar = {
         "visible": false,
         "percent": 0
@@ -21,6 +22,8 @@ angular.module('cube')
 
       $scope.uploader = {};
       this.upload = function() {
+        this.uploadEnabled = false;
+        this.hideUploadButton = true;
         $scope.uploader.flow.upload();
       };
 
