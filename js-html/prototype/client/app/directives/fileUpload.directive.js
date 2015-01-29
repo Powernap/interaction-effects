@@ -1,5 +1,5 @@
 angular.module('cube')
-.directive('fileUpload', ['$rootScope', 'createHeatmap', 'data', function($rootScope, createHeatmap, data){
+.directive('fileUpload', ['$rootScope', 'data', function($rootScope, data){
   return {
     restrict: 'E',
     templateUrl: 'app/directives/file-upload.html',
@@ -33,10 +33,7 @@ angular.module('cube')
       };
 
       $scope.uploader.flowFileSuccess = function ($flow, $file, $message) {
-        // console.log($file);
-        // rSessions.loadDataset(document.URL + $file.name);
         data.loadData(document.URL + $file.name);
-        // createHeatmap.createHeatmap().then(function(heatmap){ });
       };
     },
     controllerAs: 'myUploader'

@@ -32,40 +32,23 @@ app.config(['flowFactoryProvider', function (flowFactoryProvider) {
   });
 }]);
 
-app.factory('createHeatmap', ['$rootScope', '$q', 'data', function($rootScope, $q, data) {
+app.controller("HeatmapController", ['$scope', 'data', function($scope, data){
+  var heatmapContainer = this;
+  // http://jimhoskins.com/2012/12/17/angularjs-and-apply.html
+  // https://variadic.me/posts/2013-10-15-share-state-between-controllers-in-angularjs.html
+  // https://stackoverflow.com/questions/15380140/service-variable-not-updating-in-controller
 
-  var createHeatmapService = {};
-  createHeatmapService.status = {'created': false};
-
-  createHeatmapService.getStatus = function(){
-    return createHeatmapService.status['created'];
-  };
-
-  createHeatmapService.createHeatmap = function(dependentVariable){
+  var createHeatmap = function(dependentVariable){
     var names = data.dataset.getDimensionNames();
     var rSquared = data.dataset._rSquared[dependentVariable];
     myHeatmap = new RCUBE.Heatmap(".my-heatmap", rSquared, names);
-    this.status.created = true;
+    heatmapContainer.visible = true;
   }
-
-  return createHeatmapService;
-}]);
-
-app.controller("HeatmapController", function($scope, createHeatmap){
-  var heatmap = this;
-  // http://jimhoskins.com/2012/12/17/angularjs-and-apply.html
-  // https://variadic.me/posts/2013-10-15-share-state-between-controllers-in-angularjs.html
-  heatmap.visible = createHeatmap.status.created;
 
   $scope.$on('rSquaredCalculationDone', function(event, dimension){
     if (dimension == 'age')
-      createHeatmap.createHeatmap('age');
+      createHeatmap('age');
   });
-
-  // https://stackoverflow.com/questions/15380140/service-variable-not-updating-in-controller
-  $scope.$watch(createHeatmap.getStatus, function(){
-    heatmap.visible = createHeatmap.status.created;
-  });
-});
+}]);
 
 })();
