@@ -17,6 +17,7 @@
   <script src="assets/js/opencpu-0.4.js"></script>
   <script src="app.js"></script>
   <script src="app/directives/fileUpload.directive.js"></script>
+  <script src="app/directives/heatmap.directive.js"></script>
   <script src="app/services/data.service.js"></script>
   <script>
     document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')
@@ -40,22 +41,7 @@
 
     <file-upload></file-upload>
 
-    <div ng-controller="HeatmapController as heatmap" ng-show="heatmap.visible">
-      <div class=my-heatmap>
-        <h3>Heatmap Prototype</h3>
-        <p>Order:
-          <select id="order-heatmap">
-            <option value="name">by Name</option>
-            <option value="count">by Frequency</option>
-          </select>
-        </p>
-        <div id="tooltip-heatmap" class="hidden">
-          <p>
-            <span id="value">
-          </p>
-        </div>
-      </div>
-    </div>
+    <heatmap></heatmap>
   </div>
 </body>
 
