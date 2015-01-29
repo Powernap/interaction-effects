@@ -14,7 +14,7 @@ var app = express();
 var ACCESS_CONTROLL_ALLOW_ORIGIN = false;
 
 // Host most stuff in the public folder
-app.use(express.static(__dirname + '/../prototype'));
+app.use(express.static(__dirname + '/../client'));
 app.use(express.static(__dirname + '/uploads'));
 
 var getHashFromFile = function(filepath, filename, callback) {

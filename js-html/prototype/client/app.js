@@ -16,7 +16,23 @@ app.run(['$rootScope', '$http', 'rSessions', function($rootScope, $http, rSessio
     });
 }]);
 
-app.factory('dataLoading', ['$rootScope', 'rSessions', function($rootScope, rSessions){
+app.config(['flowFactoryProvider', function (flowFactoryProvider) {
+  flowFactoryProvider.defaults = {
+    target: '/upload',
+    // Test Chunks looks for already uploaded chunks before
+    // uploading them again. This may be suitable for large data sets
+    testChunks: true,
+    progressCallbacksInterval: 0,
+    permanentErrors:[404, 500, 501]
+  };
+  // You can also set default events:
+  flowFactoryProvider.on('catchAll', function (event) {
+    // Uncomment to see all Flow Events
+    // console.log('catchAll', arguments);
+  });
+}]);
+
+app.factory('data', ['$rootScope', 'rSessions', function($rootScope, rSessions){
   var dataLoadingService = {};
   dataLoadingService.dataset = $rootScope.dataset;
 
@@ -84,23 +100,7 @@ app.factory('rSessions', ['$q', function($q){
   return rSessionsService;
 }]);
 
-app.config(['flowFactoryProvider', function (flowFactoryProvider) {
-  flowFactoryProvider.defaults = {
-    target: '/upload',
-    // Test Chunks looks for already uploaded chunks before
-    // uploading them again. This may be suitable for large data sets
-    testChunks: true,
-    progressCallbacksInterval: 0,
-    permanentErrors:[404, 500, 501]
-  };
-  // You can also set default events:
-  flowFactoryProvider.on('catchAll', function (event) {
-    // Uncomment to see all Flow Events
-    // console.log('catchAll', arguments);
-  });
-}]);
-
-app.factory('createHeatmap', ['$rootScope', '$q', 'dataLoading', function($rootScope, $q, dataLoading) {
+app.factory('createHeatmap', ['$rootScope', '$q', 'data', function($rootScope, $q, data) {
 
   var createHeatmapService = {};
   createHeatmapService.status = {'created': false};
@@ -110,8 +110,8 @@ app.factory('createHeatmap', ['$rootScope', '$q', 'dataLoading', function($rootS
   };
 
   createHeatmapService.createHeatmap = function(dependentVariable){
-    var names = dataLoading.dataset.getDimensionNames();
-    var rSquared = dataLoading.dataset._rSquared[dependentVariable];
+    var names = data.dataset.getDimensionNames();
+    var rSquared = data.dataset._rSquared[dependentVariable];
     myHeatmap = new RCUBE.Heatmap(".my-heatmap", rSquared, names);
     this.status.created = true;
   }
