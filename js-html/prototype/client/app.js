@@ -2,8 +2,7 @@
 var app = angular.module('cube', ['flow']);
 
 // Constructor Code
-app.run(['$rootScope', '$http', 'ocpuBridge', function($rootScope, $http, ocpuBridge) {
-  $rootScope.dataset = new RCUBE.Dataset();
+app.run(['$rootScope', '$http', 'ocpuBridge', 'data', function($rootScope, $http, ocpuBridge, data) {
   // Load the file containing all servers
   $http.get('config.json')
     .then(function(result){
@@ -12,6 +11,9 @@ app.run(['$rootScope', '$http', 'ocpuBridge', function($rootScope, $http, ocpuBr
         // $rootScope.ocpuBridge.push(new RCUBE.RSession(server.url, server.name));
         ocpuBridge.pushService(server.url, server.name);
       });
+      // DEBUG Emit loading event, which would otherwise be triggered through flow
+      console.log(document.URL + result.data.dataSetName);
+      data.loadData(document.URL + result.data.dataSetName);
       // $rootScope.dataset = new RCUBE.Dataset(result.data.dataURL);
     });
 }]);
@@ -31,24 +33,5 @@ app.config(['flowFactoryProvider', function (flowFactoryProvider) {
     // console.log('catchAll', arguments);
   });
 }]);
-
-// app.controller("HeatmapController", ['$scope', 'data', function($scope, data){
-//   var heatmapContainer = this;
-//   // http://jimhoskins.com/2012/12/17/angularjs-and-apply.html
-//   // https://variadic.me/posts/2013-10-15-share-state-between-controllers-in-angularjs.html
-//   // https://stackoverflow.com/questions/15380140/service-variable-not-updating-in-controller
-//
-//   var createHeatmap = function(dependentVariable){
-//     var names = data.dataset.getDimensionNames();
-//     var rSquared = data.dataset._rSquared[dependentVariable];
-//     myHeatmap = new RCUBE.Heatmap(".my-heatmap", rSquared, names);
-//     heatmapContainer.visible = true;
-//   }
-//
-//   $scope.$on('rSquaredCalculationDone', function(event, dimension){
-//     if (dimension == 'age')
-//       createHeatmap('age');
-//   });
-// }]);
 
 })();

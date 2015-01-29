@@ -1,7 +1,7 @@
 angular.module('cube')
   .factory('data', ['$rootScope', 'ocpuBridge', function($rootScope, ocpuBridge){
     var dataService = {};
-    dataService.dataset = $rootScope.dataset;
+    dataService.dataset = new RCUBE.Dataset();
 
     dataService.loadData = function(url) {
       dataService.dataset._url = url;
