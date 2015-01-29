@@ -1,5 +1,5 @@
 angular.module('cube')
-.directive('fileUpload', ['$rootScope', 'createHeatmap', 'rSessions', 'data', function($rootScope, createHeatmap, rSessions, data){
+.directive('fileUpload', ['$rootScope', 'createHeatmap', 'data', function($rootScope, createHeatmap, data){
   return {
     restrict: 'E',
     templateUrl: 'app/directives/file-upload.html',

@@ -2,15 +2,15 @@
 var app = angular.module('cube', ['flow']);
 
 // Constructor Code
-app.run(['$rootScope', '$http', 'rSessions', function($rootScope, $http, rSessions) {
+app.run(['$rootScope', '$http', 'ocpuBridge', function($rootScope, $http, ocpuBridge) {
   $rootScope.dataset = new RCUBE.Dataset();
   // Load the file containing all servers
   $http.get('config.json')
     .then(function(result){
       // and fill it with new Server connections
       result.data.servers.forEach(function(server){
-        // $rootScope.rSessions.push(new RCUBE.RSession(server.url, server.name));
-        rSessions.pushService(server.url, server.name);
+        // $rootScope.ocpuBridge.push(new RCUBE.RSession(server.url, server.name));
+        ocpuBridge.pushService(server.url, server.name);
       });
       // $rootScope.dataset = new RCUBE.Dataset(result.data.dataURL);
     });
@@ -30,74 +30,6 @@ app.config(['flowFactoryProvider', function (flowFactoryProvider) {
     // Uncomment to see all Flow Events
     // console.log('catchAll', arguments);
   });
-}]);
-
-app.factory('data', ['$rootScope', 'rSessions', function($rootScope, rSessions){
-  var dataLoadingService = {};
-  dataLoadingService.dataset = $rootScope.dataset;
-
-  dataLoadingService.loadData = function(url) {
-    dataLoadingService.dataset._url = url;
-    loadCSV(url, function(csvData){
-      dataLoadingService.dataset.setCsvData(csvData);
-      rSessions.loadDataset(url).then(function(data){
-        console.log("Dataset loaded for all active OpenCPU sessions");
-        // TODO: All requests are executed in parallel, it will be a good
-        // idea to perform it manually
-        // dataLoadingService.dataset.getDimensionNames().forEach(function(dimensionName){
-        ['age', 'gender'].forEach(function(dimensionName){
-          rSessions.calculateRSquared(dimensionName).then(function(rSquared){
-            dataLoadingService.dataset._rSquared[dimensionName] = rSquared;
-            $rootScope.$broadcast('rSquaredCalculationDone', dimensionName);
-          });
-        });
-      });
-    });
-  };
-
-  var loadCSV = function(url, callback) {
-    d3.csv(url, function(data){
-      callback(data);
-    });
-  };
-  return dataLoadingService;
-}]);
-
-app.factory('rSessions', ['$q', function($q){
-  var rSessionsService = {};
-  rSessionsService.sessions = [];
-
-  rSessionsService.calculateRSquared = function(targetVariable){
-    return $q(function(resolve, reject){
-      // TODO: Write distribution algorithm here!
-      var rsession = rSessionsService.sessions[0];
-
-      rsession.calculateRSquaredValues(targetVariable, function(rsquaredSession){
-        $.getJSON(rsquaredSession.loc + "R/.val/json" , function(rSquaredData){
-          resolve(rSquaredData);
-        });
-      });
-    });
-  };
-
-  // This event is called when the user uploads a new data set
-  rSessionsService.loadDataset = function(url) {
-    return $q(function(resolve, reject){
-      var numberSessionsLoaded = 0;
-      rSessionsService.sessions.forEach(function(rsession, i){
-        rsession.loadDataset(url, function(){
-          numberSessionsLoaded = numberSessionsLoaded + 1;
-          if (numberSessionsLoaded == rSessionsService.sessions.length)
-            resolve();
-        });
-      });
-    });
-  };
-  rSessionsService.pushService = function(url, name){
-    rSessionsService.sessions.push(new RCUBE.RSession(url, name))
-    console.log("Created new R Session: " + url + ", " + name);
-  };
-  return rSessionsService;
 }]);
 
 app.factory('createHeatmap', ['$rootScope', '$q', 'data', function($rootScope, $q, data) {
