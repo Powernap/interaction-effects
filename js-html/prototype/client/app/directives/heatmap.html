@@ -1,11 +1,22 @@
 <div ng-show="heatmap.visible">
-  <div class=my-heatmap>
-    <p>Order Heatmap:
-      <select id="order-heatmap">
-        <option value="name">by Name</option>
-        <option value="count">by Frequency</option>
-      </select>
-    </p>
+  <div class='my-heatmap well'>
+    <div class='form-group'>
+      <div class='form-group-row'>
+        <label for='dependent-heatmap' class='col-md-2 control-label'>Dependent Variable</label>
+        <div class='col-md-2'>
+          <select id='depentent-heatmap' class='form-control'>
+            <option value="none">none</option>
+          </select>
+        </div>
+        <label for='order-heatmap' class='col-md-2 col-md-offset-1 control-label'>Order Heatmap</label>
+        <div class='col-md-2'>
+          <select id="order-heatmap" class='form-control'>
+            <option value="name">by Name</option>
+            <option value="count">by Frequency</option>
+          </select>
+        </div>
+      </div>
+    </div>
     <div id="tooltip-heatmap" class="hidden">
       <p>
         <span id="value">

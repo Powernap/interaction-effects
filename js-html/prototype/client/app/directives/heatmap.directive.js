@@ -5,6 +5,7 @@ angular.module('cube')
     templateUrl: 'app/directives/heatmap.html',
     controller: function($scope){
       var heatmapContainer = this;
+      heatmapContainer.visible = false;
       // http://jimhoskins.com/2012/12/17/angularjs-and-apply.html
       // https://variadic.me/posts/2013-10-15-share-state-between-controllers-in-angularjs.html
       // https://stackoverflow.com/questions/15380140/service-variable-not-updating-in-controller

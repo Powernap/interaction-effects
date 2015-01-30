@@ -12,9 +12,7 @@ app.run(['$rootScope', '$http', 'ocpuBridge', 'data', function($rootScope, $http
         ocpuBridge.pushService(server.url, server.name);
       });
       // DEBUG Emit loading event, which would otherwise be triggered through flow
-      console.log(document.URL + result.data.dataSetName);
       data.loadData(document.URL + result.data.dataSetName);
-      // $rootScope.dataset = new RCUBE.Dataset(result.data.dataURL);
     });
 }]);
 
