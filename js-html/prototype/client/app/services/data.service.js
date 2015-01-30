@@ -52,10 +52,6 @@ angular.module('cube')
     var ocpuBridgeService = {};
     ocpuBridgeService.sessions = [];
 
-    $rootScope.$on('ocpuJobDone', function(event, data) {
-      console.log("Job Done!");
-    });
-
     ocpuBridgeService.calculateRSquared = function(targetVariable){
       return $q(function(resolve, reject){
         // TODO: Write distribution algorithm here!
@@ -64,7 +60,6 @@ angular.module('cube')
         rsession.calculateRSquaredValues(targetVariable, function(rsquaredSession){
           $.getJSON(rsquaredSession.loc + "R/.val/json" , function(rSquaredData){
             resolve(rSquaredData);
-            $rootScope.$emit('ocpuJobDone')
           });
         });
       });

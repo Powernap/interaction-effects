@@ -25,16 +25,15 @@ angular.module('cube')
       $scope.dependentSelect = this.dependentOptions[0];
       $scope.rSquaredValues = data.getRSquaredValues();
       $scope.$watchCollection('rSquaredValues', function(newValue){
+        console.log($scope.dependentSelect);
         var values = Object.keys(newValue);
         // Set Heatmap to visible when we actually have rSquared values to display
-        if (values.length > 0)
+        if (values.length > 0) {
           heatmapController.visible = true;
-
-        heatmapController.dependentOptions = [];
-        values.forEach(function(dimension){
-          heatmapController.dependentOptions.push({label: dimension, value: dimension})
-        });
-        // $scope.dependentSelect = this.dependentOptions[0];
+          // Only add last new entry to the select to keep the old ones
+          var newEntry = values[values.length - 1]
+          heatmapController.dependentOptions.push({label: newEntry, value: newEntry});
+        }
       });
 
       this.changeDependent = function(){
@@ -42,11 +41,6 @@ angular.module('cube')
         this.currentDimension = $scope.dependentSelect.label;
         createHeatmap($scope.dependentSelect.label);
       }
-
-      $scope.$on('rSquaredCalculationDone', function(event, dimension){
-        // if (dimension == 'age')
-        //   createHeatmap('age');
-      });
     },
   controllerAs: 'heatmap'
 };
