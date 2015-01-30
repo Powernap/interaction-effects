@@ -12,6 +12,8 @@ angular.module('cube')
       // https://stackoverflow.com/questions/15380140/service-variable-not-updating-in-controller
 
       var createHeatmap = function(dependentVariable){
+        // Remove old Heatmap container
+        $('.my-heatmap svg').remove();
         var names = data.dataset.getDimensionNames();
         var rSquared = data.dataset._rSquared[dependentVariable];
         myHeatmap = new RCUBE.Heatmap(".my-heatmap", rSquared, names);
@@ -24,6 +26,10 @@ angular.module('cube')
       $scope.rSquaredValues = data.getRSquaredValues();
       $scope.$watchCollection('rSquaredValues', function(newValue){
         var values = Object.keys(newValue);
+        // Set Heatmap to visible when we actually have rSquared values to display
+        if (values.length > 0)
+          heatmapController.visible = true;
+
         heatmapController.dependentOptions = [];
         values.forEach(function(dimension){
           heatmapController.dependentOptions.push({label: dimension, value: dimension})
@@ -34,11 +40,12 @@ angular.module('cube')
       this.changeDependent = function(){
         console.log($scope.dependentSelect);
         this.currentDimension = $scope.dependentSelect.label;
+        createHeatmap($scope.dependentSelect.label);
       }
 
       $scope.$on('rSquaredCalculationDone', function(event, dimension){
-        if (dimension == 'age')
-          createHeatmap('age');
+        // if (dimension == 'age')
+        //   createHeatmap('age');
       });
     },
   controllerAs: 'heatmap'

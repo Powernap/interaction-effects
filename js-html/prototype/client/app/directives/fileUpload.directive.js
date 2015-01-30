@@ -5,7 +5,9 @@ angular.module('cube')
     templateUrl: 'app/directives/file-upload.html',
     controller: function($scope){
       var thisController = this;
-      this.visible = true;
+      if ($rootScope.debugMode)
+        this.visible = false;
+      else this.visible = true;
       this.uploadEnabled = false;
       this.hideUploadButton = false;
       this.progressbar = {

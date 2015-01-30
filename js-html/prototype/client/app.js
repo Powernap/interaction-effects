@@ -3,6 +3,7 @@ var app = angular.module('cube', ['flow', 'ngAnimate']);
 
 // Constructor Code
 app.run(['$rootScope', '$http', 'ocpuBridge', 'data', function($rootScope, $http, ocpuBridge, data) {
+  $rootScope.debugMode = true;
   // Load the file containing all servers
   $http.get('config.json')
     .then(function(result){
@@ -12,7 +13,8 @@ app.run(['$rootScope', '$http', 'ocpuBridge', 'data', function($rootScope, $http
         ocpuBridge.pushService(server.url, server.name);
       });
       // DEBUG Emit loading event, which would otherwise be triggered through flow
-      data.loadData(document.URL + result.data.dataSetName);
+      if ($rootScope.debugMode)
+        data.loadData(document.URL + result.data.dataSetName);
     });
 }]);
 
