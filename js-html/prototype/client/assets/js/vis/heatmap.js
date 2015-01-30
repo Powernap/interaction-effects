@@ -89,8 +89,12 @@ RCUBE.Heatmap.prototype.main = function (canvasID, heatmapData, names){
     })
   };
 
-  // The default sort order.
-  x.domain(orders.name);
+  // Get default sort from select field
+  var sort = $('#order-heatmap').val()
+  if (sort == 'name')
+    x.domain(orders.name);
+  else if (sort == 'count')
+    x.domain(orders.count);
 
   svg.append("rect")
   .attr("class", "background")
