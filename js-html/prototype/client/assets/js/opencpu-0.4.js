@@ -363,6 +363,8 @@ if (!window.jQuery) {
   window.ocpu = window.ocpu || {};
   var ocpu = window.ocpu;
 
+  var consoleOutput = false;
+
   //global settings
   function seturl(newpath) {
     if (!newpath.match("/R$")) {
@@ -384,14 +386,17 @@ if (!window.jQuery) {
       }
 
       if (r_cors) {
-        console.log("Setting path to CORS server " + r_path.href);
+        if (consoleOutput)
+          console.log("Setting path to CORS server " + r_path.href);
       } else {
-        console.log("Setting path to local (non-CORS) server " + r_path.href);
+        if (consoleOutput)
+          console.log("Setting path to local (non-CORS) server " + r_path.href);
       }
 
       //we use trycatch because javascript will throw an error in case CORS is refused.
       $.get(r_path.href, function(resdata) {
-        console.log("Path updated. Available objects/functions:\n" + resdata);
+        if (consoleOutput)
+          console.log("Path updated. Available objects/functions:\n" + resdata);
       }).fail(function(xhr, textStatus, errorThrown) {
         alert("Connection to OpenCPU failed:\n" + textStatus + "\n" + xhr.responseText + "\n" + errorThrown);
       });
