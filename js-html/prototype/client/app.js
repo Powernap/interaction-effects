@@ -1,5 +1,5 @@
 (function() {
-var app = angular.module('cube', ['flow']);
+var app = angular.module('cube', ['flow', 'ngAnimate']);
 
 // Constructor Code
 app.run(['$rootScope', '$http', 'ocpuBridge', 'data', function($rootScope, $http, ocpuBridge, data) {

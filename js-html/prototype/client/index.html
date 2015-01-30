@@ -8,6 +8,7 @@
   <script src="bower_components/d3/d3.js"></script>
   <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
   <script src="bower_components/angular/angular.js"></script>
+  <script src="bower_components/angular-animate/angular-animate.js"></script>
   <script src="bower_components/ng-flow/dist/ng-flow-standalone.js"></script>
   <script src="assets/js/RCUBE.js"></script>
   <script src="assets/js/OpenCPUConnection.js"></script>
@@ -26,7 +27,17 @@
   <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" media="screen">
   <!-- Bootstrap -->
   <link href="assets/css/heatmap.css" rel="stylesheet" media="screen">
-  <style type='text/css'></style>
+  <style type='text/css'>
+
+  .animation-show-hide {
+    -webkit-transition:all linear 0.5s;
+    transition:all linear 0.5s;
+  }
+
+  .animation-show-hide.ng-hide {
+    opacity:0;
+  }
+  </style>
   </script>
 </head>
 

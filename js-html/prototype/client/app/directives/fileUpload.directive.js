@@ -4,6 +4,7 @@ angular.module('cube')
     restrict: 'E',
     templateUrl: 'app/directives/file-upload.html',
     controller: function($scope){
+      var thisController = this;
       this.visible = true;
       this.uploadEnabled = false;
       this.hideUploadButton = false;
@@ -11,7 +12,6 @@ angular.module('cube')
         "visible": false,
         "percent": 0
       }
-      this.progressbarVisible = false;
       var controllerSelf = this;
       // Has to be defined on the Scope, because `input`s don't have an angular change event
       // See https://stackoverflow.com/questions/17922557/angularjs-how-to-check-for-changes-in-file-input-fields
@@ -36,6 +36,7 @@ angular.module('cube')
       };
 
       $scope.uploader.flowFileSuccess = function ($flow, $file, $message) {
+        thisController.visible = false;
         data.loadData(document.URL + $file.name);
       };
     },

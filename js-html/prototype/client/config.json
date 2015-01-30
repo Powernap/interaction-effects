@@ -2,7 +2,7 @@
   "servers": [
     {
       "name": "Localhost",
-      "url": "http://localhost:3228/ocpu"
+      "url": "http://localhost:7377/ocpu"
     }
   ],
   "dataSetName": "patients-100k.csv"
