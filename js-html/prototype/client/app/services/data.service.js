@@ -1,4 +1,6 @@
 angular.module('cube')
+// Pulsating Circle
+// http://bl.ocks.org/chiester/11267307
   .factory('data', ['$rootScope', 'ocpuBridge', function($rootScope, ocpuBridge){
     var dataService = {};
     dataService.dataset = new RCUBE.Dataset();
@@ -7,21 +9,33 @@ angular.module('cube')
       return dataService.dataset._rSquared;
     };
 
+    var calculateRSquaredSequential = function(dimensions) {
+      if (dimensions.length == 0)
+        return;
+      var dimensionName = dimensions[dimensions.length - 1];
+      ocpuBridge.calculateRSquared(dimensionName).then(function(rSquared){
+        dataService.dataset._rSquared[dimensionName] = rSquared;
+        dimensions.pop();
+        calculateRSquaredSequential(dimensions);
+      });
+    };
+
     dataService.loadData = function(url) {
       dataService.dataset._url = url;
       loadCSV(url, function(csvData){
         dataService.dataset.setCsvData(csvData);
         ocpuBridge.loadDataset(url).then(function(data){
           console.log("Dataset loaded for all active OpenCPU sessions");
-          // TODO: All requests are executed in parallel, it will be a good
-          // idea to perform it manually
+          // ['age', 'gender'].forEach(function(dimensionName){
+          // Copy the dimensions array, since the recurive algorithm will delete its contents
+          var recursionDimensions = dataService.dataset.getDimensionNames().slice(0);
+          calculateRSquaredSequential(recursionDimensions);
+          // Code for parallel execution
           // dataService.dataset.getDimensionNames().forEach(function(dimensionName){
-          ['age', 'gender'].forEach(function(dimensionName){
-            ocpuBridge.calculateRSquared(dimensionName).then(function(rSquared){
-              dataService.dataset._rSquared[dimensionName] = rSquared;
-              $rootScope.$broadcast('rSquaredCalculationDone', dimensionName);
-            });
-          });
+          // ocpuBridge.calculateRSquared(dimensionName).then(function(rSquared){
+          //   dataService.dataset._rSquared[dimensionName] = rSquared;
+          // });
+          // });
         });
       });
     };
@@ -34,9 +48,13 @@ angular.module('cube')
     return dataService;
   }])
 
-  .factory('ocpuBridge', ['$q', function($q){
+  .factory('ocpuBridge', ['$rootScope', '$q', function($rootScope, $q){
     var ocpuBridgeService = {};
     ocpuBridgeService.sessions = [];
+
+    $rootScope.$on('ocpuJobDone', function(event, data) {
+      console.log("Job Done!");
+    });
 
     ocpuBridgeService.calculateRSquared = function(targetVariable){
       return $q(function(resolve, reject){
@@ -46,6 +64,7 @@ angular.module('cube')
         rsession.calculateRSquaredValues(targetVariable, function(rsquaredSession){
           $.getJSON(rsquaredSession.loc + "R/.val/json" , function(rSquaredData){
             resolve(rSquaredData);
+            $rootScope.$emit('ocpuJobDone')
           });
         });
       });
