@@ -12,12 +12,10 @@ angular.module('cube')
         "visible": false,
         "percent": 0
       }
-      var controllerSelf = this;
       // Has to be defined on the Scope, because `input`s don't have an angular change event
       // See https://stackoverflow.com/questions/17922557/angularjs-how-to-check-for-changes-in-file-input-fields
-      uploader = this;
       $scope.fileNameChanged = function(){
-        uploader.uploadEnabled = true;
+        thisController.uploadEnabled = true;
       };
 
       $scope.uploader = {};
@@ -28,11 +26,11 @@ angular.module('cube')
       };
 
       $scope.uploader.flowUploadStart = function(){
-        controllerSelf.progressbar.visible = true;
+        thisController.progressbar.visible = true;
       };
 
       $scope.uploader.flowFileProgress = function($file){
-        controllerSelf.progressbar.percent = $file.progress() * 100;
+        thisController.progressbar.percent = $file.progress() * 100;
       };
 
       $scope.uploader.flowFileSuccess = function ($flow, $file, $message) {

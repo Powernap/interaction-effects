@@ -4,9 +4,12 @@
       <div class='form-group-row'>
         <label for='dependent-heatmap' class='col-md-2 control-label'>Dependent Variable</label>
         <div class='col-md-2'>
-          <select id='depentent-heatmap' class='form-control'>
+          <!-- <select id='depentent-heatmap' class='form-control'>
             <option value="none">none</option>
-          </select>
+          </select> -->
+          <select id='depentent-heatmap' class='form-control' ng-change='heatmap.changeDependent()'
+          ng-model="dependentSelect" ng-options="opt as opt.label for opt in heatmap.dependentOptions">
+        </select>
         </div>
         <label for='order-heatmap' class='col-md-2 col-md-offset-1 control-label'>Order Heatmap</label>
         <div class='col-md-2'>

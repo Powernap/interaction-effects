@@ -3,6 +3,10 @@ angular.module('cube')
     var dataService = {};
     dataService.dataset = new RCUBE.Dataset();
 
+    dataService.getRSquaredValues = function(){
+      return dataService.dataset._rSquared;
+    };
+
     dataService.loadData = function(url) {
       dataService.dataset._url = url;
       loadCSV(url, function(csvData){
@@ -12,7 +16,7 @@ angular.module('cube')
           // TODO: All requests are executed in parallel, it will be a good
           // idea to perform it manually
           // dataService.dataset.getDimensionNames().forEach(function(dimensionName){
-          ['age'].forEach(function(dimensionName){
+          ['age', 'gender'].forEach(function(dimensionName){
             ocpuBridge.calculateRSquared(dimensionName).then(function(rSquared){
               dataService.dataset._rSquared[dimensionName] = rSquared;
               $rootScope.$broadcast('rSquaredCalculationDone', dimensionName);
