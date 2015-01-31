@@ -13,6 +13,7 @@
   <script src="assets/js/RCUBE.js"></script>
   <script src="assets/js/OpenCPUConnection.js"></script>
   <script src="assets/js/vis/heatmap.js"></script>
+  <script src="assets/js/vis/pulse.js"></script>
   <script src="assets/js/Dataset.js"></script>
   <script src="assets/js/RSession.js"></script>
   <script src="assets/js/opencpu-0.4.js"></script>
@@ -37,6 +38,16 @@
   .animation-show-hide.ng-hide {
     opacity:0;
   }
+
+  .pulse-svg {
+    background-color: background-color:rgba(0,0,0,0.0);;
+    fill-opacity: 0;
+    padding-top:10px;
+  }
+  .pulse {
+    fill: none;
+    stroke: #398FBD;
+  }
   </style>
   </script>
 </head>
@@ -58,11 +69,9 @@
         <file-upload></file-upload>
       </div>
     </div>
-    <div class='row'>
       <!-- <div class='col-md-10 col-md-offset-1 well'> -->
-        <heatmap></heatmap>
+    <heatmap></heatmap>
       <!-- </div> -->
-    </div>
   </div>
 </body>
 
