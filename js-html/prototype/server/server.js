@@ -30,7 +30,7 @@ var getHashFromFile = function(filepath, filename, callback) {
     var hash = shasum.digest('hex');
     callback(hash);
   });
-}
+};
 
 // The flow logic is adapted from the flow.js Github Repo.
 // See `flow.js/samples/Node.js/README.md` for more details!
@@ -58,16 +58,15 @@ app.post('/upload', multipartMiddleware, function(req, res) {
         // });
         // res.req.body.flowFilename = hash + extension;
         // res.status(status).send();
+        var responseMessage = {filename: hash + extension};
+        res.status(status).send(responseMessage);
       });
     }
     if (ACCESS_CONTROLL_ALLOW_ORIGIN) {
       res.header("Access-Control-Allow-Origin", "*");
     }
-    // req.body.flowFilename = 'WOHOOOO';
-    // res.req.body.flowFilename = 'WOHOOOO';
-    // submit = res.status(status);
-    // submit.req.body.flowFilename = 'WOHOOOO';
-    res.status(status).send();
+    if (status != 'done')
+      res.status(status).send();
   });
 });
 

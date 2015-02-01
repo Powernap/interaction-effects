@@ -13,7 +13,7 @@ angular.module('cube')
       this.progressbar = {
         "visible": false,
         "percent": 0
-      }
+      };
       // Has to be defined on the Scope, because `input`s don't have an angular change event
       // See https://stackoverflow.com/questions/17922557/angularjs-how-to-check-for-changes-in-file-input-fields
       $scope.fileNameChanged = function(){
@@ -37,6 +37,8 @@ angular.module('cube')
 
       $scope.uploader.flowFileSuccess = function ($flow, $file, $message) {
         thisController.visible = false;
+        console.log("Flow File Success Message");
+        console.log($message);
         data.loadData(document.URL + $file.name);
       };
     },
