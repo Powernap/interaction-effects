@@ -3,10 +3,10 @@ var app = angular.module('cube', ['flow', 'ngAnimate']);
 
 // Constructor Code
 app.run(['$rootScope', '$http', 'ocpuBridge', 'data', function($rootScope, $http, ocpuBridge, data) {
-  $rootScope.debugMode = false;
   // Load the file containing all servers
   $http.get('config.json')
     .then(function(result){
+      $rootScope.debugMode = result.data.debugMode;
       // and fill it with new Server connections
       result.data.servers.forEach(function(server){
         // $rootScope.ocpuBridge.push(new RCUBE.RSession(server.url, server.name));

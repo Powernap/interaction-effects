@@ -4,6 +4,7 @@ angular.module('cube')
       restrict: 'E',
       templateUrl: 'app/directives/formula-editor.html',
       controller: function($scope) {
+        // This function is taken straight from the typeahead example page: https://twitter.github.io/typeahead.js/examples/
         var substringMatcher = function(strs) {
           return function findMatches(q, cb) {
             var matches, substrRegex;
@@ -30,20 +31,29 @@ angular.module('cube')
           };
         };
 
+        // Watch the dimension array
         $scope.dimensions = data.dataset.getDimensionNames();
+        // Attach typeahead logic to the UI
         $scope.$watchCollection('dimensions', function(dimensions) {
-          // Remove all prior typeahead instances
-          $('.typeahead').typeahead('destroy');
-          // And attach the new ones
-          $('.typeahead').typeahead({
-            hint: true,
-            highlight: true,
-            minLength: 1
-          }, {
-            name: 'dimensions',
-            displayKey: 'value',
-            source: substringMatcher(dimensions)
-          });
+          // Only attach the typeahead logic if there are dimensions available
+          if (dimensions.length > 0) {
+            // Attach X and Y variables to the dimension list
+            // We copy the dimensions list to not interfere with it in other controllers
+            var typeaheadDimensions = dimensions.slice(0);
+            typeaheadDimensions.splice(0,0, 'x','y');
+            // Remove all prior typeahead instances
+            $('.typeahead').typeahead('destroy');
+            // And attach the new ones
+            $('.typeahead').typeahead({
+              hint: true,
+              highlight: true,
+              minLength: 1
+            }, {
+              name: 'typeaheadDimensions',
+              displayKey: 'value',
+              source: substringMatcher(typeaheadDimensions)
+            });
+          }
         });
       },
       controllerAs: 'editor'
