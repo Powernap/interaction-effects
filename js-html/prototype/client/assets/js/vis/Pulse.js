@@ -1,6 +1,5 @@
 RCUBE.Pulse = function(canvasID) {
   this._canvasID = canvasID;
-  console.log(this._canvasID);
   this.main(canvasID);
 };
 

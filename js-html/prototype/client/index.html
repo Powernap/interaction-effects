@@ -20,6 +20,7 @@
   <script src="app.js"></script>
   <script src="app/directives/fileUpload.directive.js"></script>
   <script src="app/directives/heatmap.directive.js"></script>
+  <script src="app/directives/formulaEditor.directive.js"></script>
   <script src="app/services/data.service.js"></script>
   <script>
     document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')
@@ -64,6 +65,11 @@
   </nav>
 
   <div class=container>
+    <div class='row'>
+      <div class='col-md-4 col-md-offset-4'>
+        <formula-editor></formula-editor>
+      </div>
+    </div>
     <div class='row'>
       <div class='col-md-4 col-md-offset-4'>
         <file-upload></file-upload>
