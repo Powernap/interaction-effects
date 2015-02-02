@@ -3,20 +3,15 @@
   <div class="panel-body">
     <form class="form-inline">
       <div class="input-group">
-        <input type="text" class="form-control input typeahead" value="test1" style="margin-left:-1px" />
+        <input type="text" class="form-control input typeahead" placeholder="x" style="margin-left:-1px" />
         <span class="input-group-btn" style="width:0px;"></span>
-        <select id="lunch" class="selectpicker form-control"
-                data-live-search="true" title="Please select a lunch ...">
-            <option>+</option>
-            <option>-</option>
-            <option>:</option>
-            <option>*</option>
-            <option>^</option>
-        </select>
+        <operator-select></operator-select>
         <span class="input-group-btn" style="width:0px;"></span>
-        <input type="text" class="form-control input" value="test2" style="margin-left:-1px" />
+        <input type="text" class="form-control input typeahead" placeholder="y" style="margin-left:-1px" />
         <span class="input-group-btn" style="width:0px;"></span>
-        <input type="text" class="form-control input" value="test2" style="margin-left:-2px" />
+        <operator-select></operator-select>
+        <span class="input-group-btn" style="width:0px;"></span>
+        <input type="text" class="form-control input typeahead" placeholder="gender" style="margin-left:-2px" />
       </div>
     </form>
   </div>
