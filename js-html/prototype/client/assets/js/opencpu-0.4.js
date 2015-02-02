@@ -363,7 +363,7 @@ if (!window.jQuery) {
   window.ocpu = window.ocpu || {};
   var ocpu = window.ocpu;
 
-  var consoleOutput = true;
+  var consoleOutput = false;
 
   //global settings
   function seturl(newpath) {

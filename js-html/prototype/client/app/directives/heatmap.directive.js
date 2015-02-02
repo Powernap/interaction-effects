@@ -21,7 +21,7 @@ angular.module('cube')
         var rSquared = data.dataset._rSquared[dependentVariable];
         myHeatmap = new RCUBE.Heatmap(".my-heatmap", rSquared, names);
         heatmapController.visible = true;
-      }
+      };
 
       // Dependent
       this.dependentOptions = [];
@@ -33,7 +33,7 @@ angular.module('cube')
         if (values.length > 0) {
           heatmapController.visible = true;
           // Only add last new entry to the select to keep the old ones
-          var newEntry = values[values.length - 1]
+          var newEntry = values[values.length - 1];
           heatmapController.dependentOptions.push({label: newEntry, value: newEntry});
           pulse.pulse();
         }
@@ -42,7 +42,7 @@ angular.module('cube')
       this.changeDependent = function(){
         this.currentDimension = $scope.dependentSelect.label;
         createHeatmap($scope.dependentSelect.label);
-      }
+      };
     },
   controllerAs: 'heatmap'
 };
