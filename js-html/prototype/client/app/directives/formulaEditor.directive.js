@@ -4,6 +4,16 @@ angular.module('cube')
       restrict: 'E',
       templateUrl: 'app/directives/formula-editor.html',
       controller: function($scope) {
+
+        this.popup = {
+          content: 'Popup content here',
+          options: {
+            title: null,
+            placement: 'left',
+            delay: { show: 800, hide: 100 }
+          }
+        };
+
         // Watch the dimension array
         $scope.dimensions = data.dataset.getDimensionNames();
         // Attach typeahead logic to the UI

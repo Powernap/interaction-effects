@@ -28,7 +28,8 @@ angular.module('cube')
           console.log("Dataset loaded for all active OpenCPU sessions");
           // ['age', 'gender'].forEach(function(dimensionName){
           // Copy the dimensions array, since the recurive algorithm will delete its contents
-          var recursionDimensions = dataService.dataset.getDimensionNames().slice(0);
+          // var recursionDimensions = dataService.dataset.getDimensionNames().slice(0);
+          var recursionDimensions = ['age', 'gender'];
           calculateRSquaredSequential(recursionDimensions);
           // Code for parallel execution
           // dataService.dataset.getDimensionNames().forEach(function(dimensionName){
