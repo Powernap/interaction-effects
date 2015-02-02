@@ -52,6 +52,18 @@
       fill: none;
       stroke: #398FBD;
     }
+
+    /*Override bootstrap popover setting*/
+    .popover-override .popover {
+      display: block;
+      position: absolute;
+      left: auto;
+      right: 250px;
+      top: 5px;
+    }
+    .popover.left > .arrow {
+      top: 16px;
+    }
   </style>
   </script>
 </head>
@@ -64,7 +76,7 @@
           <p>Regression Cube</p>
         </a>
       </div>
-      <div class="col-sm-3 col-md-3 pull-right">
+      <div class="pull-right">
         <form class="navbar-form" role="search">
           <formula-editor></formula-editor>
         </form>
