@@ -11,7 +11,7 @@ angular.module('cube')
 
         test = this.popup;
         this.updatePopup = function(name){
-          $('.tooltiptest').popover('show');
+          $('#formula-popover').popover('show');
           $scope.$apply(editorController.popup.header = name);
           $scope.$apply(editorController.popup.content = name);
         };
