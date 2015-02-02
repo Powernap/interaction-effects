@@ -52,12 +52,11 @@ app.post('/upload', multipartMiddleware, function(req, res) {
       getHashFromFile(UPLOAD_DIR, filename, function(hash){
         console.log("Hash for file " + filename + ' is ' + hash);
         var extension = path.extname(filename);
-        // Do not rename until it is clear how we communicate the namechange
-        // fs.rename(UPLOAD_DIR + filename, UPLOAD_DIR + hash + extension, function(err) {
-        //   if ( err ) console.log('ERROR: ' + err);
-        // });
-        // res.req.body.flowFilename = hash + extension;
-        // res.status(status).send();
+        // Rename the file
+        fs.rename(UPLOAD_DIR + filename, UPLOAD_DIR + hash + extension, function(err) {
+          if ( err ) console.log('ERROR: ' + err);
+        });
+        // Create response message with the new file name
         var responseMessage = {filename: hash + extension};
         res.status(status).send(responseMessage);
       });
@@ -65,6 +64,7 @@ app.post('/upload', multipartMiddleware, function(req, res) {
     if (ACCESS_CONTROLL_ALLOW_ORIGIN) {
       res.header("Access-Control-Allow-Origin", "*");
     }
+    // Response message is empty for all events except for `done`
     if (status != 'done')
       res.status(status).send();
   });

@@ -40,7 +40,8 @@ angular.module('cube')
         // TODO: Write logic to replace filename with hashed one to transmit to R
         var response = JSON.parse($message);
         console.log("Response filename is " + response.filename);
-        data.loadData(document.URL + $file.name);
+        //data.loadData(document.URL + $file.name);
+        data.loadData(document.URL + response.filename);
       };
     },
     controllerAs: 'myUploader'

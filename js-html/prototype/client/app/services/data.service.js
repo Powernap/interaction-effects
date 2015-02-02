@@ -10,7 +10,7 @@ angular.module('cube')
     };
 
     var calculateRSquaredSequential = function(dimensions) {
-      if (dimensions.length == 0)
+      if (dimensions.length === 0)
         return;
       var dimensionName = dimensions[dimensions.length - 1];
       ocpuBridge.calculateRSquared(dimensionName).then(function(rSquared){
@@ -79,7 +79,7 @@ angular.module('cube')
       });
     };
     ocpuBridgeService.pushService = function(url, name){
-      ocpuBridgeService.sessions.push(new RCUBE.RSession(url, name))
+      ocpuBridgeService.sessions.push(new RCUBE.RSession(url, name));
       console.log("Created new R Session: " + url + ", " + name);
     };
     return ocpuBridgeService;
