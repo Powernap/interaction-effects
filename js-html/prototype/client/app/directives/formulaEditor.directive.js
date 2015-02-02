@@ -3,16 +3,20 @@ angular.module('cube')
     return {
       restrict: 'E',
       templateUrl: 'app/directives/formula-editor.html',
-      controller: function($scope) {
 
-        this.popup = {
-          content: 'Popup content here',
-          options: {
-            title: null,
-            placement: 'left',
-            delay: { show: 800, hide: 100 }
-          }
+      controller: function($scope) {
+        this.popup = {};
+        this.popup.header = 'My Header';
+        this.popup.content = 'My Body';
+
+        test = this.popup;
+        this.updatePopup = function(name){
+          $('.tooltiptest').popover('show');
+          $scope.$apply(editorController.popup.header = name);
+          $scope.$apply(editorController.popup.content = name);
         };
+
+        var editorController = this;
 
         // Watch the dimension array
         $scope.dimensions = data.dataset.getDimensionNames();
@@ -31,7 +35,7 @@ angular.module('cube')
                 callback($.map(this.words, function(word) {
                   var currentWord = word.indexOf(term) === 0 ? word : null;
                   if (currentWord !== null)
-                    console.log(currentWord);
+                    editorController.updatePopup(currentWord);
                   return word.indexOf(term) === 0 ? word : null;
                 }));
               },

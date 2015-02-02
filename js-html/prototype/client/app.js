@@ -2,10 +2,6 @@
 var app = angular.module('cube', ['flow', 'ngAnimate']);
 // Constructor Code
 app.run(['$rootScope', '$http', 'ocpuBridge', 'data', function($rootScope, $http, ocpuBridge, data) {
-  // Initialize Bootstrap components
-  $(function () {
-    $('[data-toggle="popover"]').popover();
-  });
   // Load the file containing all servers
   $http.get('config.json')
     .then(function(result){
