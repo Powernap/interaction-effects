@@ -19,6 +19,7 @@ plots/
 
 # Data
 data/
+config.json
 
 # History files
 .Rhistory

@@ -1,9 +1,0 @@
-{
-  "servers": [
-    {
-      "name": "Localhost",
-      "url": "http://localhost:7377/ocpu"
-    }
-  ],
-  "dataSetName": "patients-100k.csv"
-}
