@@ -10,13 +10,13 @@ RCUBE.Pulse.prototype.main = function(canvasID) {
     .attr("width", 20)
     .attr("height", 30)
     .classed('pulse-svg', true)
-    .append("g")
+    .append("g");
   svg.selectAll("circle")
     .data([0])
     .enter()
     .append("circle")
     .classed('pulse', true);
-}
+};
 
 RCUBE.Pulse.prototype.pulse = function() {
   d3.select(this._canvasID + " circle")
@@ -29,4 +29,4 @@ RCUBE.Pulse.prototype.pulse = function() {
     .attr('stroke-width', 0)
     .attr("r", 10)
     .ease('sine');
-}
+};
