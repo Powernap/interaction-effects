@@ -2,17 +2,34 @@
   <div class="panel-heading">Formula Editor</div>
   <div class="panel-body">
     <form class="form-inline">
+      <div class="input-group">
+        <input type="text" class="form-control input" value="test1" />
+        <span class="input-group-btn" style="width:0px;"></span>
+        <select id="lunch" class="selectpicker form-control"
+                data-live-search="true" title="Please select a lunch ...">
+            <option>+</option>
+            <option>-</option>
+            <option>:</option>
+            <option>*</option>
+            <option>^</option>
+        </select>
+        <span class="input-group-btn" style="width:0px;"></span>
+        <input type="text" class="form-control input" value="test2" style="margin-left:-1px" />
+        <span class="input-group-btn" style="width:0px;"></span>
+        <input type="text" class="form-control input" value="test2" style="margin-left:-2px" />
+      </div>
+
         <div class="input-group">
-            <span class="input-group-addon">X</span>
-            <select id="lunch" class="selectpicker form-control"
-                    data-live-search="true" title="Please select a lunch ...">
-                <option>+</option>
-                <option>-</option>
-                <option>:</option>
-                <option>*</option>
-                <option>^</option>
-            </select>
-            <span class="input-group-addon">Y</span>
+          <span class="input-group-addon" id="sizing-addon1">@</span>
+          <input type="text" class="form-control" placeholder="Username" aria-describedby="sizing-addon1">
+          <select id="lunch" class="selectpicker form-control"
+                  data-live-search="true" title="Please select a lunch ...">
+              <option>+</option>
+              <option>-</option>
+              <option>:</option>
+              <option>*</option>
+              <option>^</option>
+          </select>
         </div>
     </form>
   </div>
