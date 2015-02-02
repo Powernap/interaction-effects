@@ -41,6 +41,24 @@ angular.module('cube')
             // We copy the dimensions list to not interfere with it in other controllers
             var typeaheadDimensions = dimensions.slice(0);
             typeaheadDimensions.splice(0,0, 'x','y');
+            $('#formulaInput').textcomplete([
+            { // tech companies
+                words: typeaheadDimensions,
+                match: /\b(\w{0,})$/,
+                search: function (term, callback) {
+                    callback($.map(this.words, function (word) {
+                        var currentWord = word.indexOf(term) === 0 ? word : null;
+                        if (currentWord !== null)
+                          console.log(currentWord);
+                        return word.indexOf(term) === 0 ? word : null;
+                    }));
+                },
+                index: 1,
+                replace: function (word) {
+                    return word + ' ';
+                }
+            }
+        ]);
             // Remove all prior typeahead instances
             $('.typeahead').typeahead('destroy');
             // And attach the new ones
