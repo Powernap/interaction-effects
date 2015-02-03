@@ -6,10 +6,11 @@ RCUBE.RegressionFormula = function(formula) {
 };
 
 RCUBE.RegressionFormula.prototype.update = function(formula) {
+  this._valid = false;
   // Fallback to empty formula
   if (typeof(formula) == 'undefined')
     return;
-  this._formula = formula;
+  this._formula = formula.slice(0);
   // Regex formulas for variables and operators
   this._regexVariables = /([^\^\+\-\:\*\/\|\s]+)/g;
   this._regexOperators = /([\^\+\-\:\*\/\|])/g;
