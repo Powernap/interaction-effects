@@ -1,9 +1,12 @@
 angular.module('cube')
-// Pulsating Circle
-// http://bl.ocks.org/chiester/11267307
   .factory('data', ['$rootScope', 'ocpuBridge', function($rootScope, ocpuBridge){
     var dataService = {};
     dataService.dataset = new RCUBE.Dataset();
+    dataService.defaultFormula = new RCUBE.RegressionFormula('x+y');
+
+    dataService.formulaUpdate = function(formula){
+      
+    };
 
     dataService.getRSquaredValues = function(){
       return dataService.dataset._rSquared;

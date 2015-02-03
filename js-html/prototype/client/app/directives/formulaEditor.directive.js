@@ -7,6 +7,7 @@ angular.module('cube')
 
       controller: function($scope) {
         var editorController = this;
+        this.enabled = false;
         this.popup = {};
         this.popup.lastTextCompleteWord = '';
         this.popup.show = false;
@@ -25,6 +26,7 @@ angular.module('cube')
         this.submitFormula = function(){
           // TODO: Call R server through service here
           console.log("Click on submit");
+          data.formulaUpdate(this.regressionFormula.toString());
         };
 
         this.updatePopup = function(name){
@@ -87,6 +89,8 @@ angular.module('cube')
                 editorController.updatePopup();
               }
             });
+            // Enable the element
+            editorController.enabled = true;
           }
         });
       },
