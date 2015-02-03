@@ -54,6 +54,9 @@ angular.module('cube')
             });
             editorController.popup.defaultContentDimensions = dimensionsAsString;
 
+            // Update valid dimensions for formula check
+            editorController.regressionFormula.setValidVariables(typeaheadDimensions);
+
             // Update textcomplete Plugin
             $('#formula-input').textcomplete([{
               words: typeaheadDimensions,
