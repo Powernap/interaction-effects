@@ -20,7 +20,7 @@ angular.module('cube')
         this.regressionFormula = new RCUBE.RegressionFormula();
 
         this.formulaChange = function(){
-          this.regressionFormula.update($scope.formulaInput);
+          this.regressionFormula.setFormula($scope.formulaInput);
         };
 
         this.submitFormula = function(){

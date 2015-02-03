@@ -2,10 +2,13 @@ angular.module('cube')
   .factory('data', ['$rootScope', 'ocpuBridge', function($rootScope, ocpuBridge){
     var dataService = {};
     dataService.dataset = new RCUBE.Dataset();
-    dataService.defaultFormula = new RCUBE.RegressionFormula('x+y');
+    dataService.defaultRegressionFormula = new RCUBE.RegressionFormula('x + y');
+    dataService.regressionFormula = new RCUBE.RegressionFormula();
 
     dataService.formulaUpdate = function(formula){
-      
+      dataService.regressionFormula.setFormula(formula.toString());
+      dataService.regressionFormula.setValidVariables(dataService.dataset.getDimensionNames().slice(0));
+      applyFormula();
     };
 
     dataService.getRSquaredValues = function(){
@@ -23,23 +26,35 @@ angular.module('cube')
       });
     };
 
+    var applyFormula = function() {
+      var formula;
+      if (dataService.regressionFormula.isValid())
+        formula = dataService.regressionFormula;
+      else
+        formula = dataService.defaultRegressionFormula;
+
+      console.log("Calculating R^2 with formula:");
+      console.log(formula);
+      // Copy the dimensions array, since the recurive algorithm will delete its contents
+      // var recursionDimensions = dataService.dataset.getDimensionNames().slice(0);
+      var recursionDimensions = ['age', 'gender'];
+      calculateRSquaredSequential(recursionDimensions);
+      // Code for parallel execution
+      // dataService.dataset.getDimensionNames().forEach(function(dimensionName){
+      // ocpuBridge.calculateRSquared(dimensionName).then(function(rSquared){
+      //   dataService.dataset._rSquared[dimensionName] = rSquared;
+      // });
+      // });
+    };
+
     dataService.loadData = function(url) {
       dataService.dataset._url = url;
       loadCSV(url, function(csvData){
         dataService.dataset.setCsvData(csvData);
         ocpuBridge.loadDataset(url).then(function(data){
           console.log("Dataset loaded for all active OpenCPU sessions");
-          // ['age', 'gender'].forEach(function(dimensionName){
-          // Copy the dimensions array, since the recurive algorithm will delete its contents
-          // var recursionDimensions = dataService.dataset.getDimensionNames().slice(0);
-          var recursionDimensions = ['age', 'gender'];
-          calculateRSquaredSequential(recursionDimensions);
-          // Code for parallel execution
-          // dataService.dataset.getDimensionNames().forEach(function(dimensionName){
-          // ocpuBridge.calculateRSquared(dimensionName).then(function(rSquared){
-          //   dataService.dataset._rSquared[dimensionName] = rSquared;
-          // });
-          // });
+          // apply the current formula to the newly loaded dataset!
+          applyFormula();
         });
       });
     };
