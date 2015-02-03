@@ -24,8 +24,6 @@ angular.module('cube')
         };
 
         this.submitFormula = function(){
-          // TODO: Call R server through service here
-          console.log("Click on submit");
           data.formulaUpdate(this.regressionFormula.toString());
         };
 

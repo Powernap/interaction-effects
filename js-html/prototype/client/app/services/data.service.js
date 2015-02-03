@@ -35,6 +35,11 @@ angular.module('cube')
 
       console.log("Calculating R^2 with formula:");
       console.log(formula);
+      // TODO: Hier weitermachen
+      // - Stop current RSquared Calculations
+      // - Write R Squared values to data structure capturing the current formula
+      // - adjust R source to use the formulas
+
       // Copy the dimensions array, since the recurive algorithm will delete its contents
       // var recursionDimensions = dataService.dataset.getDimensionNames().slice(0);
       var recursionDimensions = ['age', 'gender'];
