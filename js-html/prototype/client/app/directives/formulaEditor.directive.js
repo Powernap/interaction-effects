@@ -2,6 +2,7 @@ angular.module('cube')
   .directive('formulaEditor', ['$rootScope', 'data', function($rootScope, data) {
     return {
       restrict: 'E',
+      require: 'ngModel',
       templateUrl: 'app/directives/formula-editor.html',
 
       controller: function($scope) {
@@ -15,6 +16,14 @@ angular.module('cube')
         this.popup.defaultContentDimensions = '';
         this.popup.header = editorController.popup.defaultHeader;
         this.popup.content = editorController.popup.defaultContentOperators;
+        this.formula = new RCUBE.RegressionFormula();
+
+        this.formulaChange = function(){
+          this.formula.update($scope.formulaInput);
+          if (this.formula.isValid()){
+            console.log("isValid");
+          }
+        };
 
         this.updatePopup = function(name){
           if (name !== undefined){
@@ -28,6 +37,25 @@ angular.module('cube')
             editorController.popup.content = editorController.popup.defaultContentOperators + '\nDimensions:\n' + editorController.popup.defaultContentDimensions;
             $scope.$apply();
           }
+        };
+
+        this.parseFormula = function(formula) {
+          var regexVariables = /([^\^\+\-\:\*\/\|\s]+)/g;
+          var regexOperators = /([\^\+\-\:\*\/\|])/g;
+          var variables = formula.match(regexVariables);
+          var operators = formula.match(regexOperators);
+          var reconstructedFormula = '';
+          var reconstructionSuccessfull = false;
+          if (operators.length == variables.length - 1) {
+            reconstructionSuccessfull = true;
+            variables.forEach(function(variable, index){
+              reconstructedFormula = reconstructedFormula + variable;
+              // If it is not the last element, attach the operator
+              if (index != variables.length - 1)
+                reconstructedFormula = reconstructedFormula + operators[index];
+            });
+          }
+          return reconstructedFormula;
         };
 
         // Watch the dimension array
