@@ -7,12 +7,16 @@ angular.module('cube')
       controller: function($scope) {
         var editorController = this;
         this.popup = {};
-        this.popup.header = 'My Header';
-        this.popup.content = 'My Body';
+        this.popup.lastTextCompleteWord = '';
         this.popup.show = false;
+        this.popup.defaultHeader = 'Available commands';
+        this.popup.defaultContentOperators = 'Available Operators: +, -, :, *, /, |';
+        // The default dimensions are fetched in the watch statement
+        this.popup.defaultContentDimensions = '';
+        this.popup.header = editorController.popup.defaultHeader;
+        this.popup.content = editorController.popup.defaultContentOperators;
 
         this.updatePopup = function(name){
-          console.log(name);
           if (name !== undefined){
             editorController.popup.header = name;
             // $scope.$apply(editorController.popup.content = name);
@@ -20,15 +24,8 @@ angular.module('cube')
             $scope.$apply();
           }
           else {
-            // TODO: Hier weitermachen. Default-Tooltup in watchcollection definieren
-            // TODO: HTML Inject machen
-            var dimensions = data.dataset.getDimensionNames();
-            var dimensionString = '';
-            dimensions.forEach(function(dimension) {
-              dimensionString = dimensionString + dimension + ', ';
-            });
-            editorController.popup.header = 'Available commands';
-            editorController.popup.content = dimensionString.toString();
+            editorController.popup.header = editorController.popup.defaultHeader;
+            editorController.popup.content = editorController.popup.defaultContentOperators + '\nDimensions:\n' + editorController.popup.defaultContentDimensions;
             $scope.$apply();
           }
         };
@@ -43,6 +40,15 @@ angular.module('cube')
             // We copy the dimensions list to not interfere with it in other controllers
             var typeaheadDimensions = dimensions.slice(0);
             typeaheadDimensions.splice(0, 0, 'x', 'y');
+
+            // Update Dimension String for default tooltip
+            var dimensionsAsString = '';
+            dimensions.forEach(function(dimension) {
+              dimensionsAsString = dimensionsAsString + dimension + ', ';
+            });
+            editorController.popup.defaultContentDimensions = dimensionsAsString;
+
+            // Update textcomplete Plugin
             $('#formulaInput').textcomplete([{
               words: typeaheadDimensions,
               match: /\b(\w{0,})$/,
@@ -50,7 +56,7 @@ angular.module('cube')
                 callback($.map(this.words, function(word) {
                   var currentWord = word.indexOf(term) === 0 ? word : null;
                   if (currentWord !== null)
-                    editorController.updatePopup(currentWord);
+                    editorController.popup.lastTextCompleteWord = currentWord;
                   return word.indexOf(term) === 0 ? word : null;
                 }));
               },
@@ -58,7 +64,15 @@ angular.module('cube')
               replace: function(word) {
                 return word + ' ';
               }
-            }]);
+            }])
+            .on({
+              'textComplete:show': function (e) {
+                editorController.updatePopup(editorController.popup.lastTextCompleteWord);
+              },
+              'textComplete:hide': function (e) {
+                editorController.updatePopup();
+              }
+            });
           }
         });
       },
