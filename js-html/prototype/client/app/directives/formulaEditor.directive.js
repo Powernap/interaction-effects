@@ -22,6 +22,11 @@ angular.module('cube')
           this.regressionFormula.update($scope.formulaInput);
         };
 
+        this.submitFormula = function(){
+          // TODO: Call R server through service here
+          console.log("Click on submit");
+        };
+
         this.updatePopup = function(name){
           if (name !== undefined){
             editorController.popup.header = name;
