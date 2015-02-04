@@ -5,6 +5,7 @@ angular.module('cube')
     dataService.defaultRegressionFormula = new RCUBE.RegressionFormula('x + y');
     dataService.regressionFormula = new RCUBE.RegressionFormula();
     dataService.calculationInProgress = false;
+    dataService.stopCalculation = false;
 
     dataService.formulaUpdate = function(formula){
       dataService.regressionFormula.setFormula(formula.toString());
@@ -18,11 +19,11 @@ angular.module('cube')
     };
 
     var calculateRSquaredSequential = function(dimensions) {
-      if (dimensions.length === 0) {
+      if (dimensions.length === 0 || dataService.stopCalculation) {
         // HACK: jQuery activating the cog visibility
         $('#cog').removeClass('visible');
+        dataService.stopCalculation = false;
         dataService.calculationInProgress = false;
-        debugger;
         return;
       }
       var dimensionName = dimensions[dimensions.length - 1];
