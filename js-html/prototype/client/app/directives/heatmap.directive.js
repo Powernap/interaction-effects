@@ -18,7 +18,7 @@ angular.module('cube')
         // Remove old Heatmap container
         $('svg.heatmap').remove();
         var names = data.dataset.getDimensionNames();
-        var rSquared = data.dataset._rSquared[dependentVariable];
+        var rSquared = data.dataset.getRSquared()[dependentVariable];
         myHeatmap = new RCUBE.Heatmap(".my-heatmap", rSquared, names);
         heatmapController.visible = true;
       };
@@ -26,6 +26,21 @@ angular.module('cube')
       // Dependent
       this.dependentOptions = [];
       $scope.dependentSelect = this.dependentOptions[0];
+
+      $scope.$on('updateRSquared', function(){
+        var rSquaredValues = data.getRSquaredValues();
+        var values = Object.keys(rSquaredValues);
+        // Set Heatmap to visible when we actually have rSquared values to display
+        if (values.length > 0) {
+          heatmapController.visible = true;
+          // Only add last new entry to the select to keep the old ones
+          var newEntry = values[values.length - 1];
+          heatmapController.dependentOptions.push({label: newEntry, value: newEntry});
+          pulse.pulse();
+        }
+      });
+
+      // TODO: Delete:
       $scope.rSquaredValues = data.getRSquaredValues();
       $scope.$watchCollection('rSquaredValues', function(newValue){
         var values = Object.keys(newValue);

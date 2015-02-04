@@ -46,10 +46,6 @@ RCUBE.RegressionFormula.prototype.update = function() {
         self._valid = false;
         return;
       }
-      self._reconstructedFormula = self._reconstructedFormula + variable;
-      // If it is not the last element, attach the operator
-      if (index != self._variables.length - 1)
-        self._reconstructedFormula = self._reconstructedFormula + self._operators[index];
     });
   }
 };
@@ -59,6 +55,16 @@ RCUBE.RegressionFormula.prototype.isValid = function(){
 };
 
 RCUBE.RegressionFormula.prototype.toString = function(){
+  var self = this;
+  // If the string was not constructed, do it here
+  if (this._reconstructedFormula === '') {
+    this._variables.forEach(function(variable, index) {
+      self._reconstructedFormula = self._reconstructedFormula + variable;
+      // If it is not the last element, attach the operator
+      if (index != self._variables.length - 1)
+        self._reconstructedFormula = self._reconstructedFormula + self._operators[index];
+    });
+  }
   return this._reconstructedFormula;
 };
 })();

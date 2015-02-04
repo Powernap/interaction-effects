@@ -13,26 +13,34 @@ angular.module('cube')
     };
 
     dataService.getRSquaredValues = function(){
-      return dataService.dataset._rSquared;
+      // return dataService.dataset._rSquared;
+      return dataService.dataset.getRSquared();
     };
 
     var calculateRSquaredSequential = function(dimensions) {
       if (dimensions.length === 0) {
+        // HACK: jQuery activating the cog visibility
+        $('#cog').removeClass('visible');
         dataService.calculationInProgress = false;
+        debugger;
         return;
       }
       var dimensionName = dimensions[dimensions.length - 1];
       ocpuBridge.calculateRSquared(dimensionName).then(function(rSquared){
-        dataService.dataset._rSquared[dimensionName] = rSquared;
+        // dataService.dataset._rSquared[dimensionName] = rSquared;
+        dataService.dataset.setRSquared(dimensionName, rSquared);
+        $rootScope.$broadcast('updateRSquared');
         dimensions.pop();
         calculateRSquaredSequential(dimensions);
       });
     };
 
     var applyFormula = function() {
+      // Set calculation flag to true
       dataService.calculationInProgress = true;
-      // HACK: jQuery Activating the cog visibility
+      // HACK: jQuery activating the cog visibility
       $('#cog').addClass('visible');
+      // Use either default formula or new one if there was one provided
       var formula;
       if (dataService.regressionFormula.isValid())
         formula = dataService.regressionFormula;
@@ -41,6 +49,8 @@ angular.module('cube')
 
       console.log("Calculating R^2 with formula:");
       console.log(formula);
+
+      dataService.dataset.switchFormula(formula);
       // TODO: Hier weitermachen
       // - Stop current RSquared Calculations
       // - Write R Squared values to data structure capturing the current formula
