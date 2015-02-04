@@ -16,8 +16,10 @@ RCUBE.Dataset.prototype.switchFormula = function(formula) {
   }
 };
 
-RCUBE.Dataset.prototype.setRSquared = function(dimensionName, rSquared) {
-  this._rSquared[this._activeFormula.toString()][dimensionName] = rSquared;
+RCUBE.Dataset.prototype.setRSquared = function(dimensionName, rSquared, formula) {
+  if (typeof formula === 'undefined')
+    formula = this._activeFormula;
+  this._rSquared[formula.toString()][dimensionName] = rSquared;
 };
 
 RCUBE.Dataset.prototype.getRSquared = function(){

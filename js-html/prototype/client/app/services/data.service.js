@@ -5,34 +5,40 @@ angular.module('cube')
     dataService.defaultRegressionFormula = new RCUBE.RegressionFormula('x + y');
     dataService.regressionFormula = new RCUBE.RegressionFormula();
     dataService.calculationInProgress = false;
-    dataService.stopCalculation = false;
+    // This flag is set per formula
+    dataService.stopCalculation = {};
 
-    dataService.formulaUpdate = function(formula){
+    dataService.formulaUpdate = function(formula) {
+      // Stop all current operations for the current formula
+      dataService.stopCalculation[dataService.regressionFormula.toString()] = true;
+      // Update the active formula
       dataService.regressionFormula.setFormula(formula.toString());
       dataService.regressionFormula.setValidVariables(dataService.dataset.getDimensionNames().slice(0));
       applyFormula();
     };
 
-    dataService.getRSquaredValues = function(){
+    dataService.getRSquaredValues = function() {
       // return dataService.dataset._rSquared;
       return dataService.dataset.getRSquared();
     };
 
-    var calculateRSquaredSequential = function(dimensions) {
-      if (dimensions.length === 0 || dataService.stopCalculation) {
+    var calculateRSquaredSequential = function(dimensions, formula) {
+      if (dimensions.length === 0) {
         // HACK: jQuery activating the cog visibility
         $('#cog').removeClass('visible');
-        dataService.stopCalculation = false;
         dataService.calculationInProgress = false;
         return;
       }
       var dimensionName = dimensions[dimensions.length - 1];
       ocpuBridge.calculateRSquared(dimensionName).then(function(rSquared){
-        // dataService.dataset._rSquared[dimensionName] = rSquared;
-        dataService.dataset.setRSquared(dimensionName, rSquared);
-        $rootScope.$broadcast('updateRSquared');
+        dataService.dataset.setRSquared(dimensionName, rSquared, formula);
         dimensions.pop();
-        calculateRSquaredSequential(dimensions);
+        console.log(dataService.dataset._rSquared);
+        // If you are not supposed to stop for this formula, continue
+        if (!dataService.stopCalculation[formula.toString()]) {
+          $rootScope.$broadcast('updateRSquared');
+          calculateRSquaredSequential(dimensions, formula);
+        }
       });
     };
 
@@ -42,26 +48,28 @@ angular.module('cube')
       // HACK: jQuery activating the cog visibility
       $('#cog').addClass('visible');
       // Use either default formula or new one if there was one provided
-      var formula;
-      if (dataService.regressionFormula.isValid())
-        formula = dataService.regressionFormula;
-      else
-        formula = dataService.defaultRegressionFormula;
+      // If the formula is not valid, fall back to the default one
+      if (!dataService.regressionFormula.isValid()) {
+        dataService.regressionFormula.setFormula(dataService.defaultRegressionFormula.toString());
+        dataService.regressionFormula.setValidVariables(dataService.dataset.getDimensionNames().slice(0));
+      }
 
       console.log("Calculating R^2 with formula:");
-      console.log(formula);
+      console.log(dataService.regressionFormula);
 
+      // Initialize the stop flag for this formula
+      // var formulaWasAlreadyLoadedBefore = Object.keys(dataService.stopCalculation).indexOf(dataService.regressionFormula.toString()) == -1;
+      dataService.stopCalculation[dataService.regressionFormula.toString()] = false;
+      // Broadcast event for other components to react
       $rootScope.$broadcast("newFormulaApplied");
-      dataService.dataset.switchFormula(formula);
-      // TODO: Hier weitermachen
-      // - Stop current RSquared Calculations
-      // - Write R Squared values to data structure capturing the current formula
-      // - adjust R source to use the formulas
-
+      dataService.dataset.switchFormula(dataService.regressionFormula);
       // Copy the dimensions array, since the recurive algorithm will delete its contents
       // var recursionDimensions = dataService.dataset.getDimensionNames().slice(0);
       var recursionDimensions = ['age', 'gender'];
-      calculateRSquaredSequential(recursionDimensions);
+      // Load the Recursion algorithm with a copy of the formula
+      // This is needed because we want to assign proper R^2 values even
+      // if there is a new one assigned in the meanwhile
+      calculateRSquaredSequential(recursionDimensions, dataService.regressionFormula.copy());
       // Code for parallel execution
       // dataService.dataset.getDimensionNames().forEach(function(dimensionName){
       // ocpuBridge.calculateRSquared(dimensionName).then(function(rSquared){

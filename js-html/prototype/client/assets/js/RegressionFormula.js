@@ -15,6 +15,17 @@ RCUBE.RegressionFormula = function(formula, validVariables) {
   this.update(formula);
 };
 
+// Return a copy of this Object
+RCUBE.RegressionFormula.prototype.copy = function() {
+  var validVariables;
+  // Copy valid variables only if they are defined
+  if (typeof this._validVariables === 'undefined')
+    validVariables = [];
+  else
+    validVariables = this._validVariables.slice(0);
+  return new RCUBE.RegressionFormula(this.toString(), validVariables);
+};
+
 RCUBE.RegressionFormula.prototype.setValidVariables = function(validVariables) {
   this._validVariables = validVariables;
   this.update();
