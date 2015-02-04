@@ -4,6 +4,7 @@ angular.module('cube')
     dataService.dataset = new RCUBE.Dataset();
     dataService.defaultRegressionFormula = new RCUBE.RegressionFormula('x + y');
     dataService.regressionFormula = new RCUBE.RegressionFormula();
+    dataService.calculationInProgress = false;
 
     dataService.formulaUpdate = function(formula){
       dataService.regressionFormula.setFormula(formula.toString());
@@ -16,8 +17,10 @@ angular.module('cube')
     };
 
     var calculateRSquaredSequential = function(dimensions) {
-      if (dimensions.length === 0)
+      if (dimensions.length === 0) {
+        dataService.calculationInProgress = false;
         return;
+      }
       var dimensionName = dimensions[dimensions.length - 1];
       ocpuBridge.calculateRSquared(dimensionName).then(function(rSquared){
         dataService.dataset._rSquared[dimensionName] = rSquared;
@@ -27,8 +30,9 @@ angular.module('cube')
     };
 
     var applyFormula = function() {
+      dataService.calculationInProgress = true;
       // HACK: jQuery Activating the cog visibility
-      $('#cog').toggleClass('visible');
+      $('#cog').addClass('visible');
       var formula;
       if (dataService.regressionFormula.isValid())
         formula = dataService.regressionFormula;
