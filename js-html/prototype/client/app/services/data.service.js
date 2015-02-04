@@ -51,6 +51,7 @@ angular.module('cube')
       console.log("Calculating R^2 with formula:");
       console.log(formula);
 
+      $rootScope.$broadcast("newFormulaApplied");
       dataService.dataset.switchFormula(formula);
       // TODO: Hier weitermachen
       // - Stop current RSquared Calculations
