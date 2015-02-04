@@ -53,8 +53,8 @@
       fill: none;
       stroke: #398FBD;
     }
-
     /*Override bootstrap popover setting*/
+
     .popover-override .popover {
       display: block;
       position: absolute;
@@ -73,7 +73,6 @@
       border-color: red;
       box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(255, 0, 0, 0.6);
     }
-
     /* Spinning Icon */
     /* http://codepen.io/astrotim/details/IjJzL */
 
@@ -81,7 +80,7 @@
       position: relative;
       z-index: 2;
     }
-    #wrap:after {
+    #cog.visible:after {
       content: "\f013";
       font-family: FontAwesome;
       font-style: normal;
@@ -89,58 +88,67 @@
       text-decoration: inherit;
       position: absolute;
       font-size: 800px;
-      color: rgba(240,240,240,1);;
+      color: rgba(240, 240, 240, 1);
+      ;
       top: 50%;
       left: 50%;
       margin: -900px 0 0 -350px;
       -webkit-animation: 15s infinite linear;
       animation: 15s infinite linear;
       z-index: 1;
-      -webkit-animation:spin 10s linear infinite;
-      -moz-animation:spin 10s linear infinite;
-      animation:spin 10s linear infinite;
+      -webkit-animation: spin 10s linear infinite;
+      -moz-animation: spin 10s linear infinite;
+      animation: spin 10s linear infinite;
     }
-    @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
-    @-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
-    @keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
-
+    @-moz-keyframes spin {
+      100% {
+        -moz-transform: rotate(360deg);
+      }
+    }
+    @-webkit-keyframes spin {
+      100% {
+        -webkit-transform: rotate(360deg);
+      }
+    }
+    @keyframes spin {
+      100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+      }
+    }
   </style>
   </script>
 </head>
 
 <body>
 
-  <div id='wrap'>
-  <div class='inner'>
-  <nav class="navbar navbar-default">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="#">
-          <p>Regression Cube</p>
-        </a>
+  <div id='cog' class=''>
+    <div class='inner'>
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="#">
+              <p>Regression Cube</p>
+            </a>
+          </div>
+          <div class="pull-right">
+            <form class="navbar-form" role="search">
+              <formula-editor></formula-editor>
+            </form>
+          </div>
+        </div>
+      </nav>
+      <div class=container>
+        <div class='row'>
+          <div class='col-md-4 col-md-offset-4'>
+            <file-upload></file-upload>
+          </div>
+        </div>
+        <heatmap></heatmap>
       </div>
-      <div class="pull-right">
-        <form class="navbar-form" role="search">
-          <formula-editor></formula-editor>
-        </form>
-      </div>
-    </div>
-  </nav>
-  <div class=container>
-    <div class='row'>
-      <div class='col-md-4 col-md-offset-4'>
-        <file-upload></file-upload>
-      </div>
-    </div>
-    <!-- <div class='col-md-10 col-md-offset-1 well'> -->
-    <heatmap></heatmap>
-    <!-- </div> -->
-  </div>
 
-</div></div>
-  <!-- <div class='spinner'>
-    <i class="fa fa-cog fa-spin spinning-cog"></i>
-  </div> -->
+    </div> <!-- / div.inner -->
+  </div> <!-- / div#cog -->
 </body>
 
 </html>

@@ -27,6 +27,8 @@ angular.module('cube')
     };
 
     var applyFormula = function() {
+      // HACK: jQuery Activating the cog visibility
+      $('#cog').toggleClass('visible');
       var formula;
       if (dataService.regressionFormula.isValid())
         formula = dataService.regressionFormula;
