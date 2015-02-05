@@ -12,6 +12,7 @@ RCUBE.RegressionFormula = function(formula, validVariables) {
     this._validVariables = [];
   else
     this._validVariables = validVariables;
+  this._errorText = '';
   this.update(formula);
 };
 
@@ -49,12 +50,31 @@ RCUBE.RegressionFormula.prototype.update = function() {
   this._operators = this._formula.match(this._regexOperators);
 
   // Check the formula for validity
-  if (this._variables !== null && this._operators !== null && this._operators.length == this._variables.length - 1) {
-    this._valid = true;
+  this._valid = true;
+  this._errorText = '';
+  if (this._variables === null) {
+    this._valid = false;
+    this._errorText = "No variables are specified.";
+  }
+  if (this._valid && this._operators === null) {
+    this._valid = false;
+    this._errorText = "No operators are specified.";
+  }
+  // The first operator has to be a '~'
+  if (this._valid && (this._operators.length < 1 || this._operators[0] !== '~')) {
+    this._valid = false;
+    this._errorText = "First operator has to be a '~'!";
+  }
+  if (this._valid && this._operators.length != this._variables.length - 1) {
+    this._valid = false;
+    this._errorText = "Number of valid operators do not match the number of variables.";
+  }
+  if (this._valid) {
     this._variables.forEach(function(variable, index) {
       // check if the current variable is valid
       if (self._validVariables.indexOf(variable) == -1) {
         self._valid = false;
+        self._errorText = "Invalid variables are specified.";
         return;
       }
     });

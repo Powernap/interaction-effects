@@ -15,12 +15,14 @@ angular.module('cube')
         this.popup.defaultContentOperators = 'Available Operators: +, -, :, *, /, |';
         // The default dimensions are fetched in the watch statement
         this.popup.defaultContentDimensions = '';
+        this.popup.textCompleteVisible = false;
         this.popup.header = editorController.popup.defaultHeader;
         this.popup.content = editorController.popup.defaultContentOperators;
         this.regressionFormula = new RCUBE.RegressionFormula();
 
         this.formulaChange = function(){
           this.regressionFormula.setFormula($scope.formulaInput);
+          this.updatePopup();
         };
 
         this.submitFormula = function(){
@@ -32,12 +34,13 @@ angular.module('cube')
             editorController.popup.header = name;
             // $scope.$apply(editorController.popup.content = name);
             editorController.popup.content = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
-            $scope.$apply();
           }
           else {
-            editorController.popup.header = editorController.popup.defaultHeader;
-            editorController.popup.content = editorController.popup.defaultContentOperators + '\nDimensions:\n' + editorController.popup.defaultContentDimensions;
-            $scope.$apply();
+            // Only update the popup if there is currently no textcomplete visible
+            if (!this.popup.textCompleteVisible) {
+              editorController.popup.header = editorController.popup.defaultHeader;
+              editorController.popup.content = editorController.popup.defaultContentOperators + '\nDimensions:\n' + editorController.popup.defaultContentDimensions + '\n' + editorController.regressionFormula._errorText;
+            }
           }
         };
 
@@ -81,10 +84,12 @@ angular.module('cube')
             }])
             .on({
               'textComplete:show': function (e) {
-                editorController.updatePopup(editorController.popup.lastTextCompleteWord);
+                editorController.popup.textCompleteVisible = true;
+                $scope.$apply(editorController.updatePopup(editorController.popup.lastTextCompleteWord));
               },
               'textComplete:hide': function (e) {
-                editorController.updatePopup();
+                editorController.popup.textCompleteVisible = false;
+                $scope.$apply(editorController.updatePopup());
               }
             });
             // Enable the element
