@@ -65,8 +65,8 @@ angular.module('cube')
       $rootScope.$broadcast("newFormulaApplied");
       dataService.dataset.switchFormula(dataService.regressionFormula);
       // Copy the dimensions array, since the recurive algorithm will delete its contents
-      // var recursionDimensions = dataService.dataset.getDimensionNames().slice(0);
-      var recursionDimensions = ['age', 'gender'];
+      var recursionDimensions = dataService.dataset.getDimensionNames().slice(0);
+      // var recursionDimensions = ['age', 'gender'];
       // Load the Recursion algorithm with a copy of the formula
       // This is needed because we want to assign proper R^2 values even
       // if there is a new one assigned in the meanwhile
@@ -103,12 +103,12 @@ angular.module('cube')
     var ocpuBridgeService = {};
     ocpuBridgeService.sessions = [];
 
-    ocpuBridgeService.calculateRSquared = function(targetVariable, formula){
+    ocpuBridgeService.calculateRSquared = function(zVariable, formula){
       return $q(function(resolve, reject){
         // TODO: Write distribution algorithm here!
         var rsession = ocpuBridgeService.sessions[0];
 
-        rsession.calculateRSquaredValues(targetVariable, formula, function(rsquaredSession){
+        rsession.calculateRSquaredValues(zVariable, formula, function(rsquaredSession){
           $.getJSON(rsquaredSession.loc + "R/.val/json" , function(rSquaredData){
             resolve(rSquaredData);
           });

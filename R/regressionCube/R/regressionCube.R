@@ -38,8 +38,29 @@ pkg.env$data <- NA
   return(data)
 }
 
-'r_squared_matrix' <- function(data, dependent, operators, variables, force_calculation = FALSE) {
-  # filename <- paste0("vardumps/goodness_of_fit_matrix_", dependent, ".Rdmped")
+'constuct_formula' <- function(variables, operators, x, y, z) {
+  formula <- ''
+  # Iterate over all variables
+  for (i in 1:length(variables)) {
+    current_variable = variables[[i]];
+    # Replace placeholders with current x, y and z values
+    if (current_variable == 'x') current_variable = x;
+    if (current_variable == 'y') current_variable = y;
+    if (current_variable == 'z') current_variable = z;
+    # If it is not the last variable, append it together with next operator
+    if (i != length(variables))
+      formula <- paste0(formula, current_variable, operators[[i]])
+    else
+      formula <- paste0(formula, current_variable)
+    
+    if (i == 1)
+      dependent_variable = current_variable
+  }
+  return(c(formula, dependent_variable))
+}
+
+'r_squared_matrix' <- function(data, z, operators, variables, force_calculation = FALSE) {
+  # filename <- paste0("vardumps/goodness_of_fit_matrix_", z, ".Rdmped")
   # if (file.exists(filename) && !force_calculation) {
   #   load(file = filename)
   #   return(goodness_of_fit_matrix)
@@ -57,8 +78,8 @@ pkg.env$data <- NA
   goodness_of_fit_matrix <- matrix(0, length(variable_names), length(variable_names))
   row.names(goodness_of_fit_matrix) <- variable_names
   colnames(goodness_of_fit_matrix) <- variable_names
-  # Class of dependent variable
-  dependent_class <- variable_classes[dependent]
+  # Class of z variable
+  dependent_class <- variable_classes[z]
   # Iterate over all variables
   #for (i in 2:2) {
   for (i in 1:length(variable_names)) {
@@ -68,7 +89,11 @@ pkg.env$data <- NA
       # No correlation of variables with each other
       if (i != j) {
         current_independent_variable2_name <- variable_names[[j]]
-        formula <- paste(dependent, "~", current_independent_variable1_name, '+', current_independent_variable2_name)
+        # First element contains the formula, the second one the dependent variable
+        formula_result <- constuct_formula(variables, operators, current_independent_variable1_name, current_independent_variable2_name, z)
+        formula <- formula_result[[1]]
+        # formula <- paste(z, "~", current_independent_variable1_name, '+', current_independent_variable2_name)
+        dependent_class <- variable_classes[formula_result[[2]]]
         # If current class is numeric, apply Linear Regression
         if (dependent_class == 'numeric')
           model <- try(lm(formula = formula, data = data), silent = TRUE)
