@@ -38,7 +38,7 @@ pkg.env$data <- NA
   return(data)
 }
 
-'r_squared_matrix' <- function(data, dependent, force_calculation = FALSE) {
+'r_squared_matrix' <- function(data, dependent, operators, variables, force_calculation = FALSE) {
   # filename <- paste0("vardumps/goodness_of_fit_matrix_", dependent, ".Rdmped")
   # if (file.exists(filename) && !force_calculation) {
   #   load(file = filename)
@@ -49,6 +49,8 @@ pkg.env$data <- NA
   # /DEBUG
   # Get Class for each group
   # data <- pkg.env$data
+  print(operators)
+  print(variables)
   variable_classes <- lapply(data, class)
   variable_names <- colnames(data)
   # Create result matrix

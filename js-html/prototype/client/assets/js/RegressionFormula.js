@@ -42,8 +42,8 @@ RCUBE.RegressionFormula.prototype.update = function() {
   this._valid = false;
   this._reconstructedFormula = '';
   // Regex formulas for variables and operators
-  this._regexVariables = /([^\^\+\-\:\*\/\|\s]+)/g;
-  this._regexOperators = /([\^\+\-\:\*\/\|])/g;
+  this._regexVariables = /([^\^\+\-\:\*\/\|\~\s]+)/g;
+  this._regexOperators = /([\^\+\-\:\*\/\|\~])/g;
   // Apply regex to the input formula
   this._variables = this._formula.match(this._regexVariables);
   this._operators = this._formula.match(this._regexOperators);

@@ -2,7 +2,7 @@ angular.module('cube')
   .factory('data', ['$rootScope', 'ocpuBridge', function($rootScope, ocpuBridge){
     var dataService = {};
     dataService.dataset = new RCUBE.Dataset();
-    dataService.defaultRegressionFormula = new RCUBE.RegressionFormula('x + y');
+    dataService.defaultRegressionFormula = new RCUBE.RegressionFormula('z ~ x + y');
     dataService.regressionFormula = new RCUBE.RegressionFormula();
     dataService.calculationInProgress = false;
     // This flag is set per formula
@@ -30,10 +30,9 @@ angular.module('cube')
         return;
       }
       var dimensionName = dimensions[dimensions.length - 1];
-      ocpuBridge.calculateRSquared(dimensionName).then(function(rSquared){
+      ocpuBridge.calculateRSquared(dimensionName, formula).then(function(rSquared){
         dataService.dataset.setRSquared(dimensionName, rSquared, formula);
         dimensions.pop();
-        console.log(dataService.dataset._rSquared);
         // If you are not supposed to stop for this formula, continue
         if (!dataService.stopCalculation[formula.toString()]) {
           $rootScope.$broadcast('updateRSquared');
@@ -102,12 +101,12 @@ angular.module('cube')
     var ocpuBridgeService = {};
     ocpuBridgeService.sessions = [];
 
-    ocpuBridgeService.calculateRSquared = function(targetVariable){
+    ocpuBridgeService.calculateRSquared = function(targetVariable, formula){
       return $q(function(resolve, reject){
         // TODO: Write distribution algorithm here!
         var rsession = ocpuBridgeService.sessions[0];
 
-        rsession.calculateRSquaredValues(targetVariable, function(rsquaredSession){
+        rsession.calculateRSquaredValues(targetVariable, formula, function(rsquaredSession){
           $.getJSON(rsquaredSession.loc + "R/.val/json" , function(rSquaredData){
             resolve(rSquaredData);
           });

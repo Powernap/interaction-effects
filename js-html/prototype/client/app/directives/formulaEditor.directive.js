@@ -50,7 +50,7 @@ angular.module('cube')
             // Attach X and Y variables to the dimension list
             // We copy the dimensions list to not interfere with it in other controllers
             var typeaheadDimensions = dimensions.slice(0);
-            typeaheadDimensions.splice(0, 0, 'x', 'y');
+            typeaheadDimensions.splice(0, 0, 'x', 'y', 'z');
 
             // Update Dimension String for default tooltip
             var dimensionsAsString = '';
