@@ -13,7 +13,8 @@ angular.module('cube')
       dataService.stopCalculation[dataService.regressionFormula.toString()] = true;
       // Update the active formula
       dataService.regressionFormula.setFormula(formula.toString());
-      dataService.regressionFormula.setValidVariables(dataService.dataset.getDimensionNames().slice(0));
+      // dataService.regressionFormula.setValidVariables(dataService.dataset.getDimensionNames().slice(0));
+      dataService.regressionFormula.setValidVariables(formula._validVariables.slice(0));
       applyFormula();
     };
 
@@ -33,6 +34,7 @@ angular.module('cube')
       ocpuBridge.calculateRSquared(dimensionName, formula).then(function(rSquared){
         dataService.dataset.setRSquared(dimensionName, rSquared, formula);
         dimensions.pop();
+        console.log(dataService.dataset._rSquared);
         // If you are not supposed to stop for this formula, continue
         if (!dataService.stopCalculation[formula.toString()]) {
           $rootScope.$broadcast('updateRSquared');

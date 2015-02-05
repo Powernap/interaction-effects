@@ -12,7 +12,7 @@ angular.module('cube')
         this.popup.lastTextCompleteWord = '';
         this.popup.show = false;
         this.popup.defaultHeader = 'Available commands';
-        this.popup.defaultContentOperators = 'Available Operators: +, -, :, *, /, |';
+        this.popup.defaultContentOperators = 'Available Operators: ~, +, -, :, *, /, |';
         // The default dimensions are fetched in the watch statement
         this.popup.defaultContentDimensions = '';
         this.popup.textCompleteVisible = false;
@@ -26,7 +26,7 @@ angular.module('cube')
         };
 
         this.submitFormula = function(){
-          data.formulaUpdate(this.regressionFormula.toString());
+          data.formulaUpdate(this.regressionFormula);
         };
 
         this.updatePopup = function(name){
