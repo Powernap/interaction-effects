@@ -149,7 +149,7 @@ pkg.env$data <- NA
 }
 
 # The function takes the formulas as input and iterates over them
-'r_squared_matrix_formula' <- function(data, formulas) {
+'r_squared_matrix_formula_serial' <- function(data, formulas) {
   variable_classes <- lapply(data, class)
   # Iterate over all formulas given in the array
   for (i in 1:nrow(formulas)) {
@@ -176,4 +176,50 @@ pkg.env$data <- NA
     }
   }
   return(formulas)
+}
+
+# The function takes the formulas as input and iterates over them
+'r_squared_matrix_formula' <- function(data, formulas, parallel='true') {
+  #save(list = c("formulas"), file = '/Users/paul/Desktop/formulas.rtmp')
+  library(parallel)
+  variable_classes <- lapply(data, class)
+  workerFunction <- function(current_formula) {
+    #global_current_formula <<- current_formula
+    current_formula_string <- current_formula[,'formula']
+    dependent_class <- variable_classes[current_formula[,'dependentVariable']]
+    
+    # If current class is numeric, apply Linear Regression
+    if (dependent_class == 'numeric')
+      model <- try(lm(formula = as.formula(current_formula_string), data = data), silent = TRUE)
+    else
+      model <- try( rms::lrm(formula = as.formula(current_formula_string), data = data), silent = TRUE)
+    
+    # If binning fails, return null
+    if(class(model) == "try-error") {
+      message(paste0("'", current_formula_string, "' failed!"))
+    } else {
+      if (dependent_class == 'numeric') {
+        model_summary <- summary(model)
+        current_formula['rSquared'] <- model_summary$r.squared
+      }
+      else
+        current_formula['rSquared'] <- model$stats[['R2']]
+    }
+    return(current_formula)
+  }
+  formulas_matrix <- as.matrix(formulas)
+  formulas_list <- lapply(1:NROW(formulas_matrix), function(i) formulas_matrix[i,,drop=FALSE])
+  numWorkers <- 8;
+  if (parallel)
+    res <- mclapply(formulas_list, workerFunction, mc.cores = numWorkers)
+  else
+    res <- lapply(formulas_list, workerFunction)
+  
+  formulas_names <- names(formulas)
+  # when other metrics are added, they also need to get a new name here!
+  formulas_names <- c(formulas_names, 'rSquared')
+  # concat results to a data frame
+  result <- data.frame(matrix(unlist(res), nrow=length(formulas_list), byrow=T))
+  names(result) <- formulas_names
+  return(result);
 }
