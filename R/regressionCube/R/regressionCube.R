@@ -39,7 +39,7 @@ pkg.env$data <- NA
 }
 
 'constuct_formula' <- function(variables, operators, x, y, z) {
-  formula <- ''
+  result_formula <- ''
   # Iterate over all variables
   for (i in 1:length(variables)) {
     current_variable = variables[[i]];
@@ -49,17 +49,46 @@ pkg.env$data <- NA
     if (current_variable == 'z') current_variable = z;
     # If it is not the last variable, append it together with next operator
     if (i != length(variables))
-      formula <- paste0(formula, current_variable, operators[[i]])
+      result_formula <- paste0(result_formula, current_variable, operators[[i]])
     else
-      formula <- paste0(formula, current_variable)
+      result_formula <- paste0(result_formula, current_variable)
     
     if (i == 1)
       dependent_variable = current_variable
   }
-  return(c(formula, dependent_variable))
+  return(c(formula(result_formula), dependent_variable, result_formula))
 }
 
-'r_squared_matrix' <- function(data, z, operators, variables, force_calculation = FALSE) {
+# data <- load_dataset('/Users/paul/Desktop/patients-100k.csv', FALSE)
+# data <- load_dataset('/Users/paul/Desktop/breast_fat_small.csv', FALSE)
+# operators = c('~', '+', '-');
+# variables = c('z', 'x', 'y');
+
+'performance_test' <- function() {
+  data <- load_dataset('/Users/paul/Desktop/patients-100k.csv', FALSE)
+  print('GLM')
+  system.time(glm(formula = as.formula('gender~age+bmi'), data = data, family='binomial'))
+  print('SpeedGLM')
+  system.time(speedglm::speedglm(formula = as.formula('gender~age+bmi'), data = data, family=binomial(link = "logit")))
+  print('lrm')
+  system.time(rms::lrm(formula = as.formula('gender~age+bmi'), data = data))
+  system.time(rms::lrm(formula = as.formula('gender~age+chd'), data = data))
+  print('lrm fit')
+  system.time(rms::lrm.fit(cbind(data$age, data$bmi), data$gender))
+  
+  # Model matrices do not include missing data here
+  model_matrix <- model.matrix(as.formula('gender~age+chd'), data)
+  model_matrix <- model_matrix[,1-2] # Drop 'intercept' row
+  system.time(rms::lrm.fit(model_matrix, data$gender))
+  system.time(rms::lrm.fit(model.matrix(as.formula('gender~age+chd'), data)[,1-2], data$gender))
+  
+  #model_matrix <- model.matrix(as.formula('age~gender+chd'), data)
+  #system.time(lm.fit(model_matrix, y = data$age))
+  system.time(lm.fit(model.matrix(as.formula('age~gender+chd'), data), y = data$age))
+  system.time(lm('age~gender+chd', data))
+}
+
+'r_squared_matrix' <- function(data, z, operators, variables, force_calculation = FALSE, use_fastLm = FALSE) {
   # filename <- paste0("vardumps/goodness_of_fit_matrix_", z, ".Rdmped")
   # if (file.exists(filename) && !force_calculation) {
   #   load(file = filename)
@@ -70,8 +99,8 @@ pkg.env$data <- NA
   # /DEBUG
   # Get Class for each group
   # data <- pkg.env$data
-  print(operators)
-  print(variables)
+  #print(operators)
+  #print(variables)
   variable_classes <- lapply(data, class)
   variable_names <- colnames(data)
   # Create result matrix
@@ -87,21 +116,30 @@ pkg.env$data <- NA
     # Iterate over all other variables
     for (j in 1:length(variable_names)) {
       # No correlation of variables with each other
+      #if (i != j && i < j) {
       if (i != j) {
         current_independent_variable2_name <- variable_names[[j]]
         # First element contains the formula, the second one the dependent variable
         formula_result <- constuct_formula(variables, operators, current_independent_variable1_name, current_independent_variable2_name, z)
-        formula <- formula_result[[1]]
-        # formula <- paste(z, "~", current_independent_variable1_name, '+', current_independent_variable2_name)
+        current_formula <- formula_result[[1]]
+        #current_formula <- formula('age~bmi+smoking')
         dependent_class <- variable_classes[formula_result[[2]]]
+        #dependent_class <- 'numeric'
         # If current class is numeric, apply Linear Regression
         if (dependent_class == 'numeric')
-          model <- try(lm(formula = formula, data = data), silent = TRUE)
+          if (use_fastLm)
+            # model <- try(RcppArmadillo::fastLm(formula = current_formula, data = data), silent = TRUE)
+            #model <- try(RcppEigen::fastLm(formula = current_formula, data = data), silent = TRUE)
+            model <- try(speedglm:speedlm(formula = current_formula, data = data), silent = TRUE)
+          else
+            model <- try(lm(formula = current_formula, data = data), silent = TRUE)
         else
-          model <- try(glm(formula = formula, family = "binomial", data = data), silent = TRUE)
+          #model <- try( glm(formula = current_formula, family = "binomial", data = data), silent = TRUE)
+          model <- try( rms::lrm(formula = current_formula, data = data), silent = TRUE)
+          #model <- try( speedglm::speedglm(formula = current_formula, family = binomial(link = "logit"), data = data), silent = TRUE)
         # If binning fails, return null
         if(class(model) == "try-error") {
-          message(paste0("'", formula, "' failed!"))
+          message(paste0("'", formula_result[[3]], "' failed!"))
         } else {
           #coefficient <- model$coefficients[[2]]
           if (dependent_class == 'numeric') {
@@ -109,11 +147,42 @@ pkg.env$data <- NA
             goodness_of_fit_matrix[i,j] <- model_summary$r.squared
           }
           else
-            goodness_of_fit_matrix[i,j] <- fmsb::NagelkerkeR2(model)['R2'][[1]]
+            #goodness_of_fit_matrix[i,j] <- fmsb::NagelkerkeR2(model)['R2'][[1]]
+            goodness_of_fit_matrix[i,j] <- model$stats[['R2']]
         }
       }
     }
   }
   #save(list = c("goodness_of_fit_matrix"), file = filename)
   return(goodness_of_fit_matrix)
+}
+
+'r_squared_matrix_formula' <- function(data, formulas) {
+  variable_classes <- lapply(data, class)
+  # Iterate over all formulas given in the array
+  for (i in 1:nrow(formulas)) {
+    current_formula = formulas[i,]
+    current_formula_string <- current_formula$formula
+    dependent_class <- variable_classes[current_formula$dependentVariable]
+    
+    # If current class is numeric, apply Linear Regression
+    if (dependent_class == 'numeric')
+      model <- try(lm(formula = as.formula(current_formula_string), data = data), silent = TRUE)
+    else
+      model <- try( rms::lrm(formula = as.formula(current_formula_string), data = data), silent = TRUE)
+    
+    # If binning fails, return null
+    if(class(model) == "try-error") {
+      message(paste0("'", current_formula_string, "' failed!"))
+    } else {
+      if (dependent_class == 'numeric') {
+        model_summary <- summary(model)
+        formulas[i,'rSquared'] <- model_summary$r.squared
+      }
+      else
+        formulas[i,'rSquared'] <- model$stats[['R2']]
+    }
+  }
+  print(formulas)
+  return(formulas)
 }
