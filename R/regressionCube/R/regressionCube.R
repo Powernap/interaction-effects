@@ -38,6 +38,7 @@ pkg.env$data <- NA
   return(data)
 }
 
+# This function should be deleted as the calculation is now formula based
 'constuct_formula' <- function(variables, operators, x, y, z) {
   result_formula <- ''
   # Iterate over all variables
@@ -63,7 +64,6 @@ pkg.env$data <- NA
 # data <- load_dataset('/Users/paul/Desktop/breast_fat_small.csv', FALSE)
 # operators = c('~', '+', '-');
 # variables = c('z', 'x', 'y');
-
 'performance_test' <- function() {
   data <- load_dataset('/Users/paul/Desktop/patients-100k.csv', FALSE)
   print('GLM')
@@ -88,19 +88,17 @@ pkg.env$data <- NA
   system.time(lm('age~gender+chd', data))
 }
 
+# This function should be deleted as the calculation is now formula based
 'r_squared_matrix' <- function(data, z, operators, variables, force_calculation = FALSE, use_fastLm = FALSE) {
   # filename <- paste0("vardumps/goodness_of_fit_matrix_", z, ".Rdmped")
   # if (file.exists(filename) && !force_calculation) {
   #   load(file = filename)
   #   return(goodness_of_fit_matrix)
   # }
-  # DEBUG
-  #data <- frame
-  # /DEBUG
-  # Get Class for each group
   # data <- pkg.env$data
   #print(operators)
   #print(variables)
+  # Get Class for each group
   variable_classes <- lapply(data, class)
   variable_names <- colnames(data)
   # Create result matrix
@@ -127,16 +125,10 @@ pkg.env$data <- NA
         #dependent_class <- 'numeric'
         # If current class is numeric, apply Linear Regression
         if (dependent_class == 'numeric')
-          if (use_fastLm)
-            # model <- try(RcppArmadillo::fastLm(formula = current_formula, data = data), silent = TRUE)
-            #model <- try(RcppEigen::fastLm(formula = current_formula, data = data), silent = TRUE)
-            model <- try(speedglm:speedlm(formula = current_formula, data = data), silent = TRUE)
-          else
             model <- try(lm(formula = current_formula, data = data), silent = TRUE)
         else
-          #model <- try( glm(formula = current_formula, family = "binomial", data = data), silent = TRUE)
           model <- try( rms::lrm(formula = current_formula, data = data), silent = TRUE)
-          #model <- try( speedglm::speedglm(formula = current_formula, family = binomial(link = "logit"), data = data), silent = TRUE)
+
         # If binning fails, return null
         if(class(model) == "try-error") {
           message(paste0("'", formula_result[[3]], "' failed!"))
@@ -147,7 +139,6 @@ pkg.env$data <- NA
             goodness_of_fit_matrix[i,j] <- model_summary$r.squared
           }
           else
-            #goodness_of_fit_matrix[i,j] <- fmsb::NagelkerkeR2(model)['R2'][[1]]
             goodness_of_fit_matrix[i,j] <- model$stats[['R2']]
         }
       }
@@ -157,6 +148,7 @@ pkg.env$data <- NA
   return(goodness_of_fit_matrix)
 }
 
+# The function takes the formulas as input and iterates over them
 'r_squared_matrix_formula' <- function(data, formulas) {
   variable_classes <- lapply(data, class)
   # Iterate over all formulas given in the array
@@ -183,6 +175,5 @@ pkg.env$data <- NA
         formulas[i,'rSquared'] <- model$stats[['R2']]
     }
   }
-  print(formulas)
   return(formulas)
 }
