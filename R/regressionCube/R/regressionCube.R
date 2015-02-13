@@ -197,6 +197,7 @@ pkg.env$data <- NA
     # If binning fails, return null
     if(class(model) == "try-error") {
       message(paste0("'", current_formula_string, "' failed!"))
+      #current_formula['rSquared'] = 0;
     } else {
       if (dependent_class == 'numeric') {
         model_summary <- summary(model)
@@ -209,7 +210,7 @@ pkg.env$data <- NA
   }
   formulas_matrix <- as.matrix(formulas)
   formulas_list <- lapply(1:NROW(formulas_matrix), function(i) formulas_matrix[i,,drop=FALSE])
-  numWorkers <- 8;
+  numWorkers <- detectCores();
   if (parallel)
     res <- mclapply(formulas_list, workerFunction, mc.cores = numWorkers)
   else
