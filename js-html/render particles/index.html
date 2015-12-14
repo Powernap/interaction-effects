@@ -199,7 +199,7 @@
 								vertex.y = y*3 - ((num_y * 3) / 2);
 								vertex.z = z*3 - ((num_z * 3) / 2);
 								geometry.vertices.push( vertex );
-								
+
 								// var vertex1 = new THREE.Vector3();
 								// vertex1.x = x*3 - ((num_x * 3) / 2) + 1;
 								// vertex1.y = y*3 - ((num_y * 3) / 2) + 1;
@@ -225,7 +225,7 @@
 								// vertex5.y = y*3 - ((num_y * 3) / 2) + 5;
 								// vertex5.z = z*3 - ((num_z * 3) / 2) + 5;
 								// geometry.vertices.push( vertex5 );
-								
+
 								// var color = new THREE.Color();
 								//color.setHSL(0.5, 1, matrixData3D[x][y][z]);
 								var color = new THREE.Color(transferfunction(matrixData2D[x][y]));
@@ -250,7 +250,7 @@
 					color = [1,1,1];
 					size  = 6;
 
-					materials = new THREE.PointCloudMaterial( { 
+					materials = new THREE.PointCloudMaterial( {
 						size: size,
 						vertexColors: THREE.VertexColors
 					});
